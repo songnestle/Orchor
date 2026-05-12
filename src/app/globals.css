@@ -1,0 +1,226 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  color-scheme: dark;
+  --rarity-glow: 139, 92, 246;
+}
+
+html,
+body {
+  background: #05050d;
+  color: #e6e6f0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  overflow-x: hidden;
+}
+
+body {
+  background-image:
+    radial-gradient(1100px 700px at 14% -10%, rgba(139, 92, 246, 0.22), transparent 60%),
+    radial-gradient(900px 600px at 86% 6%, rgba(34, 211, 238, 0.16), transparent 60%),
+    radial-gradient(700px 500px at 50% 110%, rgba(244, 114, 182, 0.10), transparent 60%),
+    linear-gradient(to bottom, #05050d 0%, #06061a 50%, #05050d 100%);
+  background-attachment: fixed;
+}
+
+/* ---------- holographic card layer ---------- */
+.holo-border {
+  position: relative;
+  border-radius: 24px;
+  padding: 1.5px;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.9),
+    rgba(34, 211, 238, 0.4) 35%,
+    rgba(244, 114, 182, 0.6) 65%,
+    rgba(139, 92, 246, 0.9)
+  );
+  background-size: 200% 200%;
+  animation: holoBorderShift 6s ease-in-out infinite;
+}
+
+@keyframes holoBorderShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.holo-sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.12) 45%,
+    rgba(255, 255, 255, 0.02) 55%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: holoSheenMove 4s ease-in-out infinite;
+}
+
+@keyframes holoSheenMove {
+  0% { background-position: 200% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ---------- legendary aura ---------- */
+.legendary-aura {
+  position: absolute;
+  inset: -30px;
+  border-radius: 32px;
+  background:
+    radial-gradient(closest-side, rgba(251, 191, 36, 0.35), transparent 70%),
+    radial-gradient(closest-side, rgba(168, 85, 247, 0.30), transparent 70%);
+  filter: blur(28px);
+  z-index: -1;
+  animation: auraPulse 3.4s ease-in-out infinite;
+}
+
+@keyframes auraPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.04); }
+}
+
+/* ---------- glass panel ---------- */
+.glass {
+  background: linear-gradient(180deg, rgba(20, 20, 42, 0.55), rgba(12, 12, 31, 0.55));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.glass-strong {
+  background: linear-gradient(180deg, rgba(20, 20, 42, 0.78), rgba(12, 12, 31, 0.78));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* ---------- grid bg ---------- */
+.grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(139, 92, 246, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 70%);
+}
+
+/* ---------- floating particle dots ---------- */
+.particle {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(0.5px);
+}
+
+/* ---------- neon CTA ---------- */
+.btn-neon {
+  position: relative;
+  background: linear-gradient(90deg, #7c3aed 0%, #22d3ee 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.10) inset,
+    0 12px 36px -8px rgba(124, 58, 237, 0.55),
+    0 0 0 0 rgba(124, 58, 237, 0.0);
+  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+}
+
+.btn-neon:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.14) inset,
+    0 16px 48px -8px rgba(34,211,238,0.55),
+    0 0 36px 0 rgba(124, 58, 237, 0.45);
+}
+
+.btn-neon:disabled {
+  opacity: 0.5;
+  transform: none;
+  filter: none;
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d8d8ee;
+  transition: all 180ms ease;
+}
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* ---------- scrollbars ---------- */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.25);
+  border-radius: 8px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- form inputs ---------- */
+.input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: white;
+  outline: none;
+  transition: all 160ms ease;
+}
+.input::placeholder { color: rgba(255, 255, 255, 0.30); }
+.input:hover { border-color: rgba(255, 255, 255, 0.14); }
+.input:focus {
+  border-color: rgba(139, 92, 246, 0.55);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+}
+textarea.input { resize: vertical; min-height: 60px; line-height: 1.5; }
+
+/* ---------- text gradient ---------- */
+.text-gradient {
+  background: linear-gradient(90deg, #c4b5fd 0%, #67e8f9 50%, #f9a8d4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(90deg, #fde68a 0%, #fb923c 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- mini sparkline ---------- */
+.spark {
+  stroke: rgba(139, 92, 246, 0.9);
+  fill: none;
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.6));
+}
+
+/* hide carousel scroll */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* utility */
+.tabular { font-variant-numeric: tabular-nums; }
