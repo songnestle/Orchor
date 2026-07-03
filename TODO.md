@@ -122,14 +122,14 @@
 ---
 
 #### 6. 测试数据填充
-- [ ] 创建种子数据脚本 (seed.ts)
-- [ ] 添加测试用户
-- [ ] 添加测试 deposits
-- [ ] 添加测试 skill_runs
-- [ ] 添加测试 creator_revenues
+- [x] 创建种子数据脚本 (seed.ts)
+- [x] 添加测试用户
+- [x] 添加测试 deposits
+- [x] 添加测试 skill_runs
+- [x] 添加测试 creator_revenues
 
 **预计时间:** 30 分钟
-**状态:** 可选，便于测试
+**状态:** ✅ 完成
 
 ---
 
