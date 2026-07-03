@@ -12,13 +12,15 @@
     "deploy:orchor:monad": "hardhat run scripts/deploy-orchor.ts --network monadTestnet"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^7.8.0",
     "@rainbow-me/rainbowkit": "^2.2.11",
     "@tanstack/react-query": "^5.59.0",
+    "@types/pg": "^8.20.0",
     "framer-motion": "^12.38.0",
     "next": "14.2.15",
     "openai": "^4.67.3",
-    "pg": "^8.13.1",
+    "pg": "^8.22.0",
+    "prisma": "^7.8.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "viem": "^2.21.25",
@@ -28,14 +30,12 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@types/node": "^20.16.11",
-    "@types/pg": "^8.11.10",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
     "dotenv": "^16.4.5",
     "hardhat": "^2.22.13",
     "postcss": "^8.4.47",
-    "prisma": "^5.22.0",
     "tailwindcss": "^3.4.13",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2"
