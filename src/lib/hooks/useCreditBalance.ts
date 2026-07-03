@@ -7,20 +7,27 @@ export function useCreditBalance() {
   const { address, isConnected } = useAccount();
   const [credits, setCredits] = useState<bigint>(0n);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function fetchBalance() {
     if (!address) return;
 
     setIsLoading(true);
+    setError(null);
     try {
       const response = await fetch(`/api/credits/balance?address=${address}`);
       const data = await response.json();
 
-      if (data.credits) {
+      if (data.error) {
+        setError(data.error);
+        setCredits(0n);
+      } else if (data.credits) {
         setCredits(BigInt(data.credits));
       }
     } catch (error) {
       console.error("Error fetching credit balance:", error);
+      setError(error instanceof Error ? error.message : "Failed to fetch balance");
+      setCredits(0n);
     } finally {
       setIsLoading(false);
     }
@@ -31,6 +38,7 @@ export function useCreditBalance() {
       fetchBalance();
     } else {
       setCredits(0n);
+      setError(null);
     }
   }, [isConnected, address]);
 
@@ -39,6 +47,7 @@ export function useCreditBalance() {
     creditsFormatted: Number(credits).toLocaleString(),
     usdValue: (Number(credits) * 0.01).toFixed(2),
     isLoading,
+    error,
     refetch: fetchBalance,
   };
 }

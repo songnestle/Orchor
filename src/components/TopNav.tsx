@@ -64,15 +64,25 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
           {isConnected && (
             <button
               onClick={onOpenTopUpCredits}
-              className="hidden sm:flex items-center gap-1.5 pl-2.5 pr-2 h-8 rounded-full glass hover:bg-white/[0.04] transition group"
-              title="Top up Orchor Credits"
+              className="hidden sm:flex items-center gap-1.5 pl-2.5 pr-2 h-8 rounded-full glass hover:bg-white/[0.04] transition group relative"
+              title="Top up Orchor Credits - Multi-chain instant payments"
             >
               <CreditIcon size={12} />
-              <span className="font-mono text-[12px] tabular text-cyan-200">{creditsFormatted}</span>
-              <span className="text-[10px] text-muted">credits</span>
-              <span className="ml-0.5 inline-flex items-center justify-center h-6 w-6 rounded-full bg-white/10 group-hover:bg-white/20 text-[13px] leading-none pb-0.5">
+              {isLoading ? (
+                <span className="font-mono text-[12px] text-cyan-200 animate-pulse">...</span>
+              ) : (
+                <>
+                  <span className="font-mono text-[12px] tabular text-cyan-200">{creditsFormatted}</span>
+                  <span className="text-[10px] text-muted">credits</span>
+                </>
+              )}
+              <span className="ml-0.5 inline-flex items-center justify-center h-6 w-6 rounded-full bg-white/10 group-hover:bg-white/20 text-[13px] leading-none pb-0.5 transition-all group-hover:scale-110">
                 +
               </span>
+              {/* Tooltip */}
+              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-black/90 text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                Multi-chain • Instant • ${usdValue}
+              </div>
             </button>
           )}
 
