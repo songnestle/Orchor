@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  walletAddress   String           @unique @map("wallet_address")
+  credits         BigInt           @default(0)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  ledgerEntries   LedgerEntry[]
+  deposits        Deposit[]
+  skillRuns       SkillRun[]
+  withdrawals     Withdrawal[]
+
+  @@map("users")
+}
+
+model LedgerEntry {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  entryType     String   @map("entry_type") // 'deposit', 'skill_run', 'creator_revenue', 'platform_fee', 'runtime_cost', 'withdrawal'
+  amount        BigInt   // Positive = credit, Negative = debit
+  balanceAfter  BigInt   @map("balance_after")
+  metadata      Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@map("ledger_entries")
+}
+
+model Deposit {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  chain           String    // 'tron', 'evm-monad', 'evm-base', 'evm-ethereum', 'x402'
+  asset           String    // 'USDT', 'USDC', 'MON'
+  amount          BigInt    // in smallest unit (e.g., 1000000 = 1 USDT with 6 decimals)
+  txHash          String    @unique @map("tx_hash")
+  depositAddress  String?   @map("deposit_address")
+  status          String    @default("pending") // 'pending', 'confirmed', 'failed'
+  creditsMinted   BigInt?   @map("credits_minted")
+  confirmedAt     DateTime? @map("confirmed_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("deposits")
+}
+
+model SkillRun {
+  id                  String    @id @default(uuid())
+  userId              String    @map("user_id")
+  skillId             Int       @map("skill_id")
+  creditsCost         BigInt    @map("credits_cost")
+  runtimeCostUsdCents Int?      @map("runtime_cost_usd_cents")
+  creatorRevenue      BigInt?   @map("creator_revenue_credits")
+  platformFee         BigInt?   @map("platform_fee_credits")
+  status              String    @default("pending") // 'pending', 'running', 'completed', 'failed'
+  inputHash           String?   @map("input_hash")
+  outputPreview       String?   @map("output_preview")
+  runtimeMs           Int?      @map("runtime_ms")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  completedAt         DateTime? @map("completed_at")
+
+  user                User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, skillId, createdAt])
+  @@index([status])
+  @@map("skill_runs")
+}
+
+model CreatorRevenue {
+  id                  String    @id @default(uuid())
+  creatorAddress      String    @map("creator_address")
+  skillId             Int       @map("skill_id")
+  totalRuns           Int       @default(0) @map("total_runs")
+  totalRevenue        BigInt    @default(0) @map("total_revenue_credits")
+  withdrawableCredits BigInt    @default(0) @map("withdrawable_credits")
+  lastWithdrawalAt    DateTime? @map("last_withdrawal_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  @@unique([creatorAddress, skillId])
+  @@index([creatorAddress])
+  @@map("creator_revenues")
+}
+
+model Withdrawal {
+  id                String    @id @default(uuid())
+  userId            String?   @map("user_id")
+  creatorAddress    String?   @map("creator_address")
+  chain             String    // 'tron', 'evm-monad', 'evm-base', etc.
+  asset             String    // 'USDT', 'USDC'
+  creditsBurned     BigInt    @map("credits_burned")
+  amountSent        BigInt    @map("amount_sent")
+  destinationAddress String   @map("destination_address")
+  txHash            String?   @map("tx_hash")
+  status            String    @default("pending") // 'pending', 'processing', 'completed', 'failed'
+  feeCredits        BigInt?   @map("fee_credits")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  completedAt       DateTime? @map("completed_at")
+
+  user              User?     @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([creatorAddress, createdAt])
+  @@index([status])
+  @@map("withdrawals")
+}

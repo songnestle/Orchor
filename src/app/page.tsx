@@ -14,6 +14,7 @@ import { SkillDetailModal } from "@/components/SkillDetailModal";
 import { SkillPackAnimation } from "@/components/SkillPackAnimation";
 import { MyDeckDrawer } from "@/components/MyDeckDrawer";
 import { TopUpEnergyModal } from "@/components/TopUpEnergyModal";
+import { TopUpCreditsModal } from "@/components/TopUpCreditsModal";
 import { PublishSkillModal } from "@/components/PublishSkillModal";
 
 import { type SkillModule } from "@/lib/skills";
@@ -28,6 +29,7 @@ export default function Page() {
   const [packOpen, setPackOpen] = useState(false);
   const [deckOpen, setDeckOpen] = useState(false);
   const [topUpOpen, setTopUpOpen] = useState(false);
+  const [topUpCreditsOpen, setTopUpCreditsOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
@@ -68,6 +70,7 @@ export default function Page() {
       <TopNav
         onOpenDeck={() => setDeckOpen(true)}
         onOpenTopUp={() => setTopUpOpen(true)}
+        onOpenTopUpCredits={() => setTopUpCreditsOpen(true)}
         onOpenPublish={() => setPublishOpen(true)}
       />
 
@@ -157,6 +160,8 @@ export default function Page() {
       />
 
       <TopUpEnergyModal open={topUpOpen} onClose={() => setTopUpOpen(false)} />
+
+      <TopUpCreditsModal open={topUpCreditsOpen} onClose={() => setTopUpCreditsOpen(false)} />
 
       <PublishSkillModal open={publishOpen} onClose={() => setPublishOpen(false)} />
     </main>
