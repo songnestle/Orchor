@@ -96,14 +96,14 @@
 ---
 
 #### 4. 错误处理和加载状态
-- [ ] TopUpCreditsModal 添加加载动画
-- [ ] SkillExecutionModal 添加错误重试
-- [ ] CreatorDashboard 添加加载骨架屏
-- [ ] TransactionHistory 添加空状态提示
-- [ ] 全局错误边界 (Error Boundary)
+- [x] TopUpCreditsModal 添加加载动画
+- [x] SkillExecutionModal 添加错误重试
+- [x] CreatorDashboard 添加加载骨架屏
+- [x] TransactionHistory 添加空状态提示
+- [x] 全局错误边界 (Error Boundary)
 
 **预计时间:** 1-2 小时
-**状态:** 功能可用，UX 可优化
+**状态:** ✅ 完成
 
 ---
 
@@ -134,14 +134,14 @@
 ---
 
 #### 7. UI/UX 细节优化
-- [ ] 改进 loading spinners
-- [ ] 添加 toast 通知系统
-- [ ] 优化移动端响应式
+- [x] 改进 loading spinners
+- [x] 添加 toast 通知系统
+- [x] 优化移动端响应式
 - [ ] 添加键盘快捷键
-- [ ] 改进表单验证提示
+- [x] 改进表单验证提示
 
 **预计时间:** 2-3 小时
-**状态:** 可选优化
+**状态:** 基本完成 (85%)
 
 ---
 
