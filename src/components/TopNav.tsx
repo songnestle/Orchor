@@ -12,7 +12,12 @@ interface Props {
   onOpenTopUpCredits: () => void;
 }
 
-const NAV = ["Discover", "Skill Packs", "Creators", "Inventory"] as const;
+const NAV = [
+  { label: "Discover", href: "/" },
+  { label: "Creator Dashboard", href: "/creator" },
+  { label: "Transactions", href: "/transactions" },
+  { label: "Inventory", href: "/" },
+] as const;
 
 export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCredits }: Props) {
   const { walletBalanceMON: balance, energy, isConnected } = useOrchorState();
@@ -37,8 +42,9 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
           {NAV.map((item, i) => {
             const isActive = i === 0;
             return (
-              <button
-                key={item}
+              <a
+                key={item.label}
+                href={item.href}
                 className={`relative px-3 h-8 rounded-lg text-[11px] font-medium tracking-wide transition ${
                   isActive
                     ? "text-white"
@@ -52,8 +58,8 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
                     transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
                   />
                 )}
-                <span className="relative">{item}</span>
-              </button>
+                <span className="relative">{item.label}</span>
+              </a>
             );
           })}
         </nav>
