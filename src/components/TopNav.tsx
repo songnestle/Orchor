@@ -2,17 +2,21 @@
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useOrchorState } from "@/lib/useOrchorState";
+import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
+import { shortAddress } from "@/lib/chain";
 
 interface Props {
   onOpenDeck: () => void;
   onOpenTopUp: () => void;
   onOpenPublish: () => void;
+  onOpenTopUpCredits: () => void;
 }
 
 const NAV = ["Discover", "Skill Packs", "Creators", "Inventory"] as const;
 
-export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish }: Props) {
+export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCredits }: Props) {
   const { walletBalanceMON: balance, energy, isConnected } = useOrchorState();
+  const { creditsFormatted, usdValue } = useCreditBalance();
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-bg/55 border-b border-white/5">
@@ -22,30 +26,30 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish }: Props) {
           <OrchorLogo />
           <div className="hidden sm:block font-display text-lg font-bold tracking-tight">
             Orch<span className="text-gradient">or</span>
-            <span className="ml-2 align-middle text-[9px] uppercase tracking-[0.2em] text-mutedHi border border-white/10 rounded px-1.5 py-0.5">
-              Skill Layer
+            <span className="ml-2 align-middle inline-block px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider bg-accent/20 text-accent border border-accent/40">
+              Multi-Chain
             </span>
           </div>
         </div>
 
-        {/* center nav */}
-        <nav className="hidden md:flex items-center gap-1 p-1 rounded-full glass">
-          {NAV.map((item) => {
-            const active = item === "Discover";
+        {/* nav */}
+        <nav className="hidden lg:flex items-center gap-1">
+          {NAV.map((item, i) => {
+            const isActive = i === 0;
             return (
               <button
                 key={item}
-                onClick={() => {
-                  if (item === "Inventory") onOpenDeck();
-                }}
-                className={`relative px-4 py-1.5 text-[13px] rounded-full transition ${
-                  active ? "text-white" : "text-mutedHi hover:text-white"
+                className={`relative px-3 h-8 rounded-lg text-[11px] font-medium tracking-wide transition ${
+                  isActive
+                    ? "text-white"
+                    : "text-mutedHi hover:text-white hover:bg-white/[0.04]"
                 }`}
               >
-                {active && (
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-accent/30 to-accent2/30 border border-white/10"
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-active"
+                    className="absolute inset-0 rounded-lg bg-white/10"
+                    transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
                   />
                 )}
                 <span className="relative">{item}</span>
@@ -56,6 +60,22 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish }: Props) {
 
         {/* right */}
         <div className="flex items-center gap-2">
+          {/* Orchor Credits - NEW */}
+          {isConnected && (
+            <button
+              onClick={onOpenTopUpCredits}
+              className="hidden sm:flex items-center gap-1.5 pl-2.5 pr-2 h-8 rounded-full glass hover:bg-white/[0.04] transition group"
+              title="Top up Orchor Credits"
+            >
+              <CreditIcon size={12} />
+              <span className="font-mono text-[12px] tabular text-cyan-200">{creditsFormatted}</span>
+              <span className="text-[10px] text-muted">credits</span>
+              <span className="ml-0.5 inline-flex items-center justify-center h-6 w-6 rounded-full bg-white/10 group-hover:bg-white/20 text-[13px] leading-none pb-0.5">
+                +
+              </span>
+            </button>
+          )}
+
           {/* Energy pill */}
           <button
             onClick={onOpenTopUp}
@@ -73,7 +93,7 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish }: Props) {
           {/* Publish */}
           <button
             onClick={onOpenPublish}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 h-8 rounded-full text-[12px] font-semibold border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 transition"
+            className="hidden md:flex items-center gap-1.5 px-3 h-8 rounded-lg text-[11px] font-medium border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 transition"
             title="Publish a new skill onchain"
           >
             <PlusIcon />
@@ -82,7 +102,7 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish }: Props) {
 
           <div className="hidden lg:flex items-center gap-2 px-3 h-8 rounded-full glass text-xs">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulseDot" />
-            <span className="text-mutedHi">Monad · Hosted Runtime</span>
+            <span className="text-mutedHi">Multi-Chain Runtime</span>
           </div>
 
           {isConnected && (
@@ -102,82 +122,24 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish }: Props) {
   );
 }
 
-/** RainbowKit-powered connect / wrong-network / account button.
- *  All visuals stay native to Orchor (glass + neon). The 3 underlying
- *  modals (wallet picker, network switcher, account/disconnect) come from
- *  RainbowKit and handle every supported wallet incl. Phantom EVM. */
 function WalletButton() {
   return (
     <ConnectButton.Custom>
-      {({
-        account,
-        chain,
-        openAccountModal,
-        openChainModal,
-        openConnectModal,
-        authenticationStatus,
-        mounted,
-      }) => {
-        const ready = mounted && authenticationStatus !== "loading";
-        const connected =
-          ready &&
-          account &&
-          chain &&
-          (!authenticationStatus || authenticationStatus === "authenticated");
-
+      {({ account, chain, openAccountModal, openConnectModal, mounted }) => {
+        const ready = mounted;
+        const connected = ready && account && chain;
         return (
-          <div
-            {...(!ready && {
-              "aria-hidden": true,
-              style: {
-                opacity: 0,
-                pointerEvents: "none",
-                userSelect: "none",
-              },
-            })}
-          >
+          <div>
             {(() => {
               if (!connected) {
                 return (
-                  <button
-                    onClick={openConnectModal}
-                    className="btn-neon px-4 h-8 rounded-full text-[12px]"
-                  >
-                    Connect Wallet
-                  </button>
-                );
-              }
-              if (chain.unsupported) {
-                return (
-                  <button
-                    onClick={openChainModal}
-                    className="px-4 h-8 rounded-full text-[12px] font-semibold bg-amber-500 text-black hover:bg-amber-400 transition"
-                  >
-                    Wrong network
+                  <button onClick={openConnectModal} className="btn-neon h-8 px-4 rounded-full text-[11px] font-medium">
+                    Connect
                   </button>
                 );
               }
               return (
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={openChainModal}
-                    className="hidden md:flex items-center gap-1 px-2 h-8 rounded-full glass text-[11px]"
-                    title="Switch network"
-                  >
-                    {chain.hasIcon && chain.iconUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={chain.iconUrl}
-                        alt={chain.name ?? "chain"}
-                        className="h-4 w-4 rounded-full"
-                      />
-                    ) : (
-                      <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                    )}
-                    <span className="text-mutedHi">
-                      {chain.name?.replace(" Testnet", "") ?? "Network"}
-                    </span>
-                  </button>
+                <div className="flex items-center gap-2">
                   <button
                     onClick={openAccountModal}
                     className="flex items-center gap-2 pl-1 pr-3 h-8 rounded-full glass text-[11px] font-mono"
@@ -200,39 +162,43 @@ function OrchorLogo() {
     <div className="relative h-9 w-9">
       <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-accent via-fuchsia-500 to-accent2 animate-gradientShift bg-[length:200%_200%]" />
       <div className="absolute inset-[2px] rounded-[10px] bg-bg2 flex items-center justify-center overflow-hidden">
-        <svg viewBox="0 0 32 32" className="h-5 w-5">
+        <svg viewBox="0 0 32 32" className="h-5 w-5 text-white">
           <defs>
-            <linearGradient id="orchorGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#a78bfa" />
-              <stop offset="50%" stopColor="#22d3ee" />
-              <stop offset="100%" stopColor="#f472b6" />
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#22d3ee" />
+              <stop offset="100%" stopColor="#a855f7" />
             </linearGradient>
           </defs>
-          <circle cx="16" cy="16" r="11" stroke="url(#orchorGrad)" strokeWidth="1.6" fill="none" />
-          <circle cx="16" cy="16" r="6" stroke="url(#orchorGrad)" strokeWidth="1.6" fill="none" opacity="0.8" />
-          <circle cx="16" cy="16" r="2" fill="url(#orchorGrad)" />
+          <circle cx="16" cy="16" r="10" fill="none" stroke="url(#logoGrad)" strokeWidth="2" />
+          <circle cx="16" cy="16" r="4" fill="url(#logoGrad)" />
+          <path
+            d="M16 6 L16 10 M16 22 L16 26 M6 16 L10 16 M22 16 L26 16"
+            stroke="url(#logoGrad)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
         </svg>
       </div>
     </div>
   );
 }
 
-export function MonadIcon({ size = 14 }: { size?: number }) {
+export function CreditIcon({ size = 12 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <defs>
-        <linearGradient id="monGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#a78bfa" />
-          <stop offset="100%" stopColor="#22d3ee" />
+        <linearGradient id="creditGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#22d3ee" />
+          <stop offset="100%" stopColor="#06b6d4" />
         </linearGradient>
       </defs>
+      <circle cx="12" cy="12" r="9" stroke="url(#creditGrad)" strokeWidth="2" />
       <path
-        d="M12 2 L20 7 L20 17 L12 22 L4 17 L4 7 Z"
-        fill="url(#monGrad)"
-        stroke="rgba(255,255,255,0.5)"
-        strokeWidth="0.8"
+        d="M12 8v8M8 12h8"
+        stroke="url(#creditGrad)"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
-      <path d="M12 6 L12 18" stroke="white" strokeOpacity="0.7" strokeWidth="1" />
     </svg>
   );
 }
@@ -257,6 +223,30 @@ export function EnergyBolt({ size = 12 }: { size?: number }) {
   );
 }
 
+export function MonadIcon({ size = 12 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden>
+      <circle cx="16" cy="16" r="14" fill="url(#monadGrad)" />
+      <defs>
+        <linearGradient id="monadGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#8b5cf6" />
+          <stop offset="100%" stopColor="#6366f1" />
+        </linearGradient>
+      </defs>
+      <text
+        x="16"
+        y="20"
+        textAnchor="middle"
+        fill="white"
+        fontSize="14"
+        fontWeight="bold"
+      >
+        M
+      </text>
+    </svg>
+  );
+}
+
 function PlusIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -269,3 +259,6 @@ function PlusIcon() {
     </svg>
   );
 }
+
+// Fix: Import motion from framer-motion
+import { motion } from "framer-motion";

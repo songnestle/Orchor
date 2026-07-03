@@ -20,12 +20,10 @@ import { PublishSkillModal } from "@/components/PublishSkillModal";
 import { type SkillModule } from "@/lib/skills";
 import { useAllSkills } from "@/lib/useAllSkills";
 import { COLLECTIONS } from "@/lib/collections";
-import { RARITY } from "@/lib/rarity";
 
-export default function Page() {
+export default function Home() {
   const allSkills = useAllSkills();
-
-  const [openSkill, setOpenSkill] = useState<SkillModule | null>(null);
+  const [selected, setSelected] = useState<SkillModule | null>(null);
   const [packOpen, setPackOpen] = useState(false);
   const [deckOpen, setDeckOpen] = useState(false);
   const [topUpOpen, setTopUpOpen] = useState(false);
@@ -55,16 +53,18 @@ export default function Page() {
     return list;
   }, [allSkills, filter, query, activeCollection]);
 
-  const activeColl = activeCollection
-    ? COLLECTIONS.find((c) => c.id === activeCollection)
-    : null;
+  function openCollection(id: string) {
+    setActiveCollection(id);
+    setPackOpen(true);
+  }
 
-  function scrollToCarousel() {
-    document.getElementById("carousel")?.scrollIntoView({ behavior: "smooth" });
+  function closeCollection() {
+    setActiveCollection(null);
+    setPackOpen(false);
   }
 
   return (
-    <main className="relative min-h-screen pb-32">
+    <div className="relative min-h-screen bg-bg text-white">
       <BackgroundFX />
 
       <TopNav
@@ -74,160 +74,50 @@ export default function Page() {
         onOpenPublish={() => setPublishOpen(true)}
       />
 
-      <HeroSection
-        onOpenPack={() => setPackOpen(true)}
-        onExplore={scrollToCarousel}
-      />
+      <div className="relative mx-auto max-w-[1600px] px-6 lg:px-10">
+        <HeroSection onOpenCollection={openCollection} />
 
-      <div
-        id="carousel"
-        className="mx-auto max-w-[1440px] px-6 lg:px-10 grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-8 mt-2"
-      >
-        <div>
-          {activeColl && (
-            <CollectionBanner
-              name={activeColl.name}
-              tagline={activeColl.tagline}
-              creator={activeColl.creator}
-              count={activeColl.skillIds.length}
-              priceMON={activeColl.unlockPriceMON}
-              rarity={activeColl.rarity}
-              onClear={() => setActiveCollection(null)}
+        <div className="relative mt-10 lg:flex lg:gap-8">
+          <div className="flex-1 min-w-0 space-y-6">
+            <SkillCarousel skills={allSkills} onSelect={setSelected} />
+            <SkillsGrid
+              skills={filtered}
+              filter={filter}
+              setFilter={setFilter}
+              query={query}
+              setQuery={setQuery}
+              onSelect={setSelected}
+              activeCollection={activeCollection}
+              onClearCollection={closeCollection}
             />
-          )}
-          <SkillCarousel
-            skills={filtered}
-            filter={filter}
-            onFilter={(c) => {
-              setFilter(c);
-              setActiveCollection(null);
-            }}
-            query={query}
-            onQuery={setQuery}
-            onCardClick={(s) => setOpenSkill(s)}
-            onInvoke={(s) => setOpenSkill(s)}
-          />
-        </div>
+          </div>
 
-        <div className="xl:pt-2">
-          <RightSidebar
-            onOpenSkill={(id) => {
-              const s = allSkills.find((x) => x.id === id);
-              if (s) setOpenSkill(s);
-            }}
-            onOpenCollection={(id) => {
-              setActiveCollection(id);
-              setFilter("All");
-              setQuery("");
-              scrollToCarousel();
-            }}
-          />
+          <RightSidebar skills={allSkills} onSelect={setSelected} />
         </div>
       </div>
 
-      {/* Full-width grid of all skills (compact cards, browse mode) */}
-      <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
-        <SkillsGrid
-          skills={filtered}
-          onCardClick={(s) => setOpenSkill(s)}
-        />
-      </div>
-
-      <BottomActionBar
-        onOpenPack={() => setPackOpen(true)}
-        onOpenDeck={() => setDeckOpen(true)}
-        onOpenTopUp={() => setTopUpOpen(true)}
-      />
+      <BottomActionBar onOpenDeck={() => setDeckOpen(true)} />
 
       <SkillDetailModal
-        skill={openSkill}
-        onClose={() => setOpenSkill(null)}
+        skill={selected}
+        onClose={() => setSelected(null)}
         onOpenTopUp={() => setTopUpOpen(true)}
       />
 
-      <SkillPackAnimation open={packOpen} onClose={() => setPackOpen(false)} />
-
-      <MyDeckDrawer
-        open={deckOpen}
-        onClose={() => setDeckOpen(false)}
-        onOpenSkill={(id) => {
-          const s = allSkills.find((x) => x.id === id);
-          if (s) {
-            setDeckOpen(false);
-            setOpenSkill(s);
-          }
-        }}
+      <SkillPackAnimation
+        open={packOpen}
+        collectionId={activeCollection}
+        onClose={closeCollection}
+        onReveal={setSelected}
       />
+
+      <MyDeckDrawer open={deckOpen} onClose={() => setDeckOpen(false)} />
 
       <TopUpEnergyModal open={topUpOpen} onClose={() => setTopUpOpen(false)} />
 
       <TopUpCreditsModal open={topUpCreditsOpen} onClose={() => setTopUpCreditsOpen(false)} />
 
       <PublishSkillModal open={publishOpen} onClose={() => setPublishOpen(false)} />
-    </main>
-  );
-}
-
-function CollectionBanner({
-  name,
-  tagline,
-  creator,
-  count,
-  priceMON,
-  rarity,
-  onClear,
-}: {
-  name: string;
-  tagline: string;
-  creator: string;
-  count: number;
-  priceMON: number;
-  rarity: keyof typeof RARITY;
-  onClear: () => void;
-}) {
-  const theme = RARITY[rarity];
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mb-4 rounded-2xl p-[1.5px]"
-      style={{ background: theme.border }}
-    >
-      <div
-        className="rounded-[14px] px-4 py-3 flex items-center justify-between gap-4"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(14,14,32,0.9), rgba(8,8,22,0.9))",
-        }}
-      >
-        <div className="flex items-center gap-3 min-w-0">
-          <div
-            className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
-            style={{ background: theme.tagBg, color: theme.tagText }}
-          >
-            Collection · {rarity}
-          </div>
-          <div className="min-w-0">
-            <div className="font-display text-[15px] text-white truncate">
-              {name}
-            </div>
-            <div className="text-[11px] text-mutedHi truncate">
-              {tagline} · by {creator} · {count} skills
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="hidden sm:block text-right">
-            <div className="text-[10px] uppercase tracking-wider text-muted">
-              Pack
-            </div>
-            <div className="font-mono text-[12px] text-white">{priceMON} MON</div>
-          </div>
-          <button onClick={onClear} className="btn-ghost h-9 px-3 rounded-lg text-[11px]">
-            Clear filter
-          </button>
-        </div>
-      </div>
-    </motion.div>
+    </div>
   );
 }
