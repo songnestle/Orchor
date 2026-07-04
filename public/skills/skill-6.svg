@@ -1,0 +1,26 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#43e97b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#43e97b80;stop-opacity:0.8" />
+    </linearGradient>
+    <pattern id="pattern-6" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="2" fill="white" opacity="0.1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#grad-6)"/>
+  <rect width="400" height="300" fill="url(#pattern-6)"/>
+
+  <!-- Icon -->
+  <text x="200" y="150" font-size="80" text-anchor="middle" opacity="0.3"
+        filter="drop-shadow(0 0 20px rgba(255,255,255,0.5))">
+    ⚙️
+  </text>
+
+  <!-- Geometric shapes -->
+  <circle cx="80" cy="80" r="30" fill="white" opacity="0.1"/>
+  <circle cx="320" cy="220" r="40" fill="white" opacity="0.1"/>
+  <rect x="300" y="50" width="60" height="60" fill="white" opacity="0.05" transform="rotate(45 330 80)"/>
+</svg>

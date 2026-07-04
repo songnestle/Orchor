@@ -28,6 +28,38 @@ const rarityGradients: Record<Rarity, string> = {
   Mythic: "from-pink-500 to-fuchsia-600",
 };
 
+// Category-based gradients
+function getCategoryGradient(category: string, rarity: Rarity): string {
+  const baseGradients: Record<string, string> = {
+    "Research": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "Product": "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    "Marketing": "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    "Automation": "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+    "Web3 Dev": "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    "Data": "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+  };
+
+  // Enhance with rarity overlay
+  const rarityOverlay = rarity === "Mythic" ? ", rgba(236, 72, 153, 0.3)" :
+                        rarity === "Legendary" ? ", rgba(245, 158, 11, 0.2)" :
+                        rarity === "Epic" ? ", rgba(139, 92, 246, 0.2)" : "";
+
+  return baseGradients[category] || baseGradients["Research"];
+}
+
+// Category icons
+function getCategoryIcon(category: string): string {
+  const icons: Record<string, string> = {
+    "Research": "🔬",
+    "Product": "🚀",
+    "Marketing": "📢",
+    "Automation": "⚙️",
+    "Web3 Dev": "⛓️",
+    "Data": "📊",
+  };
+  return icons[category] || "✨";
+}
+
 export function PremiumSkillCard({ skill, onClick, onRun, onCollect }: PremiumSkillCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -79,9 +111,37 @@ export function PremiumSkillCard({ skill, onClick, onRun, onCollect }: PremiumSk
               </div>
 
               {/* Card Artwork */}
-              <div className="relative w-full h-[160px] bg-gradient-to-br from-purple-900/30 to-fuchsia-900/30 overflow-hidden">
-                {/* Placeholder gradient artwork */}
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 via-purple-600/20 to-fuchsia-600/20" />
+              <div className="relative w-full h-[160px] overflow-hidden">
+                {/* Skill image */}
+                <img
+                  src={`/skills/skill-${skill.id}.svg`}
+                  alt={skill.title}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to gradient if image fails to load
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+
+                {/* Fallback gradient (shown if image fails) */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: getCategoryGradient(skill.category, skill.rarity)
+                  }}
+                />
+
+                {/* Category icon overlay */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div
+                    className="text-7xl opacity-20 select-none"
+                    style={{
+                      filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.3))'
+                    }}
+                  >
+                    {getCategoryIcon(skill.category)}
+                  </div>
+                </div>
 
                 {/* Shimmer effect */}
                 {isHovered && (
