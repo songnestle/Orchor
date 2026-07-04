@@ -21,7 +21,7 @@ const NAV = [
 
 export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCredits }: Props) {
   const { walletBalanceMON: balance, energy, isConnected } = useOrchorState();
-  const { creditsFormatted, usdValue } = useCreditBalance();
+  const { creditsFormatted, usdValue, isLoading } = useCreditBalance();
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-bg/55 border-b border-white/5">
