@@ -65,8 +65,8 @@ export default function Home() {
         skill={selected}
         isOpen={!!selected}
         onClose={() => setSelected(null)}
-        onRun={() => selected && handleSkillRun(selected)}
-        onCollect={() => selected && handleSkillCollect(selected)}
+        onOpenTopUp={() => setTopUpOpen(true)}
+        onOpenTopUpCredits={() => setTopUpCreditsOpen(true)}
       />
 
       <MyDeckDrawer

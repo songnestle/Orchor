@@ -2,28 +2,112 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useAccount } from "wagmi";
 import type { SkillModule } from "@/lib/skills";
 import { RarityBadge } from "./RarityBadge";
 import { AttributeBar } from "./AttributeBar";
+import { useOrchorState } from "@/lib/useOrchorState";
+import { useOrchorWrites } from "@/lib/useOrchor";
+import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
+
+type Step = "idle" | "confirm" | "submitting" | "done" | "error";
+type Mode = "invoke" | "subscribe" | "unlock";
+type PaymentMode = "energy" | "credits";
 
 interface CardDetailModalProps {
   skill: SkillModule | null;
   isOpen: boolean;
   onClose: () => void;
-  onRun?: () => void;
-  onCollect?: () => void;
+  onOpenTopUp?: () => void;
+  onOpenTopUpCredits?: () => void;
 }
 
 export function CardDetailModal({
   skill,
   isOpen,
   onClose,
-  onRun,
-  onCollect,
+  onOpenTopUp,
+  onOpenTopUpCredits,
 }: CardDetailModalProps) {
   const [activeTab, setActiveTab] = useState<"details" | "stats" | "history">("details");
+  const [step, setStep] = useState<Step>("idle");
+  const [mode, setMode] = useState<Mode>("invoke");
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>("credits");
+  const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
+  const [output, setOutput] = useState("");
+  const [err, setErr] = useState<string | null>(null);
+
+  const { isConnected } = useAccount();
+  const { energy } = useOrchorState();
+  const { credits } = useCreditBalance();
+  const { invoke, subscribe, unlock } = useOrchorWrites();
 
   if (!skill) return null;
+
+  const monPrice = mode === "subscribe" ? skill.subscriptionMON ?? skill.priceMON : skill.priceMON;
+  const energyPrice = skill.energyCost;
+  const creditsPrice = skill.energyCost * 10; // 1 Energy = 10 Credits
+  const insufficientEnergy = paymentMode === "energy" && mode === "invoke" && energy < energyPrice;
+  const insufficientCredits = paymentMode === "credits" && credits < creditsPrice;
+
+  async function runPaymentFlow() {
+    if (!skill || !isConnected) return;
+
+    if (paymentMode === "energy" && insufficientEnergy) {
+      onOpenTopUp?.();
+      return;
+    }
+
+    if (paymentMode === "credits" && insufficientCredits) {
+      onOpenTopUpCredits?.();
+      return;
+    }
+
+    setErr(null);
+    setStep("confirm");
+
+    try {
+      let h: `0x${string}`;
+
+      if (paymentMode === "credits") {
+        // Credits flow: Call backend API
+        const res = await fetch("/api/skills/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            skillId: skill.id,
+            input: skill.inputExample,
+          }),
+        });
+
+        if (!res.ok) throw new Error("Execution failed");
+        const data = await res.json();
+        setOutput(data.output || "Execution completed");
+        setTxHash("0x0" as `0x${string}`); // Placeholder for Credits flow
+      } else {
+        // Energy flow: Onchain transaction
+        if (mode === "subscribe") {
+          h = await subscribe(skill.id, monPrice);
+        } else if (mode === "unlock") {
+          h = await unlock(skill.id, monPrice);
+        } else {
+          h = await invoke(skill.id, skill.inputExample);
+        }
+        setTxHash(h);
+      }
+
+      setStep("submitting");
+
+      // Simulate completion
+      setTimeout(() => {
+        setStep("done");
+      }, 2000);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Transaction failed";
+      setErr(msg.split("\n")[0]);
+      setStep("error");
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -128,16 +212,48 @@ export function CardDetailModal({
                   {/* Action buttons */}
                   <div className="flex gap-3 mb-6">
                     <button
-                      onClick={onRun}
-                      className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all"
+                      onClick={() => {
+                        setMode("invoke");
+                        runPaymentFlow();
+                      }}
+                      disabled={step === "submitting"}
+                      className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Run Now
+                      {step === "submitting" ? "Running..." : "Run Now"}
                     </button>
                     <button
-                      onClick={onCollect}
-                      className="flex-1 px-6 py-3 rounded-xl glass text-white font-bold border border-white/20 hover:bg-white/20 transition-all"
+                      onClick={() => {
+                        setMode("unlock");
+                        runPaymentFlow();
+                      }}
+                      disabled={step === "submitting"}
+                      className="flex-1 px-6 py-3 rounded-xl glass text-white font-bold border border-white/20 hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Collect · {skill.priceMON} ETH
+                    </button>
+                  </div>
+
+                  {/* Payment mode toggle */}
+                  <div className="flex gap-2 mb-4 p-1 rounded-lg glass">
+                    <button
+                      onClick={() => setPaymentMode("credits")}
+                      className={`flex-1 px-3 py-2 rounded-md text-sm font-semibold transition-all ${
+                        paymentMode === "credits"
+                          ? "bg-violet-600 text-white"
+                          : "text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      Credits ({creditsPrice})
+                    </button>
+                    <button
+                      onClick={() => setPaymentMode("energy")}
+                      className={`flex-1 px-3 py-2 rounded-md text-sm font-semibold transition-all ${
+                        paymentMode === "energy"
+                          ? "bg-violet-600 text-white"
+                          : "text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      Energy ({energyPrice})
                     </button>
                   </div>
 
@@ -157,6 +273,67 @@ export function CardDetailModal({
                       </button>
                     ))}
                   </div>
+
+                  {/* Status Messages */}
+                  {step === "confirm" && (
+                    <div className="mb-4 p-4 rounded-xl glass border border-violet-500/30">
+                      <p className="text-sm text-white">Confirm transaction in your wallet...</p>
+                    </div>
+                  )}
+
+                  {step === "submitting" && (
+                    <div className="mb-4 p-4 rounded-xl glass border border-blue-500/30">
+                      <div className="flex items-center gap-3">
+                        <div className="loading-spinner" />
+                        <div>
+                          <p className="text-sm text-white font-semibold">Processing...</p>
+                          {txHash && paymentMode === "energy" && (
+                            <a
+                              href={`https://explorer.monad.xyz/tx/${txHash}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-400 hover:underline"
+                            >
+                              View transaction
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {step === "done" && (
+                    <div className="mb-4 p-4 rounded-xl glass border border-green-500/30">
+                      <p className="text-sm text-green-400 font-semibold mb-2">✓ Success!</p>
+                      {output && (
+                        <pre className="text-xs text-gray-300 whitespace-pre-wrap max-h-32 overflow-y-auto">
+                          {output}
+                        </pre>
+                      )}
+                      <button
+                        onClick={() => {
+                          setStep("idle");
+                          onClose();
+                        }}
+                        className="mt-3 px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-all"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  )}
+
+                  {step === "error" && err && (
+                    <div className="mb-4 p-4 rounded-xl glass border border-red-500/30">
+                      <p className="text-sm text-red-400 font-semibold mb-2">✕ Error</p>
+                      <p className="text-xs text-gray-300">{err}</p>
+                      <button
+                        onClick={() => setStep("idle")}
+                        className="mt-3 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-all"
+                      >
+                        Retry
+                      </button>
+                    </div>
+                  )}
 
                   {/* Tab content */}
                   <div className="flex-1 overflow-y-auto">
