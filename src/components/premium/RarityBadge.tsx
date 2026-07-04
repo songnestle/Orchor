@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Rarity } from "@/lib/skills";
+import type { Rarity } from "@/lib/rarity";
 
 interface RarityBadgeProps {
   rarity: Rarity;

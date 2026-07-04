@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import type { SkillModule, Rarity } from "@/lib/skills";
+import type { SkillModule } from "@/lib/skills";
+import type { Rarity } from "@/lib/rarity";
 
 interface PremiumSkillCardProps {
   skill: SkillModule;

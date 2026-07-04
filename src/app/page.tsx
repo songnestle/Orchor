@@ -60,7 +60,7 @@ export default function Home() {
         onSkillCollect={handleSkillCollect}
       />
 
-      {/* Premium Card Detail Modal */}
+      {/* Card Detail Modal */}
       <CardDetailModal
         skill={selected}
         isOpen={!!selected}
@@ -69,29 +69,27 @@ export default function Home() {
         onCollect={() => selected && handleSkillCollect(selected)}
       />
 
-      {/* Legacy modals */}
-      <SkillDetailModal
-        skill={selected}
-        onClose={() => setSelected(null)}
-      />
-
       <MyDeckDrawer
-        isOpen={deckOpen}
+        open={deckOpen}
         onClose={() => setDeckOpen(false)}
+        onOpenSkill={(id) => {
+          const skill = allSkills.find(s => s.id === id);
+          if (skill) setSelected(skill);
+        }}
       />
 
       <TopUpEnergyModal
-        isOpen={topUpOpen}
+        open={topUpOpen}
         onClose={() => setTopUpOpen(false)}
       />
 
       <TopUpCreditsModal
-        isOpen={topUpCreditsOpen}
+        open={topUpCreditsOpen}
         onClose={() => setTopUpCreditsOpen(false)}
       />
 
       <PublishSkillModal
-        isOpen={publishOpen}
+        open={publishOpen}
         onClose={() => setPublishOpen(false)}
       />
 
