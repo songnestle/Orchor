@@ -1,0 +1,363 @@
+/* Premium Dark Mode Design System */
+
+:root {
+  /* === Color System === */
+  /* Primary Palette */
+  --orchor-black: #0A0B0F;
+  --orchor-void: #13141A;
+  --orchor-violet: #7C3AED;
+  --orchor-purple: #8B5CF6;
+  --orchor-fuchsia: #C026D3;
+  --orchor-silver: #E5E7EB;
+  --orchor-platinum: #F3F4F6;
+  --orchor-gold: #FBBF24;
+
+  /* Rarity Colors */
+  --rarity-common: #64748B;
+  --rarity-rare: #3B82F6;
+  --rarity-epic: #8B5CF6;
+  --rarity-legendary: #F59E0B;
+  --rarity-mythic: #EC4899;
+
+  /* Semantic Colors */
+  --orchor-success: #10B981;
+  --orchor-warning: #F59E0B;
+  --orchor-danger: #EF4444;
+  --orchor-info: #3B82F6;
+
+  /* Typography */
+  --font-display: "Orbitron", "Space Grotesk", "Inter", system-ui;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Fira Code", "JetBrains Mono", monospace;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-card: 1.5rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* Glow Shadows */
+  --glow-violet: 0 0 20px rgba(124, 58, 237, 0.4);
+  --glow-fuchsia: 0 0 20px rgba(192, 38, 211, 0.4);
+  --glow-mythic: 0 0 40px rgba(236, 72, 153, 0.6);
+}
+
+/* === Base Styles === */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--orchor-black);
+  color: var(--orchor-silver);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-image:
+    radial-gradient(1100px 700px at 14% -10%, rgba(124, 58, 237, 0.15), transparent 60%),
+    radial-gradient(900px 600px at 86% 6%, rgba(34, 211, 238, 0.1), transparent 60%),
+    radial-gradient(700px 500px at 50% 110%, rgba(192, 38, 211, 0.08), transparent 60%),
+    linear-gradient(to bottom, var(--orchor-black) 0%, var(--orchor-void) 50%, var(--orchor-black) 100%);
+  background-attachment: fixed;
+}
+
+/* === Typography === */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
+h1 { font-size: 3rem; }
+h2 { font-size: 2.25rem; }
+h3 { font-size: 1.875rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1.125rem; }
+
+p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* === Utility Classes === */
+.text-display {
+  font-family: var(--font-display);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--orchor-violet), var(--orchor-fuchsia));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* === Glass Effect === */
+.glass {
+  background: rgba(19, 20, 26, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(229, 231, 235, 0.1);
+}
+
+.glass-strong {
+  background: rgba(19, 20, 26, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(229, 231, 235, 0.15);
+}
+
+/* === Card Effects === */
+.card-base {
+  border-radius: var(--radius-card);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* === Holographic Effect === */
+.holo-border {
+  position: relative;
+  border-radius: var(--radius-card);
+  padding: 2px;
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.9),
+    rgba(34, 211, 238, 0.4) 35%,
+    rgba(192, 38, 211, 0.6) 65%,
+    rgba(124, 58, 237, 0.9)
+  );
+  background-size: 200% 200%;
+  animation: holoBorderShift 6s ease-in-out infinite;
+}
+
+.holo-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.holo-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: holoShine 3s ease-in-out infinite;
+}
+
+/* === Rarity Glows === */
+.rarity-common {
+  box-shadow: 0 0 20px rgba(100, 116, 139, 0.3);
+}
+
+.rarity-rare {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+.rarity-epic {
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+}
+
+.rarity-legendary {
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
+  animation: rarityPulse 2s ease-in-out infinite;
+}
+
+.rarity-mythic {
+  box-shadow: 0 0 40px rgba(236, 72, 153, 0.7);
+  animation: rarityPulse 2s ease-in-out infinite, mythicFloat 3s ease-in-out infinite;
+}
+
+/* === Animations === */
+@keyframes holoBorderShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes holoShine {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+@keyframes rarityPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 40px currentColor;
+  }
+}
+
+@keyframes mythicFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes cardHover {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-8px) scale(1.02); }
+}
+
+@keyframes cardFlip {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(180deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes particleFloat {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--orchor-void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--orchor-violet);
+  border-radius: 6px;
+  border: 3px solid var(--orchor-void);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--orchor-purple);
+}
+
+/* === Selection === */
+::selection {
+  background: var(--orchor-violet);
+  color: white;
+}
+
+/* === Focus Styles === */
+*:focus-visible {
+  outline: 2px solid var(--orchor-violet);
+  outline-offset: 2px;
+}
+
+/* === Button Base === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-body);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--orchor-violet), var(--orchor-fuchsia));
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glow-violet);
+}
+
+.btn-secondary {
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--orchor-violet);
+  border: 1px solid var(--orchor-violet);
+}
+
+.btn-secondary:hover {
+  background: rgba(124, 58, 237, 0.2);
+}
+
+/* === Loading === */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(124, 58, 237, 0.2);
+  border-top-color: var(--orchor-violet);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+}
