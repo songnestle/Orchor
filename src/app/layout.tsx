@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
-  title: "Orchor — The Skill Layer for AI Agents · on Monad",
+  title: "Orchor — The Skill Layer for AI Agents",
   description:
-    "Orchor is a collectible, programmable, onchain AI skill economy. Collect agentic skill cards, invoke them with Energy, and build your deck — powered by Monad.",
+    "Orchor is a collectible, programmable AI skill economy. Collect agentic skill cards, run them with Credits, and build your deck — funded across multiple chains.",
 };
 
 export default function RootLayout({
