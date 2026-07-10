@@ -112,36 +112,12 @@ export function PremiumSkillCard({ skill, onClick, onRun, onCollect }: PremiumSk
 
               {/* Card Artwork */}
               <div className="relative w-full h-[160px] overflow-hidden">
-                {/* Skill image */}
+                {/* Generated image */}
                 <img
                   src={`/skills/skill-${skill.id}.svg`}
                   alt={skill.title}
                   className="absolute inset-0 w-full h-full object-cover"
-                  onError={(e) => {
-                    // Fallback to gradient if image fails to load
-                    e.currentTarget.style.display = 'none';
-                  }}
                 />
-
-                {/* Fallback gradient (shown if image fails) */}
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: getCategoryGradient(skill.category, skill.rarity)
-                  }}
-                />
-
-                {/* Category icon overlay */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div
-                    className="text-7xl opacity-20 select-none"
-                    style={{
-                      filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.3))'
-                    }}
-                  >
-                    {getCategoryIcon(skill.category)}
-                  </div>
-                </div>
 
                 {/* Shimmer effect */}
                 {isHovered && (

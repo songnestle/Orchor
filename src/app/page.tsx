@@ -65,7 +65,6 @@ export default function Home() {
         skill={selected}
         isOpen={!!selected}
         onClose={() => setSelected(null)}
-        onOpenTopUp={() => setTopUpOpen(true)}
         onOpenTopUpCredits={() => setTopUpCreditsOpen(true)}
       />
 

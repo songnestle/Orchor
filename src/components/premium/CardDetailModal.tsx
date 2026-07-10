@@ -6,19 +6,15 @@ import { useAccount } from "wagmi";
 import type { SkillModule } from "@/lib/skills";
 import { RarityBadge } from "./RarityBadge";
 import { AttributeBar } from "./AttributeBar";
-import { useOrchorState } from "@/lib/useOrchorState";
-import { useOrchorWrites } from "@/lib/useOrchor";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
 
 type Step = "idle" | "confirm" | "submitting" | "done" | "error";
-type Mode = "invoke" | "subscribe" | "unlock";
-type PaymentMode = "energy" | "credits";
+type Action = "run" | "collect";
 
 interface CardDetailModalProps {
   skill: SkillModule | null;
   isOpen: boolean;
   onClose: () => void;
-  onOpenTopUp?: () => void;
   onOpenTopUpCredits?: () => void;
 }
 
@@ -26,39 +22,29 @@ export function CardDetailModal({
   skill,
   isOpen,
   onClose,
-  onOpenTopUp,
   onOpenTopUpCredits,
 }: CardDetailModalProps) {
   const [activeTab, setActiveTab] = useState<"details" | "stats" | "history">("details");
   const [step, setStep] = useState<Step>("idle");
-  const [mode, setMode] = useState<Mode>("invoke");
-  const [paymentMode, setPaymentMode] = useState<PaymentMode>("credits");
-  const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
+  const [action, setAction] = useState<Action>("run");
   const [output, setOutput] = useState("");
   const [err, setErr] = useState<string | null>(null);
 
   const { isConnected } = useAccount();
-  const { energy } = useOrchorState();
   const { credits } = useCreditBalance();
-  const { invoke, subscribe, unlock } = useOrchorWrites();
 
   if (!skill) return null;
 
-  const monPrice = mode === "subscribe" ? skill.subscriptionMON ?? skill.priceMON : skill.priceMON;
-  const energyPrice = skill.energyCost;
-  const creditsPrice = skill.energyCost * 10; // 1 Energy = 10 Credits
-  const insufficientEnergy = paymentMode === "energy" && mode === "invoke" && energy < energyPrice;
-  const insufficientCredits = paymentMode === "credits" && credits < creditsPrice;
+  // Pure Credits pricing (multi-chain funded)
+  const runCost = skill.energyCost * 10;            // Credits per run
+  const collectCost = Math.round(skill.priceMON * 1000); // Credits to own the card
+  const currentCost = action === "run" ? runCost : collectCost;
+  const insufficientCredits = credits < currentCost;
 
   async function runPaymentFlow() {
     if (!skill || !isConnected) return;
 
-    if (paymentMode === "energy" && insufficientEnergy) {
-      onOpenTopUp?.();
-      return;
-    }
-
-    if (paymentMode === "credits" && insufficientCredits) {
+    if (insufficientCredits) {
       onOpenTopUpCredits?.();
       return;
     }
@@ -67,41 +53,23 @@ export function CardDetailModal({
     setStep("confirm");
 
     try {
-      let h: `0x${string}`;
+      const endpoint = action === "run" ? "/api/skills/execute" : "/api/skills/collect";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          skillId: skill.id,
+          input: action === "run" ? skill.inputExample : undefined,
+          credits: currentCost,
+        }),
+      });
 
-      if (paymentMode === "credits") {
-        // Credits flow: Call backend API
-        const res = await fetch("/api/skills/execute", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            skillId: skill.id,
-            input: skill.inputExample,
-          }),
-        });
-
-        if (!res.ok) throw new Error("Execution failed");
-        const data = await res.json();
-        setOutput(data.output || "Execution completed");
-        setTxHash("0x0" as `0x${string}`); // Placeholder for Credits flow
-      } else {
-        // Energy flow: Onchain transaction
-        if (mode === "subscribe") {
-          h = await subscribe(skill.id, monPrice);
-        } else if (mode === "unlock") {
-          h = await unlock(skill.id, monPrice);
-        } else {
-          h = await invoke(skill.id, skill.inputExample);
-        }
-        setTxHash(h);
-      }
+      if (!res.ok) throw new Error(action === "run" ? "Execution failed" : "Collect failed");
+      const data = await res.json();
+      setOutput(data.output || (action === "run" ? "Execution completed" : "Card collected!"));
 
       setStep("submitting");
-
-      // Simulate completion
-      setTimeout(() => {
-        setStep("done");
-      }, 2000);
+      setTimeout(() => setStep("done"), 1500);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Transaction failed";
       setErr(msg.split("\n")[0]);
@@ -213,49 +181,40 @@ export function CardDetailModal({
                   <div className="flex gap-3 mb-6">
                     <button
                       onClick={() => {
-                        setMode("invoke");
+                        setAction("run");
                         runPaymentFlow();
                       }}
                       disabled={step === "submitting"}
                       className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {step === "submitting" ? "Running..." : "Run Now"}
+                      {step === "submitting" && action === "run"
+                        ? "Running..."
+                        : `Run · ${runCost} Credits`}
                     </button>
                     <button
                       onClick={() => {
-                        setMode("unlock");
+                        setAction("collect");
                         runPaymentFlow();
                       }}
                       disabled={step === "submitting"}
                       className="flex-1 px-6 py-3 rounded-xl glass text-white font-bold border border-white/20 hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Collect · {skill.priceMON} ETH
+                      {step === "submitting" && action === "collect"
+                        ? "Collecting..."
+                        : `Collect · ${collectCost} Credits`}
                     </button>
                   </div>
 
-                  {/* Payment mode toggle */}
-                  <div className="flex gap-2 mb-4 p-1 rounded-lg glass">
-                    <button
-                      onClick={() => setPaymentMode("credits")}
-                      className={`flex-1 px-3 py-2 rounded-md text-sm font-semibold transition-all ${
-                        paymentMode === "credits"
-                          ? "bg-violet-600 text-white"
-                          : "text-gray-400 hover:text-white"
-                      }`}
-                    >
-                      Credits ({creditsPrice})
-                    </button>
-                    <button
-                      onClick={() => setPaymentMode("energy")}
-                      className={`flex-1 px-3 py-2 rounded-md text-sm font-semibold transition-all ${
-                        paymentMode === "energy"
-                          ? "bg-violet-600 text-white"
-                          : "text-gray-400 hover:text-white"
-                      }`}
-                    >
-                      Energy ({energyPrice})
-                    </button>
+                  {/* Balance hint */}
+                  <div className="flex items-center justify-between mb-4 px-3 py-2 rounded-lg glass text-sm">
+                    <span className="text-gray-400">Your Balance</span>
+                    <span className={`font-semibold ${insufficientCredits ? "text-red-400" : "text-violet-400"}`}>
+                      {credits.toLocaleString()} Credits
+                    </span>
                   </div>
+                  <p className="text-xs text-gray-500 mb-4">
+                    Credits funded via multi-chain deposits (TRON · Base · Ethereum · USDT/USDC)
+                  </p>
 
                   {/* Tabs */}
                   <div className="flex gap-2 mb-6 border-b border-white/10">
@@ -285,19 +244,7 @@ export function CardDetailModal({
                     <div className="mb-4 p-4 rounded-xl glass border border-blue-500/30">
                       <div className="flex items-center gap-3">
                         <div className="loading-spinner" />
-                        <div>
-                          <p className="text-sm text-white font-semibold">Processing...</p>
-                          {txHash && paymentMode === "energy" && (
-                            <a
-                              href={`https://explorer.monad.xyz/tx/${txHash}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-xs text-blue-400 hover:underline"
-                            >
-                              View transaction
-                            </a>
-                          )}
-                        </div>
+                        <p className="text-sm text-white font-semibold">Processing...</p>
                       </div>
                     </div>
                   )}
@@ -393,9 +340,9 @@ export function CardDetailModal({
                         </div>
 
                         <div className="glass p-4 rounded-xl">
-                          <div className="text-sm text-gray-400 mb-1">Energy Cost</div>
+                          <div className="text-sm text-gray-400 mb-1">Cost per Run</div>
                           <div className="text-2xl font-bold text-white">
-                            {skill.energyCost} ⚡
+                            {runCost} Credits
                           </div>
                         </div>
 
