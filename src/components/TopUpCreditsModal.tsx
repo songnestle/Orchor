@@ -22,6 +22,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
   const [depositAddress, setDepositAddress] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
   const [qrCode, setQrCode] = useState<string>("");
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
 
   const chains = [
     {
@@ -86,6 +87,37 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
       }
     } catch (error) {
       console.error("Error generating deposit address:", error);
+    }
+  }
+
+  // Demo / instant top-up: credits the account directly (no on-chain transfer).
+  async function handleDemoTopUp() {
+    if (!address || isDemoLoading) return;
+    setIsDemoLoading(true);
+    try {
+      const response = await fetch("/api/credits/deposit/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: address,
+          usd: parseFloat(amount),
+          chain: selectedChain,
+          asset: selectedAsset,
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setStep("success");
+        // Notify the app so balances refresh.
+        window.dispatchEvent(new Event("orchor:credits-updated"));
+      } else {
+        alert(data.error || "Top-up failed");
+      }
+    } catch (error) {
+      console.error("Demo top-up error:", error);
+      alert("Top-up failed");
+    } finally {
+      setIsDemoLoading(false);
     }
   }
 
@@ -242,6 +274,23 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
                     >
                       Generate Deposit Address
                     </button>
+
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 h-px bg-white/10" />
+                      <span className="text-[10px] uppercase tracking-wider text-muted">or</span>
+                      <div className="flex-1 h-px bg-white/10" />
+                    </div>
+
+                    <button
+                      onClick={handleDemoTopUp}
+                      disabled={!address || parseFloat(amount) <= 0 || isDemoLoading}
+                      className="w-full h-11 rounded-xl text-[13px] font-semibold border border-emerald-400/40 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20 transition disabled:opacity-50"
+                    >
+                      {isDemoLoading ? "Processing…" : `⚡ Instant Top-Up (Demo) · ${expectedCredits.toLocaleString()} credits`}
+                    </button>
+                    <p className="text-[10px] text-muted text-center">
+                      Demo mode credits your account instantly without an on-chain transfer.
+                    </p>
                   </div>
                 )}
 
@@ -317,6 +366,27 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
                       className="btn-ghost h-10 px-4 rounded-xl text-[12px]"
                     >
                       Close (Check Back Later)
+                    </button>
+                  </div>
+                )}
+
+                {step === "success" && (
+                  <div className="space-y-4 text-center py-8">
+                    <div className="text-5xl">✅</div>
+                    <div className="font-semibold text-white text-lg">
+                      Credited {expectedCredits.toLocaleString()} credits
+                    </div>
+                    <div className="text-[12px] text-mutedHi">
+                      Your balance has been updated. You can now run skills.
+                    </div>
+                    <button
+                      onClick={() => {
+                        reset();
+                        onClose();
+                      }}
+                      className="btn-neon h-10 px-6 rounded-xl text-[13px] font-semibold"
+                    >
+                      Done
                     </button>
                   </div>
                 )}

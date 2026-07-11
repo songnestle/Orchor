@@ -77,6 +77,8 @@ export function CardDetailModal({
       }
       const data = await res.json();
       setOutput(data.output || (action === "run" ? "Execution completed" : "Card collected!"));
+      // Balance changed (credits were spent) — refresh it everywhere.
+      window.dispatchEvent(new Event("orchor:credits-updated"));
 
       setStep("submitting");
       setTimeout(() => setStep("done"), 1500);

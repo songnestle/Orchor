@@ -42,6 +42,16 @@ export function useCreditBalance() {
     }
   }, [isConnected, address]);
 
+  // Refresh balance when any part of the app signals a credit change
+  // (e.g. after a demo top-up or a skill run).
+  useEffect(() => {
+    const handler = () => {
+      if (isConnected && address) fetchBalance();
+    };
+    window.addEventListener("orchor:credits-updated", handler);
+    return () => window.removeEventListener("orchor:credits-updated", handler);
+  }, [isConnected, address]);
+
   return {
     credits,
     creditsFormatted: Number(credits).toLocaleString(),
