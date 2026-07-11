@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAllSkills } from "@/lib/useAllSkills";
+import { useI18n } from "@/lib/i18n";
 import { PremiumSkillCard } from "@/components/premium/PremiumSkillCard";
 
 type ListingType = "all" | "buy" | "auction";
 
 export default function MarketplacePage() {
   const allSkills = useAllSkills();
+  const { t } = useI18n();
   const [listingType, setListingType] = useState<ListingType>("all");
 
   const listings = allSkills.map(skill => ({
@@ -29,7 +31,7 @@ export default function MarketplacePage() {
       <div className="sticky top-0 z-40 backdrop-blur-xl bg-bg/80 border-b border-white/5 py-4">
         <div className="max-w-7xl mx-auto px-6">
           <h1 className="text-3xl font-bold gradient-text font-display">
-            🛒 Marketplace
+            🛒 {t("market.title")}
           </h1>
           <p className="text-gray-400 text-sm mt-1">
             Buy, sell, and trade skill cards
@@ -41,9 +43,9 @@ export default function MarketplacePage() {
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="flex gap-3">
           {[
-            { key: "all", label: "All Listings" },
-            { key: "buy", label: "🛍️ Buy Now" },
-            { key: "auction", label: "⏰ Auctions" },
+            { key: "all", label: t("market.allListings") },
+            { key: "buy", label: `🛍️ ${t("market.buyTab")}` },
+            { key: "auction", label: `⏰ ${t("market.auctionTab")}` },
           ].map((type) => (
             <button
               key={type.key}
@@ -75,13 +77,13 @@ export default function MarketplacePage() {
 
               {/* Listing Badge */}
               <div className="absolute top-3 right-3 px-3 py-1 rounded-full glass-strong text-xs font-bold">
-                {listing.listingType === "auction" ? "⏰ AUCTION" : "🛍️ BUY NOW"}
+                {listing.listingType === "auction" ? `⏰ ${t("market.auction")}` : `🛍️ ${t("market.buyNow")}`}
               </div>
 
               {/* Price Footer */}
               <div className="mt-3 glass rounded-xl p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-gray-400">Seller</span>
+                  <span className="text-xs text-gray-400">{t("market.seller")}</span>
                   <span className="text-xs text-violet-400 font-semibold">{listing.seller}</span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -95,7 +97,7 @@ export default function MarketplacePage() {
                   )}
                 </div>
                 <button className="w-full mt-3 px-4 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white text-sm font-bold hover:shadow-lg transition-all">
-                  {listing.listingType === "auction" ? "Place Bid" : "Buy Now"}
+                  {listing.listingType === "auction" ? t("market.placeBid") : t("market.buyNow")}
                 </button>
               </div>
             </motion.div>

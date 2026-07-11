@@ -73,6 +73,46 @@ const dict = {
   "creator.connectWallet": { en: "Connect your wallet to view creator dashboard", zh: "连接钱包以查看创作者面板" },
   "creator.loading": { en: "Loading creator stats...", zh: "加载创作者数据中…" },
   "creator.noData": { en: "No creator data found", zh: "暂无创作者数据" },
+
+  // Explore
+  "explore.title": { en: "Explore Skills", zh: "探索技能" },
+  "explore.trending": { en: "Trending", zh: "热门" },
+  "explore.topCreators": { en: "Top Creators", zh: "顶级创作者" },
+  "explore.posts": { en: "posts", zh: "条帖子" },
+  "common.runs": { en: "runs", zh: "次运行" },
+
+  // Marketplace
+  "market.title": { en: "Marketplace", zh: "市场" },
+  "market.buyNow": { en: "Buy Now", zh: "立即购买" },
+  "market.placeBid": { en: "Place Bid", zh: "出价" },
+  "market.seller": { en: "Seller", zh: "卖家" },
+  "market.auction": { en: "Auction", zh: "拍卖" },
+  "market.allListings": { en: "All Listings", zh: "全部" },
+  "market.buyTab": { en: "Buy Now", zh: "一口价" },
+  "market.auctionTab": { en: "Auctions", zh: "拍卖" },
+
+  // Rankings
+  "rankings.title": { en: "Rankings", zh: "排行榜" },
+  "rankings.rank": { en: "Rank", zh: "排名" },
+  "rankings.skill": { en: "Skill", zh: "技能" },
+  "rankings.price": { en: "Price", zh: "价格" },
+
+  // Deck
+  "deck.title": { en: "My Deck", zh: "我的卡组" },
+  "deck.totalValue": { en: "Total Value", zh: "总价值" },
+  "deck.empty": { en: "No cards yet", zh: "暂无卡牌" },
+  "deck.emptyHint": { en: "Start collecting AI skill cards to build your deck", zh: "开始收集 AI 技能卡来组建你的卡组" },
+  "deck.browse": { en: "Browse Skills", zh: "浏览技能" },
+  "deck.collected": { en: "cards collected", zh: "张卡牌已收集" },
+
+  // Battle
+  "battle.title": { en: "Battle Arena", zh: "竞技场" },
+  "battle.chooseFighter": { en: "Choose Your Fighter", zh: "选择你的战士" },
+  "battle.start": { en: "Start Battle", zh: "开始战斗" },
+  "battle.victory": { en: "Victory!", zh: "胜利！" },
+  "battle.defeat": { en: "Defeat", zh: "失败" },
+  "battle.new": { en: "New Battle", zh: "新战斗" },
+  "battle.rematch": { en: "Rematch", zh: "再战" },
 } as const;
 
 export type TranslationKey = keyof typeof dict;

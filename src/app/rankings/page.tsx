@@ -1,27 +1,29 @@
 "use client";
 
 import { useAllSkills } from "@/lib/useAllSkills";
+import { useI18n } from "@/lib/i18n";
 
 export default function RankingsPage() {
   const allSkills = useAllSkills();
+  const { t } = useI18n();
   const sorted = [...allSkills].sort((a, b) => b.usageCount - a.usageCount);
 
   return (
     <div className="min-h-screen bg-transparent">
       <div className="max-w-6xl mx-auto px-6 py-8">
         <h1 className="text-3xl font-bold gradient-text font-display mb-8">
-          🏆 Rankings
+          🏆 {t("rankings.title")}
         </h1>
 
         <div className="glass-strong rounded-2xl overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/10">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Rank</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Skill</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Creator</th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Runs</th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">Price</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">{t("rankings.rank")}</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">{t("rankings.skill")}</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">{t("nav.creator")}</th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">{t("common.runs")}</th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-400">{t("rankings.price")}</th>
               </tr>
             </thead>
             <tbody>
