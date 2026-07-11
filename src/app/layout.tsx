@@ -2,6 +2,7 @@ import "./globals.css";
 import "../styles/premium.css";
 import type { Metadata } from "next";
 import { Providers } from "@/components/Providers";
+import { AppChrome } from "@/components/AppChrome";
 
 export const metadata: Metadata = {
   title: "Orchor — The Skill Layer for AI Agents",
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <AppChrome>{children}</AppChrome>
+        </Providers>
       </body>
     </html>
   );

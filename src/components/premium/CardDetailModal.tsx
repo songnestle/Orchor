@@ -47,7 +47,7 @@ export function CardDetailModal({
     if (!skill || !isConnected) return;
 
     if (insufficientCredits) {
-      onOpenTopUpCredits?.();
+      if (onOpenTopUpCredits) onOpenTopUpCredits(); else window.dispatchEvent(new Event("orchor:open-topup"));
       return;
     }
 
@@ -71,7 +71,7 @@ export function CardDetailModal({
         const errData = await res.json().catch(() => ({}));
         // 402 = insufficient credits -> guide user to top up
         if (res.status === 402 || errData.needsTopUp) {
-          onOpenTopUpCredits?.();
+          if (onOpenTopUpCredits) onOpenTopUpCredits(); else window.dispatchEvent(new Event("orchor:open-topup"));
           setStep("idle");
           return;
         }
