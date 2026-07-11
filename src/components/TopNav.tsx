@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useOrchorState } from "@/lib/useOrchorState";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
@@ -16,15 +18,18 @@ interface Props {
 
 const NAV: { key: TranslationKey; href: string }[] = [
   { key: "nav.discover", href: "/" },
-  { key: "nav.creator", href: "/creator" },
-  { key: "nav.transactions", href: "/transactions" },
+  { key: "nav.explore", href: "/explore" },
+  { key: "nav.marketplace", href: "/marketplace" },
+  { key: "nav.rankings", href: "/rankings" },
   { key: "nav.deck", href: "/deck" },
+  { key: "nav.creator", href: "/creator" },
 ];
 
 export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCredits }: Props) {
   const { walletBalanceMON: balance, energy, isConnected } = useOrchorState();
   const { creditsFormatted, usdValue, isLoading } = useCreditBalance();
   const { t } = useI18n();
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-bg/55 border-b border-white/5">
@@ -42,13 +47,13 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
 
         {/* nav */}
         <nav className="hidden lg:flex items-center gap-1">
-          {NAV.map((item, i) => {
-            const isActive = i === 0;
+          {NAV.map((item) => {
+            const isActive = pathname === item.href;
             return (
-              <a
+              <Link
                 key={item.key}
                 href={item.href}
-                className={`relative px-3 h-8 rounded-lg text-[11px] font-medium tracking-wide transition ${
+                className={`relative px-3 h-8 flex items-center rounded-lg text-[11px] font-medium tracking-wide transition ${
                   isActive
                     ? "text-white"
                     : "text-mutedHi hover:text-white hover:bg-white/[0.04]"
@@ -58,11 +63,11 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
                   <motion.div
                     layoutId="nav-active"
                     className="absolute inset-0 rounded-lg bg-white/10"
-                    transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+                    transition={{ type: "spring", duration: 0.4, bounce: 0.15 }}
                   />
                 )}
                 <span className="relative">{t(item.key)}</span>
-              </a>
+              </Link>
             );
           })}
         </nav>
