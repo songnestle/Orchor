@@ -35,10 +35,18 @@ export async function GET(req: NextRequest) {
       } : null,
     });
   } catch (error) {
+    // Graceful degradation: if the DB is unavailable, return a zero-balance
+    // payload (HTTP 200) instead of a 500. This keeps the UI functional
+    // (shows 0 credits) rather than crashing on a failed fetch.
     console.error('[API] Error fetching balance:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to fetch balance' },
-      { status: 500 }
-    );
+    const address = req.nextUrl.searchParams.get('address') ?? '';
+    return NextResponse.json({
+      address,
+      credits: '0',
+      creditsFormatted: '0',
+      usdEquivalent: '0.00',
+      stats: null,
+      degraded: true,
+    });
   }
 }

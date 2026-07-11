@@ -62,9 +62,17 @@ export function CreatorDashboard() {
     try {
       const response = await fetch(`/api/creator/stats?address=${address}`);
       const data = await response.json();
-      setStats(data);
+      // Only accept a valid payload that actually contains summary data.
+      // On API error (e.g. DB unavailable) the response is { error }, which
+      // must NOT be stored as stats — otherwise rendering crashes.
+      if (response.ok && data?.summary) {
+        setStats(data);
+      } else {
+        setStats(null);
+      }
     } catch (error) {
       console.error("Error fetching creator stats:", error);
+      setStats(null);
     } finally {
       setIsLoading(false);
     }
@@ -185,7 +193,7 @@ export function CreatorDashboard() {
         </div>
 
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
-          {stats.settlementChains.map((chain) => (
+          {(stats.settlementChains ?? []).map((chain) => (
             <div
               key={chain.chain}
               className="rounded-lg border border-white/10 bg-white/[0.02] p-3"
@@ -203,13 +211,13 @@ export function CreatorDashboard() {
       </div>
 
       {/* Revenue by Skill */}
-      {stats.revenueBySkill.length > 0 && (
+      {(stats.revenueBySkill?.length ?? 0) > 0 && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
           <h2 className="text-[11px] uppercase tracking-wider text-mutedHi mb-4">
             Revenue by Skill
           </h2>
           <div className="space-y-2">
-            {stats.revenueBySkill.map((skill) => (
+            {(stats.revenueBySkill ?? []).map((skill) => (
               <div
                 key={skill.skillId}
                 className="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-white/[0.01]"
@@ -237,13 +245,13 @@ export function CreatorDashboard() {
       )}
 
       {/* Recent Transactions */}
-      {stats.recentTransactions.length > 0 && (
+      {(stats.recentTransactions?.length ?? 0) > 0 && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
           <h2 className="text-[11px] uppercase tracking-wider text-mutedHi mb-4">
             Recent Transactions
           </h2>
           <div className="space-y-2">
-            {stats.recentTransactions.slice(0, 5).map((tx) => (
+            {(stats.recentTransactions ?? []).slice(0, 5).map((tx) => (
               <div
                 key={tx.id}
                 className="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-white/[0.01]"
@@ -415,7 +423,7 @@ function WithdrawModal({
               onChange={(e) => setSelectedChain(e.target.value)}
               className="input w-full"
             >
-              {stats.settlementChains.map((chain) => (
+              {(stats.settlementChains ?? []).map((chain) => (
                 <option key={chain.chain} value={chain.chain}>
                   {chain.name} - {chain.recommendedFor}
                 </option>

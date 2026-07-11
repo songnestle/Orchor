@@ -123,10 +123,31 @@ export async function GET(req: NextRequest) {
       ],
     });
   } catch (error) {
+    // Graceful degradation: if the DB is unavailable, return an empty but
+    // structurally-complete payload (HTTP 200) so the dashboard renders an
+    // empty state instead of crashing. `degraded` flags the fallback.
     console.error('[API] Error fetching creator stats:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to fetch creator stats' },
-      { status: 500 }
-    );
+    const address = req.nextUrl.searchParams.get('address') ?? '';
+    return NextResponse.json({
+      address,
+      degraded: true,
+      summary: {
+        totalSkills: 0,
+        totalRuns: 0,
+        grossRevenue: '0',
+        grossRevenueFormatted: '0',
+        platformFee: '0',
+        platformFeeFormatted: '0',
+        netRevenue: '0',
+        netRevenueFormatted: '0',
+        withdrawableBalance: '0',
+        withdrawableBalanceFormatted: '0',
+        usdValue: '0.00',
+      },
+      revenueBySkill: [],
+      recentTransactions: [],
+      withdrawalHistory: [],
+      settlementChains: [],
+    });
   }
 }
