@@ -113,6 +113,60 @@ const dict = {
   "battle.defeat": { en: "Defeat", zh: "失败" },
   "battle.new": { en: "New Battle", zh: "新战斗" },
   "battle.rematch": { en: "Rematch", zh: "再战" },
+  "battle.opponent": { en: "Opponent", zh: "对手" },
+  "battle.you": { en: "You", zh: "你" },
+
+  // Create page
+  "create.title": { en: "Create Skill Card", zh: "创建技能卡" },
+  "create.upload": { en: "Upload .or Package", zh: "上传 .or 包" },
+  "create.configure": { en: "Configure Card", zh: "配置卡牌" },
+  "create.cardName": { en: "Card Name", zh: "卡牌名称" },
+  "create.description": { en: "Description", zh: "描述" },
+  "create.rarity": { en: "Rarity", zh: "稀有度" },
+  "create.preview": { en: "Preview coming soon", zh: "预览即将推出" },
+  "create.deploying": { en: "Deploying...", zh: "部署中…" },
+  "create.minting": { en: "Your skill card is being minted onchain", zh: "你的技能卡正在链上铸造" },
+
+  // Profile page
+  "profile.followers": { en: "Followers", zh: "粉丝" },
+  "profile.following": { en: "Following", zh: "关注" },
+  "profile.totalEarnings": { en: "Total Earnings", zh: "总收益" },
+  "profile.skillsCreated": { en: "Skills Created", zh: "已创建技能" },
+  "profile.follow": { en: "Follow", zh: "关注" },
+  "profile.message": { en: "Message", zh: "消息" },
+  "profile.created": { en: "Created", zh: "已创建" },
+  "profile.collected": { en: "Collected", zh: "已收藏" },
+  "profile.stats": { en: "Stats", zh: "数据" },
+
+  // Transaction history
+  "tx.title": { en: "Transaction History", zh: "交易历史" },
+  "tx.loading": { en: "Loading transactions...", zh: "加载交易记录中…" },
+  "tx.deposit": { en: "Deposit", zh: "充值" },
+  "tx.withdrawal": { en: "Withdrawal", zh: "提现" },
+  "tx.skillRun": { en: "Skill Execution", zh: "技能执行" },
+  "tx.amount": { en: "Amount", zh: "金额" },
+  "tx.chain": { en: "Chain", zh: "链" },
+  "tx.confirmed": { en: "Confirmed", zh: "已确认" },
+  "tx.pending": { en: "Pending", zh: "待处理" },
+  "tx.failed": { en: "Failed", zh: "失败" },
+  "tx.completed": { en: "Completed", zh: "已完成" },
+
+  // Creator dashboard (extended)
+  "creator.avgRating": { en: "Avg Rating", zh: "平均评分" },
+  "creator.totalRevenue": { en: "Total Revenue", zh: "总营收" },
+  "creator.withdraw": { en: "Withdraw Earnings", zh: "提取收益" },
+  "creator.balance": { en: "Balance", zh: "余额" },
+
+  // Arena / Hero (extended)
+  "arena.featured": { en: "Featured", zh: "精选" },
+  "arena.newArrivals": { en: "New Arrivals", zh: "最新上架" },
+  "arena.viewAll": { en: "View All", zh: "查看全部" },
+  "arena.recentActivity": { en: "Recent Activity", zh: "最近活动" },
+  "arena.skills": { en: "Skills", zh: "技能" },
+
+  // Top-up (extended)
+  "topup.willReceiveHint": { en: "You will receive", zh: "你将收到" },
+  "topup.orchorCredits": { en: "Orchor Credits", zh: "Orchor 积分" },
 } as const;
 
 export type TranslationKey = keyof typeof dict;

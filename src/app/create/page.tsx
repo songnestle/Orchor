@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@/lib/i18n";
 import { motion } from "framer-motion";
 
 export default function CreatePage() {
   const [step, setStep] = useState<"upload" | "configure" | "preview" | "deploy">("upload");
   const [file, setFile] = useState<File | null>(null);
+  const { t } = useI18n();
 
   return (
     <div className="min-h-screen bg-transparent">
@@ -13,7 +15,7 @@ export default function CreatePage() {
       <div className="sticky top-0 z-40 backdrop-blur-xl bg-bg/80 border-b border-white/5 py-4">
         <div className="max-w-4xl mx-auto px-6">
           <h1 className="text-3xl font-bold gradient-text font-display">
-            Create Skill Card
+            {t("create.title")}
           </h1>
           <p className="text-gray-400 text-sm mt-1">
             Upload your .or package to mint a new skill card
@@ -53,7 +55,7 @@ export default function CreatePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Upload .or Package</h2>
+              <h2 className="text-2xl font-bold text-white mb-2">{t("create.upload")}</h2>
               <p className="text-gray-400 mb-6">
                 Drop your skill package here or click to browse
               </p>
@@ -86,14 +88,14 @@ export default function CreatePage() {
             animate={{ opacity: 1, y: 0 }}
             className="glass-strong rounded-2xl p-8"
           >
-            <h2 className="text-xl font-bold text-white mb-6">Configure Card</h2>
+            <h2 className="text-xl font-bold text-white mb-6">{t("create.configure")}</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">Card Name</label>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">{t("create.cardName")}</label>
                 <input type="text" placeholder="My Awesome Skill" className="w-full px-4 py-3 rounded-xl glass text-white" />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">Description</label>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">{t("create.description")}</label>
                 <textarea placeholder="What does this skill do?" rows={4} className="w-full px-4 py-3 rounded-xl glass text-white" />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -126,7 +128,7 @@ export default function CreatePage() {
         {/* Preview & Deploy steps placeholder */}
         {step === "preview" && (
           <div className="glass-strong rounded-2xl p-8 text-center">
-            <h2 className="text-xl font-bold text-white mb-4">Preview coming soon</h2>
+            <h2 className="text-xl font-bold text-white mb-4">{t("create.preview")}</h2>
             <button onClick={() => setStep("deploy")} className="px-8 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold">
               Deploy
             </button>

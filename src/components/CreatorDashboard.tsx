@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { motion } from "framer-motion";
+import { useI18n } from "@/lib/i18n";
 
 interface CreatorStats {
   address: string;
@@ -45,6 +46,7 @@ interface CreatorStats {
 
 export function CreatorDashboard() {
   const { address, isConnected } = useAccount();
+  const { t } = useI18n();
   const [stats, setStats] = useState<CreatorStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -81,7 +83,7 @@ export function CreatorDashboard() {
   if (!isConnected) {
     return (
       <div className="text-center py-20">
-        <div className="text-[14px] text-mutedHi">Connect your wallet to view creator dashboard</div>
+        <div className="text-[14px] text-mutedHi">{t("creator.connectWallet")}</div>
       </div>
     );
   }
@@ -89,7 +91,7 @@ export function CreatorDashboard() {
   if (isLoading) {
     return (
       <div className="text-center py-20">
-        <div className="text-[14px] text-mutedHi">Loading creator stats...</div>
+        <div className="text-[14px] text-mutedHi">{t("creator.loading")}</div>
       </div>
     );
   }
@@ -97,7 +99,7 @@ export function CreatorDashboard() {
   if (!stats) {
     return (
       <div className="text-center py-20">
-        <div className="text-[14px] text-mutedHi">No creator data found</div>
+        <div className="text-[14px] text-mutedHi">{t("creator.noData")}</div>
       </div>
     );
   }
@@ -106,7 +108,7 @@ export function CreatorDashboard() {
     <div className="mx-auto max-w-[1200px] px-6 py-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="font-display text-3xl font-bold">Creator Dashboard</h1>
+        <h1 className="font-display text-3xl font-bold">{t("creator.title")}</h1>
         <p className="text-[13px] text-mutedHi mt-1">
           Track your skill performance and earnings
         </p>
@@ -115,23 +117,23 @@ export function CreatorDashboard() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          label="Total Skills"
+          label={t("creator.totalSkills")}
           value={stats.summary.totalSkills.toString()}
           icon="📦"
         />
         <StatCard
-          label="Total Runs"
+          label={t("creator.totalRuns")}
           value={stats.summary.totalRuns.toLocaleString()}
           icon="⚡"
         />
         <StatCard
-          label="Gross Revenue"
+          label={t("creator.grossRevenue")}
           value={`${stats.summary.grossRevenueFormatted} credits`}
           subtitle={`≈ $${(Number(stats.summary.grossRevenue) * 0.01).toFixed(2)}`}
           icon="💰"
         />
         <StatCard
-          label="Withdrawable"
+          label={t("creator.withdrawable")}
           value={`${stats.summary.withdrawableBalanceFormatted} credits`}
           subtitle={`≈ $${stats.summary.usdValue}`}
           icon="💳"
@@ -146,7 +148,7 @@ export function CreatorDashboard() {
         </h2>
         <div className="space-y-3">
           <RevenueRow
-            label="Gross Revenue"
+            label={t("creator.grossRevenue")}
             value={stats.summary.grossRevenueFormatted}
             percentage={100}
           />

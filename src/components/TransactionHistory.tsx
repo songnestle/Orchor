@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { motion } from "framer-motion";
+import { useI18n } from "@/lib/i18n";
 
 interface Transaction {
   id: string;
@@ -18,6 +19,7 @@ interface Transaction {
 
 export function TransactionHistory() {
   const { address, isConnected } = useAccount();
+  const { t } = useI18n();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState<'all' | 'deposits' | 'runs' | 'withdrawals'>('all');
@@ -46,7 +48,7 @@ export function TransactionHistory() {
   if (!isConnected) {
     return (
       <div className="text-center py-20">
-        <div className="text-[14px] text-mutedHi">Connect your wallet to view transaction history</div>
+        <div className="text-[14px] text-mutedHi">{t("creator.connectWallet")}</div>
       </div>
     );
   }
@@ -54,7 +56,7 @@ export function TransactionHistory() {
   if (isLoading) {
     return (
       <div className="text-center py-20">
-        <div className="text-[14px] text-mutedHi">Loading transactions...</div>
+        <div className="text-[14px] text-mutedHi">{t("tx.loading")}</div>
       </div>
     );
   }
@@ -71,7 +73,7 @@ export function TransactionHistory() {
     <div className="mx-auto max-w-[1200px] px-6 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold">Transaction History</h1>
+          <h1 className="font-display text-3xl font-bold">{t("tx.title")}</h1>
           <p className="text-[13px] text-mutedHi mt-1">
             All your credit transactions in one place
           </p>

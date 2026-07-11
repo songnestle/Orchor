@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAllSkills } from "@/lib/useAllSkills";
+import { useI18n } from "@/lib/i18n";
 import { PremiumSkillCard } from "@/components/premium/PremiumSkillCard";
 import type { SkillModule } from "@/lib/skills";
 
@@ -10,6 +11,7 @@ type BattlePhase = "select" | "battle" | "result";
 
 export default function BattleArenaPage() {
   const allSkills = useAllSkills();
+  const { t } = useI18n();
   const [phase, setPhase] = useState<BattlePhase>("select");
   const [playerCard, setPlayerCard] = useState<SkillModule | null>(null);
   const [opponentCard, setOpponentCard] = useState<SkillModule | null>(null);
@@ -37,7 +39,7 @@ export default function BattleArenaPage() {
       <div className="sticky top-0 z-40 backdrop-blur-xl bg-bg/80 border-b border-white/5 py-4">
         <div className="max-w-7xl mx-auto px-6">
           <h1 className="text-3xl font-bold gradient-text font-display">
-            ⚔️ Battle Arena
+            ⚔️ {t("battle.title")}
           </h1>
           <p className="text-gray-400 text-sm mt-1">
             Challenge skills in head-to-head battles
@@ -50,7 +52,7 @@ export default function BattleArenaPage() {
         {/* Select Phase */}
         {phase === "select" && (
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Choose Your Fighter</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">{t("battle.chooseFighter")}</h2>
             {playerCard ? (
               <div className="mb-8">
                 <div className="flex items-center gap-4 mb-4">
@@ -71,7 +73,7 @@ export default function BattleArenaPage() {
                   onClick={startBattle}
                   className="px-8 py-4 rounded-xl bg-gradient-to-r from-red-600 to-orange-600 text-white font-bold text-lg hover:shadow-lg hover:shadow-red-500/50 transition-all"
                 >
-                  🔥 Start Battle
+                  🔥 {t("battle.start")}
                 </button>
               </div>
             ) : (
@@ -98,7 +100,7 @@ export default function BattleArenaPage() {
               transition={{ repeat: Infinity, duration: 0.6 }}
             >
               <PremiumSkillCard skill={playerCard} onClick={() => {}} />
-              <div className="text-center mt-4 text-lg font-bold text-white">You</div>
+              <div className="text-center mt-4 text-lg font-bold text-white">{t("battle.you")}</div>
             </motion.div>
 
             <div className="text-6xl animate-pulse">⚔️</div>
@@ -108,7 +110,7 @@ export default function BattleArenaPage() {
               transition={{ repeat: Infinity, duration: 0.6 }}
             >
               <PremiumSkillCard skill={opponentCard} onClick={() => {}} />
-              <div className="text-center mt-4 text-lg font-bold text-white">Opponent</div>
+              <div className="text-center mt-4 text-lg font-bold text-white">{t("battle.opponent")}</div>
             </motion.div>
           </motion.div>
         )}
@@ -123,7 +125,7 @@ export default function BattleArenaPage() {
             <div className="glass-strong rounded-3xl p-12 text-center">
               <div className="text-8xl mb-6">{winner === "player" ? "🏆" : "😔"}</div>
               <h2 className="text-4xl font-bold text-white mb-4">
-                {winner === "player" ? "Victory!" : "Defeat"}
+                {winner === "player" ? t("battle.victory") : t("battle.defeat")}
               </h2>
               <p className="text-gray-400 mb-8">
                 {winner === "player"
@@ -142,13 +144,13 @@ export default function BattleArenaPage() {
                   }}
                   className="px-6 py-3 rounded-xl glass text-white font-bold hover:bg-white/10 transition-all"
                 >
-                  New Battle
+                  {t("battle.new")}
                 </button>
                 <button
                   onClick={startBattle}
                   className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all"
                 >
-                  Rematch
+                  {t("battle.rematch")}
                 </button>
               </div>
             </div>
