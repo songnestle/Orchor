@@ -30,7 +30,7 @@ export function CardDetailModal({
   const [output, setOutput] = useState("");
   const [err, setErr] = useState<string | null>(null);
 
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { credits } = useCreditBalance();
 
   if (!skill) return null;
@@ -58,13 +58,23 @@ export function CardDetailModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          userId: address?.toLowerCase(),
           skillId: skill.id,
           input: action === "run" ? skill.inputExample : undefined,
           credits: currentCost,
         }),
       });
 
-      if (!res.ok) throw new Error(action === "run" ? "Execution failed" : "Collect failed");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        // 402 = insufficient credits -> guide user to top up
+        if (res.status === 402 || errData.needsTopUp) {
+          onOpenTopUpCredits?.();
+          setStep("idle");
+          return;
+        }
+        throw new Error(errData.error || (action === "run" ? "Execution failed" : "Collect failed"));
+      }
       const data = await res.json();
       setOutput(data.output || (action === "run" ? "Execution completed" : "Card collected!"));
 

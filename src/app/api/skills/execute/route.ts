@@ -44,8 +44,17 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('[API] Error executing skill:', error);
+    const message = error instanceof Error ? error.message : 'Failed to execute skill';
+    // Insufficient balance is an expected business condition, not a server
+    // error. Return 402 (Payment Required) so the client can prompt top-up.
+    if (message.toLowerCase().includes('insufficient credits')) {
+      return NextResponse.json(
+        { error: message, needsTopUp: true },
+        { status: 402 }
+      );
+    }
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to execute skill' },
+      { error: message },
       { status: 500 }
     );
   }
