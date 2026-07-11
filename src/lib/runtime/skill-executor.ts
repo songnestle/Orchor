@@ -128,20 +128,11 @@ class RevenueManager {
         });
       }
 
-      // Record creator revenue in ledger (for transparency)
-      // Note: This is internal accounting, not user credits
-      await tx.ledgerEntry.create({
-        data: {
-          userId: params.creatorAddress,
-          entryType: 'creator_revenue',
-          amount: creatorRevenue,
-          balanceAfter: 0n, // Creator balances tracked separately
-          metadata: {
-            skillId: params.skillId,
-            type: 'skill_execution',
-          },
-        },
-      });
+      // NOTE: Creator revenue is tracked in the `creator_revenues` table above.
+      // We intentionally do NOT write it to `ledger_entries`, because that
+      // table has a FK to `users` and a creator (e.g. "Atlas Labs") is not a
+      // registered user — writing here caused a foreign-key violation that
+      // rolled back the whole run.
     });
 
     return {
