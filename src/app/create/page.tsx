@@ -12,7 +12,7 @@ export default function CreatePage() {
   return (
     <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <div className="sticky top-0 z-40 backdrop-blur-xl bg-bg/80 border-b border-white/5 py-4">
+      <div className="border-b border-white/5 py-6">
         <div className="max-w-4xl mx-auto px-6">
           <h1 className="text-3xl font-bold gradient-text font-display">
             {t("create.title")}

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 export type Lang = "en" | "zh";
 
@@ -222,13 +222,14 @@ interface I18nContextValue {
 const I18nContext = createContext<I18nContextValue | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("en");
-
-  // Load saved preference on mount.
-  useEffect(() => {
-    const saved = (typeof window !== "undefined" && localStorage.getItem("orchor:lang")) as Lang | null;
-    if (saved === "en" || saved === "zh") setLangState(saved);
-  }, []);
+  // Lazy initializer reads the saved language on the very first client render,
+  // so the UI doesn't flash English before switching to the saved language.
+  // (On the server there's no localStorage, so it defaults to "en".)
+  const [lang, setLangState] = useState<Lang>(() => {
+    if (typeof window === "undefined") return "en";
+    const saved = localStorage.getItem("orchor:lang");
+    return saved === "zh" || saved === "en" ? saved : "en";
+  });
 
   function setLang(l: Lang) {
     setLangState(l);
