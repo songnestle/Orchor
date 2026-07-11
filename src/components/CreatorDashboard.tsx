@@ -110,7 +110,7 @@ export function CreatorDashboard() {
       <div>
         <h1 className="font-display text-3xl font-bold">{t("creator.title")}</h1>
         <p className="text-[13px] text-mutedHi mt-1">
-          Track your skill performance and earnings
+          {t("creator.subtitle")}
         </p>
       </div>
 
@@ -144,7 +144,7 @@ export function CreatorDashboard() {
       {/* Revenue Breakdown */}
       <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
         <h2 className="text-[11px] uppercase tracking-wider text-mutedHi mb-4">
-          Revenue Breakdown
+          {t("creator.revenueBreakdown")}
         </h2>
         <div className="space-y-3">
           <RevenueRow
@@ -153,18 +153,18 @@ export function CreatorDashboard() {
             percentage={100}
           />
           <RevenueRow
-            label="Creator Share (70%)"
+            label={t("creator.creatorShare")}
             value={stats.summary.netRevenueFormatted}
             percentage={70}
             highlight
           />
           <RevenueRow
-            label="Platform Fee (20%)"
+            label={t("creator.platformFee")}
             value={stats.summary.platformFeeFormatted}
             percentage={20}
           />
           <RevenueRow
-            label="Runtime Cost (10%)"
+            label={t("creator.runtimeCost")}
             value={(Number(stats.summary.grossRevenue) * 0.1).toLocaleString()}
             percentage={10}
           />
@@ -176,7 +176,7 @@ export function CreatorDashboard() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-[11px] uppercase tracking-wider text-mutedHi">
-              Withdrawable Balance
+              {t("creator.withdrawableBalance")}
             </h2>
             <div className="mt-2 font-display text-3xl font-bold text-gradient">
               {stats.summary.withdrawableBalanceFormatted} credits
@@ -190,7 +190,7 @@ export function CreatorDashboard() {
             disabled={Number(stats.summary.withdrawableBalance) < 100}
             className="btn-neon h-11 px-6 rounded-xl text-[13px] font-semibold disabled:opacity-50"
           >
-            Withdraw
+            {t("common.withdraw")}
           </button>
         </div>
 
@@ -216,7 +216,7 @@ export function CreatorDashboard() {
       {(stats.revenueBySkill?.length ?? 0) > 0 && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
           <h2 className="text-[11px] uppercase tracking-wider text-mutedHi mb-4">
-            Revenue by Skill
+            {t("creator.revenueBySkill")}
           </h2>
           <div className="space-y-2">
             {(stats.revenueBySkill ?? []).map((skill) => (
@@ -250,7 +250,7 @@ export function CreatorDashboard() {
       {(stats.recentTransactions?.length ?? 0) > 0 && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
           <h2 className="text-[11px] uppercase tracking-wider text-mutedHi mb-4">
-            Recent Transactions
+            {t("creator.recentTransactions")}
           </h2>
           <div className="space-y-2">
             {(stats.recentTransactions ?? []).slice(0, 5).map((tx) => (

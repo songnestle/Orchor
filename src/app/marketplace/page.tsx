@@ -34,7 +34,7 @@ export default function MarketplacePage() {
             🛒 {t("market.title")}
           </h1>
           <p className="text-gray-400 text-sm mt-1">
-            Buy, sell, and trade skill cards
+            {t("market.subtitle")}
           </p>
         </div>
       </div>

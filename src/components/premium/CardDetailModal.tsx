@@ -250,7 +250,7 @@ export function CardDetailModal({
                   {/* Status Messages */}
                   {step === "confirm" && (
                     <div className="mb-4 p-4 rounded-xl glass border border-violet-500/30">
-                      <p className="text-sm text-white">Confirm transaction in your wallet...</p>
+                      <p className="text-sm text-white">{t("card.confirmWallet")}</p>
                     </div>
                   )}
 
@@ -308,7 +308,7 @@ export function CardDetailModal({
                         </div>
 
                         <div>
-                          <h3 className="text-sm font-bold text-gray-400 mb-2">Example Input</h3>
+                          <h3 className="text-sm font-bold text-gray-400 mb-2">{t("card.exampleInput")}</h3>
                           <div className="p-4 rounded-lg bg-black/40 border border-white/10">
                             <code className="text-sm text-gray-300 font-mono">
                               {skill.inputExample}
@@ -317,7 +317,7 @@ export function CardDetailModal({
                         </div>
 
                         <div>
-                          <h3 className="text-sm font-bold text-gray-400 mb-2">Example Output</h3>
+                          <h3 className="text-sm font-bold text-gray-400 mb-2">{t("card.exampleOutput")}</h3>
                           <div className="p-4 rounded-lg bg-black/40 border border-white/10">
                             <pre className="text-sm text-gray-300 font-mono whitespace-pre-wrap">
                               {skill.outputPreview}
@@ -326,7 +326,7 @@ export function CardDetailModal({
                         </div>
 
                         <div>
-                          <h3 className="text-sm font-bold text-gray-400 mb-2">Privacy Verification</h3>
+                          <h3 className="text-sm font-bold text-gray-400 mb-2">{t("card.privacyVerification")}</h3>
                           <div className="flex items-center gap-2 p-4 rounded-lg glass border border-green-500/20">
                             <span className="text-green-400 text-xl">✓</span>
                             <span className="text-sm text-green-400 font-semibold">
@@ -361,7 +361,7 @@ export function CardDetailModal({
                         </div>
 
                         <div className="glass p-4 rounded-xl">
-                          <div className="text-sm text-gray-400 mb-1">Runtime Model</div>
+                          <div className="text-sm text-gray-400 mb-1">{t("card.runtimeModel")}</div>
                           <div className="text-lg font-bold text-white">
                             {skill.runtime.model}
                           </div>

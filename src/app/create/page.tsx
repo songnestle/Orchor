@@ -18,7 +18,7 @@ export default function CreatePage() {
             {t("create.title")}
           </h1>
           <p className="text-gray-400 text-sm mt-1">
-            Upload your .or package to mint a new skill card
+            {t("create.subtitle")}
           </p>
         </div>
       </div>
@@ -75,7 +75,7 @@ export default function CreatePage() {
                 htmlFor="file-upload"
                 className="inline-block px-8 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold cursor-pointer hover:shadow-lg hover:shadow-violet-500/50 transition-all"
               >
-                Choose File
+                {t("common.chooseFile")}
               </label>
             </div>
           </motion.div>
@@ -115,10 +115,10 @@ export default function CreatePage() {
               </div>
               <div className="flex gap-3 mt-6">
                 <button onClick={() => setStep("upload")} className="px-6 py-3 rounded-xl glass text-white font-bold hover:bg-white/10 transition-all">
-                  Back
+                  {t("common.back")}
                 </button>
                 <button onClick={() => setStep("preview")} className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all">
-                  Continue
+                  {t("common.continue")}
                 </button>
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function CreatePage() {
           <div className="glass-strong rounded-2xl p-8 text-center">
             <h2 className="text-xl font-bold text-white mb-4">{t("create.preview")}</h2>
             <button onClick={() => setStep("deploy")} className="px-8 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold">
-              Deploy
+              {t("common.deploy")}
             </button>
           </div>
         )}

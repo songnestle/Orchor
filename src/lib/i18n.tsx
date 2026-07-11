@@ -137,6 +137,8 @@ const dict = {
   "profile.created": { en: "Created", zh: "已创建" },
   "profile.collected": { en: "Collected", zh: "已收藏" },
   "profile.stats": { en: "Stats", zh: "数据" },
+  "profile.title": { en: "Creator Profile", zh: "创作者主页" },
+  "profile.noCollected": { en: "No collected cards yet", zh: "暂无收藏卡片" },
 
   // Transaction history
   "tx.title": { en: "Transaction History", zh: "交易历史" },
@@ -167,6 +169,46 @@ const dict = {
   // Top-up (extended)
   "topup.willReceiveHint": { en: "You will receive", zh: "你将收到" },
   "topup.orchorCredits": { en: "Orchor Credits", zh: "Orchor 积分" },
+
+  // Common labels
+  "common.back": { en: "Back", zh: "返回" },
+  "common.continue": { en: "Continue", zh: "继续" },
+  "common.deploy": { en: "Deploy", zh: "部署" },
+  "common.chooseFile": { en: "Choose File", zh: "选择文件" },
+  "common.change": { en: "Change", zh: "更改" },
+  "common.selected": { en: "Selected", zh: "已选择" },
+  "common.withdraw": { en: "Withdraw", zh: "提现" },
+
+  // Card detail extended
+  "card.exampleInput": { en: "Example Input", zh: "输入示例" },
+  "card.exampleOutput": { en: "Example Output", zh: "输出示例" },
+  "card.privacyVerification": { en: "Privacy Verification", zh: "隐私验证" },
+  "card.runtimeModel": { en: "Runtime Model", zh: "运行模型" },
+  "card.avgRating": { en: "Average Rating", zh: "平均评分" },
+  "card.confirmWallet": { en: "Confirm transaction in your wallet...", zh: "在钱包中确认交易…" },
+
+  // Create extended
+  "create.dropHint": { en: "Drop your skill package here or click to browse", zh: "拖放技能包到此处或点击浏览" },
+  "create.subtitle": { en: "Upload your .or package to mint a new skill card", zh: "上传 .or 包来铸造新技能卡" },
+
+  // Battle extended
+  "battle.subtitle": { en: "Challenge skills in head-to-head battles", zh: "在对战中挑战技能" },
+
+  // Creator dashboard extended
+  "creator.revenueBreakdown": { en: "Revenue Breakdown", zh: "收益明细" },
+  "creator.creatorShare": { en: "Creator Share (70%)", zh: "创作者分成 (70%)" },
+  "creator.platformFee": { en: "Platform Fee (20%)", zh: "平台费用 (20%)" },
+  "creator.runtimeCost": { en: "Runtime Cost (10%)", zh: "运行成本 (10%)" },
+  "creator.withdrawableBalance": { en: "Withdrawable Balance", zh: "可提现余额" },
+  "creator.revenueBySkill": { en: "Revenue by Skill", zh: "技能收益" },
+  "creator.recentTransactions": { en: "Recent Transactions", zh: "最近交易" },
+
+  // Transactions extended
+  "tx.subtitle": { en: "All your credit transactions in one place", zh: "所有积分交易记录" },
+  "tx.noTransactions": { en: "No transactions found", zh: "暂无交易记录" },
+
+  // Marketplace extended
+  "market.subtitle": { en: "Buy, sell, and trade skill cards", zh: "购买、出售和交易技能卡" },
 } as const;
 
 export type TranslationKey = keyof typeof dict;

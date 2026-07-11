@@ -75,7 +75,7 @@ export function TransactionHistory() {
         <div>
           <h1 className="font-display text-3xl font-bold">{t("tx.title")}</h1>
           <p className="text-[13px] text-mutedHi mt-1">
-            All your credit transactions in one place
+            {t("tx.subtitle")}
           </p>
         </div>
 
@@ -99,7 +99,7 @@ export function TransactionHistory() {
       <div className="space-y-2">
         {filtered.length === 0 ? (
           <div className="text-center py-10 text-[13px] text-mutedHi">
-            No transactions found
+            {t("tx.noTransactions")}
           </div>
         ) : (
           filtered.map((tx) => (

@@ -42,7 +42,7 @@ export default function BattleArenaPage() {
             ⚔️ {t("battle.title")}
           </h1>
           <p className="text-gray-400 text-sm mt-1">
-            Challenge skills in head-to-head battles
+            {t("battle.subtitle")}
           </p>
         </div>
       </div>

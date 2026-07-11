@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAllSkills } from "@/lib/useAllSkills";
+import { useI18n } from "@/lib/i18n";
 import { PremiumSkillCard } from "@/components/premium/PremiumSkillCard";
 
 export default function ProfilePage() {
   const allSkills = useAllSkills();
+  const { t } = useI18n();
   const [tab, setTab] = useState<"created" | "collected" | "stats">("created");
 
   // Mock creator data
@@ -29,7 +31,7 @@ export default function ProfilePage() {
       <div className="sticky top-0 z-40 backdrop-blur-xl bg-bg/80 border-b border-white/5 py-4">
         <div className="max-w-7xl mx-auto px-6">
           <h1 className="text-3xl font-bold gradient-text font-display">
-            Creator Profile
+            {t("profile.title")}
           </h1>
         </div>
       </div>
@@ -53,29 +55,29 @@ export default function ProfilePage() {
               <div className="flex gap-6 mb-6">
                 <div>
                   <div className="text-2xl font-bold text-white">{creator.followers.toLocaleString()}</div>
-                  <div className="text-sm text-gray-400">Followers</div>
+                  <div className="text-sm text-gray-400">{t("profile.followers")}</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-white">{creator.following.toLocaleString()}</div>
-                  <div className="text-sm text-gray-400">Following</div>
+                  <div className="text-sm text-gray-400">{t("profile.following")}</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-white">{creator.totalEarnings} ETH</div>
-                  <div className="text-sm text-gray-400">Total Earnings</div>
+                  <div className="text-sm text-gray-400">{t("profile.totalEarnings")}</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-white">{creator.totalRuns.toLocaleString()}</div>
-                  <div className="text-sm text-gray-400">Total Runs</div>
+                  <div className="text-sm text-gray-400">{t("creator.totalRuns")}</div>
                 </div>
               </div>
 
               {/* Actions */}
               <div className="flex gap-3">
                 <button className="px-6 py-3 rounded-xl bg-violet-600 text-white font-bold hover:bg-violet-700 transition-all">
-                  Follow
+                  {t("profile.follow")}
                 </button>
                 <button className="px-6 py-3 rounded-xl glass text-white font-bold hover:bg-white/10 transition-all">
-                  Message
+                  {t("profile.message")}
                 </button>
               </div>
             </div>
@@ -84,21 +86,21 @@ export default function ProfilePage() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 border-b border-white/10">
-          {[
-            { key: "created", label: "Created" },
-            { key: "collected", label: "Collected" },
-            { key: "stats", label: "Stats" },
-          ].map((t) => (
+          {([
+            { key: "created", label: t("profile.created") },
+            { key: "collected", label: t("profile.collected") },
+            { key: "stats", label: t("profile.stats") },
+          ] as const).map((tabItem) => (
             <button
-              key={t.key}
-              onClick={() => setTab(t.key as any)}
+              key={tabItem.key}
+              onClick={() => setTab(tabItem.key)}
               className={`px-6 py-3 font-semibold transition-all ${
-                tab === t.key
+                tab === tabItem.key
                   ? "text-violet-400 border-b-2 border-violet-400"
                   : "text-gray-400 hover:text-gray-300"
               }`}
             >
-              {t.label}
+              {tabItem.label}
             </button>
           ))}
         </div>
@@ -121,7 +123,7 @@ export default function ProfilePage() {
 
         {tab === "collected" && (
           <div className="text-center py-20 text-gray-400">
-            No collected cards yet
+            {t("profile.noCollected")}
           </div>
         )}
 
@@ -132,21 +134,21 @@ export default function ProfilePage() {
               <div className="text-2xl font-bold text-white mb-2">
                 {createdSkills.length}
               </div>
-              <div className="text-sm text-gray-400">Skills Created</div>
+              <div className="text-sm text-gray-400">{t("profile.skillsCreated")}</div>
             </div>
             <div className="glass-strong rounded-xl p-6">
               <div className="text-4xl mb-3">⚡</div>
               <div className="text-2xl font-bold text-white mb-2">
                 {createdSkills.reduce((sum, s) => sum + s.usageCount, 0).toLocaleString()}
               </div>
-              <div className="text-sm text-gray-400">Total Runs</div>
+              <div className="text-sm text-gray-400">{t("creator.totalRuns")}</div>
             </div>
             <div className="glass-strong rounded-xl p-6">
               <div className="text-4xl mb-3">💰</div>
               <div className="text-2xl font-bold text-white mb-2">
                 {creator.totalEarnings} ETH
               </div>
-              <div className="text-sm text-gray-400">Total Revenue</div>
+              <div className="text-sm text-gray-400">{t("creator.totalRevenue")}</div>
             </div>
           </div>
         )}
