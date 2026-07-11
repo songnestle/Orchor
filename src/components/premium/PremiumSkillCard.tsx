@@ -111,12 +111,18 @@ export function PremiumSkillCard({ skill, onClick, onRun, onCollect }: PremiumSk
               </div>
 
               {/* Card Artwork */}
-              <div className="relative w-full h-[160px] overflow-hidden">
+              <div className="relative w-full h-[160px] overflow-hidden bg-gradient-to-br from-violet-900/40 to-cyan-900/40">
                 {/* Generated image */}
                 <img
-                  src={`/skills/skill-${skill.id}.svg`}
+                  src={`/skills/skill-${skill.id}.png`}
                   alt={skill.title}
+                  loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => {
+                    // If the PNG is missing, hide the broken image so the
+                    // gradient fallback behind it shows instead.
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                  }}
                 />
 
                 {/* Shimmer effect */}
