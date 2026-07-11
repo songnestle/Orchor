@@ -7,6 +7,7 @@ import type { SkillModule } from "@/lib/skills";
 import { RarityBadge } from "./RarityBadge";
 import { AttributeBar } from "./AttributeBar";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
+import { useI18n } from "@/lib/i18n";
 
 type Step = "idle" | "confirm" | "submitting" | "done" | "error";
 type Action = "run" | "collect";
@@ -31,6 +32,7 @@ export function CardDetailModal({
   const [err, setErr] = useState<string | null>(null);
 
   const { isConnected, address } = useAccount();
+  const { t } = useI18n();
   const { credits } = useCreditBalance();
 
   if (!skill) return null;
@@ -200,8 +202,8 @@ export function CardDetailModal({
                       className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {step === "submitting" && action === "run"
-                        ? "Running..."
-                        : `Run · ${runCost} Credits`}
+                        ? t("card.running")
+                        : `${t("card.run")} · ${runCost} ${t("topup.creditsUnit")}`}
                     </button>
                     <button
                       onClick={() => {
@@ -212,14 +214,14 @@ export function CardDetailModal({
                       className="flex-1 px-6 py-3 rounded-xl glass text-white font-bold border border-white/20 hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {step === "submitting" && action === "collect"
-                        ? "Collecting..."
-                        : `Collect · ${collectCost} Credits`}
+                        ? t("card.collecting")
+                        : `${t("card.collect")} · ${collectCost} ${t("topup.creditsUnit")}`}
                     </button>
                   </div>
 
                   {/* Balance hint */}
                   <div className="flex items-center justify-between mb-4 px-3 py-2 rounded-lg glass text-sm">
-                    <span className="text-gray-400">Your Balance</span>
+                    <span className="text-gray-400">{t("card.balance")}</span>
                     <span className={`font-semibold ${insufficientCredits ? "text-red-400" : "text-violet-400"}`}>
                       {credits.toLocaleString()} Credits
                     </span>
@@ -230,17 +232,17 @@ export function CardDetailModal({
 
                   {/* Tabs */}
                   <div className="flex gap-2 mb-6 border-b border-white/10">
-                    {["details", "stats", "history"].map((tab) => (
+                    {(["details", "stats", "history"] as const).map((tab) => (
                       <button
                         key={tab}
-                        onClick={() => setActiveTab(tab as any)}
-                        className={`px-4 py-2 font-semibold text-sm capitalize transition-all ${
+                        onClick={() => setActiveTab(tab)}
+                        className={`px-4 py-2 font-semibold text-sm transition-all ${
                           activeTab === tab
                             ? "text-violet-400 border-b-2 border-violet-400"
                             : "text-gray-400 hover:text-gray-300"
                         }`}
                       >
-                        {tab}
+                        {t(`card.${tab}` as any)}
                       </button>
                     ))}
                   </div>
@@ -256,14 +258,14 @@ export function CardDetailModal({
                     <div className="mb-4 p-4 rounded-xl glass border border-blue-500/30">
                       <div className="flex items-center gap-3">
                         <div className="loading-spinner" />
-                        <p className="text-sm text-white font-semibold">Processing...</p>
+                        <p className="text-sm text-white font-semibold">{t("card.processing")}</p>
                       </div>
                     </div>
                   )}
 
                   {step === "done" && (
                     <div className="mb-4 p-4 rounded-xl glass border border-green-500/30">
-                      <p className="text-sm text-green-400 font-semibold mb-2">✓ Success!</p>
+                      <p className="text-sm text-green-400 font-semibold mb-2">✓ {t("card.success")}</p>
                       {output && (
                         <pre className="text-xs text-gray-300 whitespace-pre-wrap max-h-32 overflow-y-auto">
                           {output}
@@ -352,7 +354,7 @@ export function CardDetailModal({
                         </div>
 
                         <div className="glass p-4 rounded-xl">
-                          <div className="text-sm text-gray-400 mb-1">Cost per Run</div>
+                          <div className="text-sm text-gray-400 mb-1">{t("card.costPerRun")}</div>
                           <div className="text-2xl font-bold text-white">
                             {runCost} Credits
                           </div>

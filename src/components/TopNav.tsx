@@ -4,6 +4,8 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useOrchorState } from "@/lib/useOrchorState";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
 import { shortAddress } from "@/lib/chain";
+import { useI18n, type TranslationKey } from "@/lib/i18n";
+import { LangToggle } from "./LangToggle";
 
 interface Props {
   onOpenDeck: () => void;
@@ -12,16 +14,17 @@ interface Props {
   onOpenTopUpCredits: () => void;
 }
 
-const NAV = [
-  { label: "Discover", href: "/" },
-  { label: "Creator Dashboard", href: "/creator" },
-  { label: "Transactions", href: "/transactions" },
-  { label: "Inventory", href: "/" },
-] as const;
+const NAV: { key: TranslationKey; href: string }[] = [
+  { key: "nav.discover", href: "/" },
+  { key: "nav.creator", href: "/creator" },
+  { key: "nav.transactions", href: "/transactions" },
+  { key: "nav.deck", href: "/deck" },
+];
 
 export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCredits }: Props) {
   const { walletBalanceMON: balance, energy, isConnected } = useOrchorState();
   const { creditsFormatted, usdValue, isLoading } = useCreditBalance();
+  const { t } = useI18n();
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-bg/55 border-b border-white/5">
@@ -43,7 +46,7 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
             const isActive = i === 0;
             return (
               <a
-                key={item.label}
+                key={item.key}
                 href={item.href}
                 className={`relative px-3 h-8 rounded-lg text-[11px] font-medium tracking-wide transition ${
                   isActive
@@ -58,7 +61,7 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
                     transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
                   />
                 )}
-                <span className="relative">{item.label}</span>
+                <span className="relative">{t(item.key)}</span>
               </a>
             );
           })}
@@ -130,6 +133,8 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
               <span className="text-[10px] text-muted">MON</span>
             </div>
           )}
+
+          <LangToggle />
 
           <WalletButton />
         </div>

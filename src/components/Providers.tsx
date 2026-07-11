@@ -10,6 +10,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { monadTestnet } from "@/lib/chain";
+import { I18nProvider } from "@/lib/i18n";
 
 const wagmiConfig = getDefaultConfig({
   appName: "Orchor",
@@ -38,7 +39,7 @@ export function Providers({ children }: { children: ReactNode }) {
           })}
           modalSize="compact"
         >
-          {children}
+          <I18nProvider>{children}</I18nProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
