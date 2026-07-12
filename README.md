@@ -111,6 +111,29 @@ Orchor uses **hybrid settlement**: deposits & withdrawals on-chain, execution of
 
 ---
 
+## ⛓️ Where the Blockchain Sits / 区块链的角色
+
+Orchor is a **hybrid architecture** — the blockchain does what it's best at, the off-chain layer does what it's best at. Three distinct roles:
+
+Orchor 是**混合架构** —— 链上做它擅长的，链下做它擅长的。区块链承担三件事：
+
+**1. Asset ownership / 资产确权**
+Skill cards and creator identity are registered on-chain. Our `OrchorCore` contract (deployed) turns a skill into a verifiable on-chain asset via `registerSkill`. 技能卡的所有权与创作者身份在链上注册，`OrchorCore` 合约（已部署）把技能变成链上可验证的资产。
+
+**2. Settlement in & out / 结算出入口**
+Credits are an off-chain layer for high-frequency, low-cost execution — but **money enters and leaves on-chain**: users deposit TRON stablecoins, creators withdraw to on-chain wallets. Off-chain ledger, on-chain settlement. 充值入口与提现出口在链上：用户用 TRON 稳定币充值，创作者提现回链上钱包。链下记账，链上结算。
+
+**3. Trustless revenue split / 分账可信保证**
+The 70/20/10 split is recorded in the off-chain ledger and enforceable on-chain — `OrchorCore._splitRevenue()` already implements it. 70/20/10 分成既在链下账本记录，也可由链上合约强制执行。
+
+> **On-chain for what it's good at — ownership & final settlement. Off-chain for what it's good at — high-frequency, low-cost execution. Fully on-chain is slow and expensive; fully off-chain isn't Web3. We take the best of both.**
+>
+> **链上做确权与最终结算，链下做高频低成本执行。全上链又慢又贵，全链下就不是 Web3 —— 我们取两者所长。**
+
+> **Current status / 当前状态:** The `OrchorCore` contract is deployed on Monad Testnet ([`0x769fC7...7a03`](https://testnet.monadexplorer.com/address/0x769fC7dFf74502E5A387eE7EF47A01917A847a03)). The demo's Credit flow runs off-chain for speed; wiring the main flow to on-chain TRON settlement is the first step on our roadmap — the architecture is already built for it. 合约已部署在 Monad 测试网；demo 的 Credits 流程当前走链下以保证流畅，接入 TRON 主网结算是路线图第一步，架构已预留。
+
+---
+
 ## 🏗️ Architecture / 架构
 
 ```
