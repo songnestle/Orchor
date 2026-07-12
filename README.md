@@ -93,6 +93,7 @@ Creator withdraws  ←  Revenue split 70/20/10  ←  Credits deducted
 
 - 🔜 **B.AI real compute integration** — replace the runtime stub with live B.AI inference — 接入 B.AI 真实算力
 - 🔜 **TRON mainnet settlement** — real TRC-20 USDT deposit monitoring & withdrawal — TRON 主网真实结算
+- 🔜 **x402 protocol** — adopt Coinbase's HTTP 402 standard so **AI Agents can auto-pay per skill call** (machine-to-machine payments). Our per-run billing model is natively compatible — 接入 x402 协议，让 **AI Agent 自动为每次技能调用付费**（机器对机器支付），我们的按次计费模型天然兼容
 - 🔜 **HTX liquidity** — list skill cards for trading in the HTX ecosystem — 接入 HTX 流动性
 - 🔜 **`.or` privacy compiler** — privacy-preserving executable skill packages — 隐私保护的技能封装
 
