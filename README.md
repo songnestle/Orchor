@@ -14,23 +14,35 @@
 
 ## 🎯 The Problem / 问题
 
-As AI Agents become the core interface of Web3, a critical question emerges:
+As AI Agents become the core interface of Web3, two groups are both stuck:
 
-> **How should the capabilities of these Agents be owned, traded, and monetized?**
+**🎨 Skill creators can't get paid.**
+Countless prompt engineers, researchers, and Agent builders craft powerful AI skills — but there's no way to monetize them. A brilliant VC-research agent or a battle-tested contract auditor stays trapped in one person's private toolkit, earning nothing. The work has real value; the market to capture it doesn't exist.
 
-Today, AI capabilities are closed and rented. We believe they should be **assets** — ownable, tradable, composable.
+**🔍 Users can't find good skills.**
+Everyone knows AI can do amazing things, but *which* prompt, *which* workflow, *which* agent actually delivers? Users waste hours reinventing wheels, or settle for generic ChatGPT output — because there's no trusted marketplace to discover, rate, and instantly run proven, high-quality skills.
 
-当 AI Agent 成为 Web3 的核心入口，一个关键问题浮现：**这些 Agent 的能力，该如何被拥有、交易和变现?** 今天的 AI 能力是封闭的、租来的 —— 我们认为它应该像资产一样**可拥有、可交易、可组合**。
+> **The capability exists. The creators exist. The demand exists. What's missing is the economic layer that connects them.**
+
+当 AI Agent 成为 Web3 的核心入口，两类人都被困住了：
+
+**🎨 技能创作者拿不到收益。** 无数 prompt 工程师、研究员、Agent 开发者打磨出强大的 AI 技能，却无从变现。一个出色的 VC 研究 Agent、一个久经考验的合约审计工具，只能锁在个人的私有工具箱里，赚不到一分钱。价值真实存在，但捕获价值的市场不存在。
+
+**🔍 用户找不到优质技能。** 人人都知道 AI 能做很多事，但*哪个* prompt、*哪个* 工作流、*哪个* Agent 真正好用？用户浪费大量时间重复造轮子，或将就用通用的 ChatGPT 输出 —— 因为没有一个可信的市场，去发现、评价、一键运行那些经过验证的优质技能。
+
+> **能力存在，创作者存在，需求存在。缺的，是那个把三者连起来的经济层。**
+
+That economic layer is Orchor. / 这个经济层，就是 Orchor。
 
 ---
 
 ## 💡 What is Orchor / 什么是 Orchor
 
-Orchor is an **AI Skill Runtime Economy** platform. It packages AI Agent capabilities — research, auditing, marketing, on-chain analysis — into **executable Skill Cards**.
+Orchor is an **AI Skill Runtime Economy** platform. It packages AI Agent capabilities — research, auditing, marketing, on-chain analysis — into **executable Skill Cards**, then gives creators a way to earn and users a place to discover.
 
-- Users deposit stablecoins → receive **Credits**
-- Run any skill with one click → **B.AI compute** executes it
-- Creators earn per-run revenue, settled with an automatic **70 / 20 / 10** split
+**For creators / 对创作者:** publish a skill once → earn per-run revenue forever, with an automatic **70 / 20 / 10** split. 发布一次技能 → 按次持续赚取收益。
+
+**For users / 对用户:** browse a marketplace of rated, proven skills → deposit stablecoins for **Credits** → run any skill in one click, powered by **B.AI**. 浏览经过评价验证的技能市场 → 充值获得 Credits → 一键运行，由 B.AI 驱动。
 
 > Orchor is to AI Agents what an app store is to Apps — but every capability is a card you can **own and trade**.
 >
