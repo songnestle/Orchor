@@ -35,7 +35,7 @@ export function TransactionHistory() {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/credits/transactions?address=${address}&limit=50`);
+      const response = await fetch(`/api/credits/transactions?address=${address.toLowerCase()}&limit=50`);
       const data = await response.json();
       setTransactions(data.transactions || []);
     } catch (error) {

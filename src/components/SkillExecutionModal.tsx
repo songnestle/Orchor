@@ -45,7 +45,7 @@ export function SkillExecutionModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: address,
+          userId: address?.toLowerCase(),
           skillId,
           input,
         }),

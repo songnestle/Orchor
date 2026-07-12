@@ -62,7 +62,7 @@ export function CreatorDashboard() {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/creator/stats?address=${address}`);
+      const response = await fetch(`/api/creator/stats?address=${address.toLowerCase()}`);
       const data = await response.json();
       // Only accept a valid payload that actually contains summary data.
       // On API error (e.g. DB unavailable) the response is { error }, which

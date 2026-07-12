@@ -15,7 +15,7 @@ export function useCreditBalance() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/credits/balance?address=${address}`);
+      const response = await fetch(`/api/credits/balance?address=${address.toLowerCase()}`);
       const data = await response.json();
 
       if (data.error) {

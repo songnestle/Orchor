@@ -71,7 +71,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: address,
+          userId: address?.toLowerCase(),
           chain: selectedChain,
           asset: selectedAsset,
         }),
@@ -99,7 +99,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: address,
+          userId: address?.toLowerCase(),
           usd: parseFloat(amount),
           chain: selectedChain,
           asset: selectedAsset,
