@@ -9,8 +9,23 @@
  */
 import OpenAI from "openai";
 import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
+
+// Resumable progress: ids already converted to retro art are skipped on re-run.
+const STATE_FILE = path.join(process.cwd(), "scripts", ".retro-done.json");
+function loadDone(): Set<number> {
+  try {
+    return new Set(JSON.parse(readFileSync(STATE_FILE, "utf8")));
+  } catch {
+    return new Set();
+  }
+}
+function markDone(id: number) {
+  const s = loadDone();
+  s.add(id);
+  writeFileSync(STATE_FILE, JSON.stringify([...s].sort((a, b) => a - b)));
+}
 
 const openai = new OpenAI({
   apiKey: "sk-ca945276d582a1f88fe37af6d241d4525d75d2fe654d88df8407b2436afbf357",
@@ -60,6 +75,7 @@ async function generateOnce(skill: { id: number; scene: string }, model: string)
   const outDir = path.join(process.cwd(), "public", "skills");
   if (!existsSync(outDir)) await mkdir(outDir, { recursive: true });
   await writeFile(path.join(outDir, `skill-${skill.id}.png`), buffer);
+  markDone(skill.id);
   console.log(`✅ saved skill-${skill.id}.png via ${model} (${(buffer.length / 1024).toFixed(0)} KB)`);
 }
 
@@ -83,8 +99,14 @@ async function generate(skill: { id: number; scene: string }) {
 
 async function main() {
   const argIds = process.argv.slice(2).map(Number).filter((n) => !Number.isNaN(n));
-  const targets = argIds.length ? skills.filter((s) => argIds.includes(s.id)) : skills;
-  console.log(`🚀 generating ${targets.length} retro image(s): [${targets.map((t) => t.id).join(", ")}]`);
+  const done = loadDone();
+  const requested = argIds.length ? skills.filter((s) => argIds.includes(s.id)) : skills;
+  const targets = requested.filter((s) => !done.has(s.id)); // skip already-converted
+  if (!targets.length) {
+    console.log(`✅ nothing to do — all requested ids already converted (done: [${[...done].sort((a,b)=>a-b).join(", ")}])`);
+    return;
+  }
+  console.log(`🚀 generating ${targets.length} retro image(s): [${targets.map((t) => t.id).join(", ")}] (skipping done: [${[...done].sort((a,b)=>a-b).join(", ")}])`);
 
   let ok = 0;
   for (const s of targets) {
