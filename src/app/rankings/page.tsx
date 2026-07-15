@@ -40,7 +40,7 @@ export default function RankingsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-300">@{skill.creatorHandle}</td>
                   <td className="px-6 py-4 text-right font-mono text-white">{skill.usageCount.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-right font-mono text-violet-400">{skill.priceMON} ETH</td>
+                  <td className="px-6 py-4 text-right font-mono text-[#d6a44c]">{skill.priceMON} ETH</td>
                 </tr>
               ))}
             </tbody>

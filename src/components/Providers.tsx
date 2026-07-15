@@ -31,7 +31,7 @@ export function Providers({ children }: { children: ReactNode }) {
         <RainbowKitProvider
           initialChain={monadTestnet}
           theme={darkTheme({
-            accentColor: "#8b5cf6",
+            accentColor: "#d6a44c",
             accentColorForeground: "white",
             borderRadius: "large",
             fontStack: "system",

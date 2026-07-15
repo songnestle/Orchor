@@ -102,7 +102,7 @@ export default function HistoryPage() {
               <div className="flex items-start gap-4">
                 {/* Icon */}
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${
-                  entry.status === "success" ? "bg-green-500/20" : "bg-red-500/20"
+                  entry.status === "success" ? "bg-[#7a9450]/20" : "bg-red-500/20"
                 }`}>
                   {entry.action === "run" ? "⚡" : entry.action === "unlock" ? "🔓" : "📅"}
                 </div>
@@ -118,7 +118,7 @@ export default function HistoryPage() {
                     </div>
                     <div className={`px-3 py-1 rounded-full text-xs font-bold ${
                       entry.status === "success"
-                        ? "bg-green-500/20 text-green-400"
+                        ? "bg-[#7a9450]/20 text-[#7a9450]"
                         : "bg-red-500/20 text-red-400"
                     }`}>
                       {entry.status}
@@ -134,7 +134,7 @@ export default function HistoryPage() {
                   )}
 
                   <div className="flex items-center gap-4 text-sm">
-                    <span className="text-violet-400 font-semibold">
+                    <span className="text-[#d6a44c] font-semibold">
                       {entry.action === "run" ? `${entry.cost} Energy` : `${entry.cost} ETH`}
                     </span>
                     {entry.txHash && (
@@ -142,7 +142,7 @@ export default function HistoryPage() {
                         href={`https://explorer.monad.xyz/tx/${entry.txHash}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 hover:underline"
+                        className="text-[#5a869c] hover:underline"
                       >
                         View TX →
                       </a>

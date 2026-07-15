@@ -125,7 +125,7 @@ export function SkillCard({ skill, variant = "main", onClick, onInvoke }: Props)
 
                 {variant === "side" && (
                   <div className="mt-3 flex items-center justify-between text-[11px]">
-                    <span className="font-mono text-amber-200">
+                    <span className="font-mono text-[#f0d493]">
                       {skill.energyCost} ⚡
                     </span>
                     <span className="text-mutedHi uppercase tracking-wider">
@@ -158,7 +158,7 @@ function MythicParticles() {
           y: (r2 / 233280) * 100,
           delay: (r2 / 233280) * 3,
           duration: 3 + (r / 233280) * 3,
-          color: i % 3 === 0 ? "#f9a8d4" : i % 3 === 1 ? "#67e8f9" : "#fde68a",
+          color: i % 3 === 0 ? "#d98a7d" : i % 3 === 1 ? "#b6c98f" : "#f0d493",
         };
       }),
     []
@@ -208,7 +208,7 @@ function CardHeader({
           className="h-8 w-8 rounded-full flex items-center justify-center text-[11px] font-display font-bold shrink-0"
           style={{
             background:
-              "linear-gradient(135deg, rgba(139,92,246,0.7), rgba(34,211,238,0.7))",
+              "linear-gradient(135deg, rgba(214,164,76,0.7), rgba(122,148,80,0.7))",
           }}
         >
           {skill.creatorAvatar}
@@ -229,9 +229,9 @@ function CardHeader({
             background: theme.tagBg,
             color: theme.tagText,
             textShadow: isMythic
-              ? "0 0 14px rgba(244,114,182,0.8)"
+              ? "0 0 14px rgba(191,91,75,0.8)"
               : skill.rarity === "Legendary"
-              ? "0 0 12px rgba(251,191,36,0.7)"
+              ? "0 0 12px rgba(214,164,76,0.7)"
               : "none",
           }}
         >
@@ -242,7 +242,7 @@ function CardHeader({
             : skill.rarity}
         </div>
         {isMythic && (liveMint || skill.mintedOf) && variant === "main" && (
-          <div className="px-1.5 py-0.5 rounded text-[9px] font-mono text-pink-200 bg-pink-500/10 border border-pink-400/20">
+          <div className="px-1.5 py-0.5 rounded text-[9px] font-mono text-[#d98a7d] bg-[#bf5b4b]/10 border border-[#bf5b4b]/20">
             {(liveMint?.current ?? skill.mintedOf!.current)}/{(liveMint?.cap ?? skill.mintedOf!.cap)} minted
           </div>
         )}
@@ -264,8 +264,8 @@ function CardTitle({ skill, variant }: { skill: SkillModule; variant: Variant })
       <div className="text-[10px] uppercase tracking-[0.2em] text-mutedHi flex items-center gap-2">
         <span>{skill.category}</span>
         {variant === "main" && (
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] bg-emerald-400/10 border border-emerald-400/20 text-emerald-300 normal-case tracking-normal">
-            <span className="h-1 w-1 rounded-full bg-emerald-400 animate-pulseDot" />
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] bg-[#7a9450]/10 border border-[#7a9450]/20 text-[#7a9450] normal-case tracking-normal">
+            <span className="h-1 w-1 rounded-full bg-[#7a9450] animate-pulseDot" />
             Hosted Runtime
           </span>
         )}
@@ -302,7 +302,7 @@ function CardPreview({ skill, variant }: { skill: SkillModule; variant: Variant 
         <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-muted">
           <span>{isMain ? `Pipeline · ${skill.runtime.model}` : "Pipeline"}</span>
           <span className="flex items-center gap-1">
-            <span className="h-1 w-1 rounded-full bg-emerald-400 animate-pulseDot" />
+            <span className="h-1 w-1 rounded-full bg-[#7a9450] animate-pulseDot" />
             ready
           </span>
         </div>
@@ -398,7 +398,7 @@ function CardStats({ skill, variant }: { skill: SkillModule; variant: Variant })
   if (variant === "mini") {
     return (
       <div className="flex items-center justify-between text-[10px]">
-        <span className="font-mono text-amber-200">{skill.energyCost} ⚡</span>
+        <span className="font-mono text-[#f0d493]">{skill.energyCost} ⚡</span>
         <span className="text-muted">★ {skill.rating}</span>
       </div>
     );
@@ -409,7 +409,7 @@ function CardStats({ skill, variant }: { skill: SkillModule; variant: Variant })
         icon={<EnergyBolt size={11} />}
         label="Invoke"
         value={`${skill.energyCost}`}
-        valueClass="text-amber-200"
+        valueClass="text-[#f0d493]"
       />
       <Pill label="Rating" value={`★ ${skill.rating}`} />
       <Pill

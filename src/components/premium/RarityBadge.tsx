@@ -15,36 +15,36 @@ const rarityConfig: Record<Rarity, {
   shimmer: boolean;
 }> = {
   Common: {
-    gradient: "from-slate-500 to-slate-600",
-    glow: "shadow-slate-500/30",
+    gradient: "from-[#8a7d63] to-[#6f6450]",
+    glow: "rgba(138,125,99,0.5)",
     shimmer: false,
   },
   Rare: {
-    gradient: "from-blue-500 to-blue-600",
-    glow: "shadow-blue-500/40",
+    gradient: "from-[#5a869c] to-[#476b7d]",
+    glow: "rgba(90,134,156,0.6)",
     shimmer: true,
   },
   Epic: {
-    gradient: "from-purple-500 to-purple-600",
-    glow: "shadow-purple-500/50",
+    gradient: "from-[#8a6a9c] to-[#6f547d]",
+    glow: "rgba(138,106,156,0.6)",
     shimmer: true,
   },
   Legendary: {
-    gradient: "from-amber-500 to-amber-600",
-    glow: "shadow-amber-500/60",
+    gradient: "from-[#edc26a] to-[#d6a44c]",
+    glow: "rgba(214,164,76,0.7)",
     shimmer: true,
   },
   Mythic: {
-    gradient: "from-pink-500 via-fuchsia-500 to-purple-600",
-    glow: "shadow-fuchsia-500/70",
+    gradient: "from-[#d6a44c] via-[#bf5b4b] to-[#8a6a9c]",
+    glow: "rgba(191,91,75,0.7)",
     shimmer: true,
   },
 };
 
 const sizeClasses = {
-  sm: "px-2 py-0.5 text-xs",
-  md: "px-3 py-1 text-sm",
-  lg: "px-4 py-1.5 text-base",
+  sm: "px-2 py-1 text-[7px]",
+  md: "px-2.5 py-1 text-[8px]",
+  lg: "px-3 py-1.5 text-[10px]",
 };
 
 export function RarityBadge({ rarity, size = "md", animated = true }: RarityBadgeProps) {
@@ -54,16 +54,16 @@ export function RarityBadge({ rarity, size = "md", animated = true }: RarityBadg
     <motion.div
       className={`
         relative inline-flex items-center justify-center
-        rounded-full font-bold text-white
+        rounded-[3px] font-pixel tracking-wide text-[#161310]
         bg-gradient-to-r ${config.gradient}
         ${sizeClasses[size]}
-        ${config.glow}
       `}
       initial={animated ? { scale: 0, opacity: 0 } : undefined}
       animate={animated ? { scale: 1, opacity: 1 } : undefined}
       whileHover={animated ? { scale: 1.05 } : undefined}
       style={{
-        boxShadow: `0 0 20px ${rarityConfig[rarity].glow}`,
+        border: "2px solid #161310",
+        boxShadow: `2px 2px 0 rgba(0,0,0,0.4)`,
       }}
     >
       {/* Shimmer effect for rare+ cards */}
@@ -94,7 +94,7 @@ export function RarityBadge({ rarity, size = "md", animated = true }: RarityBadg
             repeat: Infinity,
           }}
           style={{
-            background: "radial-gradient(circle, rgba(236,72,153,0.3) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(191,91,75,0.3) 0%, transparent 70%)",
           }}
         />
       )}

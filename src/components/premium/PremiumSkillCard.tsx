@@ -12,271 +12,190 @@ interface PremiumSkillCardProps {
   onCollect?: () => void;
 }
 
+// Retro "aged cartridge" rarity tints (kept in sync with globals.css)
 const rarityColors: Record<Rarity, string> = {
-  Common: "#64748B",
-  Rare: "#3B82F6",
-  Epic: "#8B5CF6",
-  Legendary: "#F59E0B",
-  Mythic: "#EC4899",
+  Common: "#8a7d63",
+  Rare: "#5a869c",
+  Epic: "#8a6a9c",
+  Legendary: "#d6a44c",
+  Mythic: "#bf5b4b",
 };
 
-const rarityGradients: Record<Rarity, string> = {
-  Common: "from-slate-500 to-slate-600",
-  Rare: "from-blue-500 to-blue-600",
-  Epic: "from-purple-500 to-purple-600",
-  Legendary: "from-amber-500 to-amber-600",
-  Mythic: "from-pink-500 to-fuchsia-600",
-};
-
-// Category-based gradients
-function getCategoryGradient(category: string, rarity: Rarity): string {
-  const baseGradients: Record<string, string> = {
-    "Research": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "Product": "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    "Marketing": "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-    "Automation": "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-    "Web3 Dev": "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-    "Data": "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
-  };
-
-  // Enhance with rarity overlay
-  const rarityOverlay = rarity === "Mythic" ? ", rgba(236, 72, 153, 0.3)" :
-                        rarity === "Legendary" ? ", rgba(245, 158, 11, 0.2)" :
-                        rarity === "Epic" ? ", rgba(139, 92, 246, 0.2)" : "";
-
-  return baseGradients[category] || baseGradients["Research"];
-}
-
-// Category icons
+// Pixel category glyphs
 function getCategoryIcon(category: string): string {
   const icons: Record<string, string> = {
-    "Research": "🔬",
-    "Product": "🚀",
-    "Marketing": "📢",
-    "Automation": "⚙️",
+    Research: "🔬",
+    Product: "🚀",
+    Marketing: "📢",
+    Automation: "⚙️",
     "Web3 Dev": "⛓️",
-    "Data": "📊",
+    Data: "📊",
   };
   return icons[category] || "✨";
 }
 
 export function PremiumSkillCard({ skill, onClick, onRun, onCollect }: PremiumSkillCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
-
   const rarityColor = rarityColors[skill.rarity];
-  const rarityGradient = rarityGradients[skill.rarity];
+
+  const attrs = [
+    { label: "SPD", value: 8 },
+    { label: "PWR", value: 9 },
+    { label: "COST", value: 6 },
+  ];
 
   return (
     <motion.div
-      className="relative w-[280px] h-[400px] perspective-1000"
-      initial={{ opacity: 0, y: 20 }}
+      className="relative w-[280px] h-[400px]"
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8, scale: 1.02 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.25 }}
       onClick={onClick}
-      style={{ perspective: "1000px" }}
+      style={{ perspective: "1200px" }}
     >
       <motion.div
         className="relative w-full h-full"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5 }}
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Front of Card */}
+        {/* ---------- Front ---------- */}
         <div
-          className="absolute inset-0 rounded-2xl overflow-hidden cursor-pointer"
-          style={{
-            backfaceVisibility: "hidden",
-            boxShadow: isHovered
-              ? `0 20px 60px ${rarityColor}66`
-              : `0 10px 30px ${rarityColor}33`,
-          }}
+          className="retro-card absolute inset-0 flex flex-col cursor-pointer"
+          data-rarity={skill.rarity}
+          style={{ backfaceVisibility: "hidden" }}
         >
-          {/* Holographic Border */}
-          <div className="holo-border w-full h-full">
-            <div className="relative w-full h-full bg-gradient-to-br from-[#13141A] to-[#0A0B0F] rounded-2xl overflow-hidden">
+          {/* name plate */}
+          <div className="retro-plate flex items-center justify-between gap-2 px-3 py-2.5">
+            <div className="retro-name text-[9px] leading-[1.4] line-clamp-2">{skill.title}</div>
+            <div
+              className="retro-badge shrink-0 px-1.5 py-1 text-[7px]"
+              data-rarity={skill.rarity}
+            >
+              {skill.rarity.toUpperCase()}
+            </div>
+          </div>
 
-              {/* Rarity Badge */}
-              <div className="absolute top-3 right-3 z-10">
-                <div
-                  className={`px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r ${rarityGradient} shadow-lg`}
-                  style={{
-                    boxShadow: `0 0 20px ${rarityColor}66`,
-                  }}
-                >
-                  {skill.rarity}
-                </div>
-              </div>
+          {/* art window */}
+          <div className="retro-art mx-2.5 mt-2.5 h-[150px]">
+            <img
+              src={`/skills/skill-${skill.id}.png`}
+              alt={skill.title}
+              loading="lazy"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = "none";
+              }}
+            />
+            {/* category chip */}
+            <div className="absolute bottom-1.5 left-1.5 z-[2]">
+              <span className="font-pixel text-[6px] px-1.5 py-1 bg-black/70 text-cream border border-black/60"
+                style={{ color: "var(--r-cream)" }}>
+                {getCategoryIcon(skill.category)} {skill.category.toUpperCase()}
+              </span>
+            </div>
+          </div>
 
-              {/* Card Artwork */}
-              <div className="relative w-full h-[160px] overflow-hidden bg-gradient-to-br from-violet-900/40 to-cyan-900/40">
-                {/* Generated image */}
-                <img
-                  src={`/skills/skill-${skill.id}.png`}
-                  alt={skill.title}
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full object-cover"
-                  onError={(e) => {
-                    // If the PNG is missing, hide the broken image so the
-                    // gradient fallback behind it shows instead.
-                    (e.currentTarget as HTMLImageElement).style.display = "none";
-                  }}
-                />
+          {/* body */}
+          <div className="flex-1 flex flex-col px-3 pt-2.5 pb-3">
+            {/* creator + rating */}
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="font-retro text-[15px]" style={{ color: "var(--r-ink)" }}>
+                @{skill.creatorHandle}
+              </span>
+              <span className="font-retro text-[15px]" style={{ color: "var(--r-gold)" }}>
+                ★ {skill.rating}
+              </span>
+            </div>
 
-                {/* Shimmer effect */}
-                {isHovered && (
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                    initial={{ x: "-100%" }}
-                    animate={{ x: "100%" }}
-                    transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
-                  />
-                )}
-
-                {/* Mythic particles */}
-                {skill.rarity === "Mythic" && (
-                  <div className="absolute inset-0">
-                    {[...Array(5)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className="absolute w-1 h-1 bg-pink-400 rounded-full"
-                        style={{
-                          left: `${20 + i * 15}%`,
-                          bottom: 0,
-                        }}
-                        animate={{
-                          y: [-100, -120],
-                          x: [0, 20],
-                          opacity: [0, 1, 0],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          delay: i * 0.5,
-                        }}
-                      />
+            {/* attribute bars */}
+            <div className="flex flex-col gap-1.5 mb-2.5">
+              {attrs.map((a) => (
+                <div key={a.label} className="flex items-center gap-2">
+                  <span className="font-pixel text-[6px] w-8" style={{ color: "var(--r-ink-dim)" }}>
+                    {a.label}
+                  </span>
+                  <div className="retro-bar flex-1">
+                    {Array.from({ length: 10 }).map((_, i) => (
+                      <div key={i} className={`retro-bar__seg ${i < a.value ? "on" : ""}`} />
                     ))}
                   </div>
-                )}
-
-                {/* Category badge */}
-                <div className="absolute bottom-2 left-2">
-                  <div className="px-2 py-1 rounded-md text-xs font-semibold bg-black/60 backdrop-blur-sm text-white border border-white/10">
-                    {skill.category}
-                  </div>
                 </div>
-              </div>
+              ))}
+            </div>
 
-              {/* Card Info */}
-              <div className="p-4 space-y-3">
-                {/* Skill Name */}
-                <h3 className="text-lg font-bold text-white font-display line-clamp-2 leading-tight">
-                  {skill.title}
-                </h3>
+            {/* runs + cost */}
+            <div className="flex items-center justify-between mb-2.5 mt-auto">
+              <span className="font-retro text-[15px]" style={{ color: "var(--r-ink-dim)" }}>
+                {skill.usageCount.toLocaleString()} runs
+              </span>
+              <span className="font-retro text-[16px]" style={{ color: "var(--r-ink)" }}>
+                <b style={{ color: "var(--r-gold)" }}>{skill.energyCost * 10}</b> cr
+              </span>
+            </div>
 
-                {/* Creator */}
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500" />
-                  <span className="text-xs text-gray-400">@{skill.creatorHandle}</span>
-                </div>
-
-                {/* Stats */}
-                <div className="flex items-center gap-4 text-xs">
-                  <div className="flex items-center gap-1">
-                    <span className="text-yellow-400">⭐</span>
-                    <span className="text-white font-semibold">{skill.rating}</span>
-                  </div>
-                  <div className="text-gray-400">
-                    {skill.usageCount.toLocaleString()} runs
-                  </div>
-                </div>
-
-                {/* Attributes */}
-                <div className="space-y-1.5">
-                  {[
-                    { label: "Speed", value: 8 },
-                    { label: "Power", value: 9 },
-                    { label: "Cost", value: 6 },
-                  ].map((attr) => (
-                    <div key={attr.label} className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400 w-12">{attr.label}</span>
-                      <div className="flex-1 h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                        <motion.div
-                          className={`h-full bg-gradient-to-r ${rarityGradient}`}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${attr.value * 10}%` }}
-                          transition={{ duration: 1, delay: 0.2 }}
-                        />
-                      </div>
-                      <span className="text-xs text-white font-mono">{attr.value}/10</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="absolute bottom-4 left-4 right-4 flex gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRun?.();
-                  }}
-                  className="flex-1 px-3 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white text-xs font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all"
-                >
-                  Run
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onCollect?.();
-                  }}
-                  className="flex-1 px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm text-white text-xs font-bold border border-white/20 hover:bg-white/20 transition-all"
-                >
-                  Collect
-                </button>
-              </div>
+            {/* actions */}
+            <div className="flex gap-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRun?.();
+                }}
+                className="retro-btn flex-1 py-2 text-[8px]"
+              >
+                RUN
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCollect?.();
+                }}
+                className="retro-btn retro-btn--ghost flex-1 py-2 text-[8px]"
+              >
+                COLLECT
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Back of Card (Stats) */}
+        {/* ---------- Back (stats) ---------- */}
         <div
-          className="absolute inset-0 rounded-2xl overflow-hidden"
-          style={{
-            backfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
-            boxShadow: `0 20px 60px ${rarityColor}66`,
-          }}
+          className="retro-card absolute inset-0 flex flex-col justify-center px-6"
+          data-rarity={skill.rarity}
+          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
-          <div className="w-full h-full bg-gradient-to-br from-[#13141A] to-[#0A0B0F] rounded-2xl p-6 flex flex-col justify-center">
-            <h4 className="text-lg font-bold text-white mb-4 font-display">Card Stats</h4>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Energy Cost:</span>
-                <span className="text-white font-bold">{skill.energyCost} ⚡</span>
+          <div className="font-pixel text-[11px] mb-5" style={{ color: "var(--r-gold)" }}>
+            CARD STATS
+          </div>
+          <div className="flex flex-col gap-3.5 font-retro text-[17px]">
+            {[
+              ["ENERGY", `${skill.energyCost} ⚡`],
+              ["RUNS", skill.usageCount.toLocaleString()],
+              ["RATING", `${skill.rating} ★`],
+              ["ORIGIN", skill.origin],
+            ].map(([k, v]) => (
+              <div key={k} className="flex justify-between border-b border-dashed pb-1"
+                style={{ borderColor: "var(--r-line)" }}>
+                <span style={{ color: "var(--r-ink-dim)" }}>{k}</span>
+                <span style={{ color: "var(--r-cream)" }}>{v}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Total Runs:</span>
-                <span className="text-white font-bold">{skill.usageCount.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Rating:</span>
-                <span className="text-white font-bold">{skill.rating} ⭐</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Origin:</span>
-                <span className="text-white font-bold">{skill.origin}</span>
-              </div>
-            </div>
+            ))}
+          </div>
+          <div className="mt-5 font-pixel text-[7px]" style={{ color: rarityColor }}>
+            ◆ {skill.rarity.toUpperCase()} ◆
           </div>
         </div>
       </motion.div>
 
-      {/* Flip indicator */}
+      {/* flip toggle */}
       <button
-        className="absolute bottom-2 right-2 z-20 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white text-xs hover:bg-black/80 transition-all"
+        className="absolute bottom-1.5 right-1.5 z-20 w-7 h-7 flex items-center justify-center font-pixel text-[9px]"
+        style={{
+          background: "var(--r-panel)",
+          color: "var(--r-cream)",
+          border: "2px solid var(--r-line-strong)",
+          borderRadius: 3,
+        }}
         onClick={(e) => {
           e.stopPropagation();
           setIsFlipped(!isFlipped);

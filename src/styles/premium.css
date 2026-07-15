@@ -2,33 +2,35 @@
 
 :root {
   /* === Color System === */
-  /* Primary Palette */
-  --orchor-black: #0A0B0F;
-  --orchor-void: #13141A;
-  --orchor-violet: #7C3AED;
-  --orchor-purple: #8B5CF6;
-  --orchor-fuchsia: #C026D3;
-  --orchor-silver: #E5E7EB;
-  --orchor-platinum: #F3F4F6;
-  --orchor-gold: #FBBF24;
+  /* Primary Palette — retro "aged cartridge" warm tones.
+     Names kept; values remapped so every component re-themes for free. */
+  --orchor-black: #161310;
+  --orchor-void: #201c17;
+  --orchor-violet: #d6a44c;   /* primary → aged brass */
+  --orchor-purple: #c9973f;
+  --orchor-fuchsia: #bf5b4b;  /* secondary → faded terracotta */
+  --orchor-silver: #f2e8d5;
+  --orchor-platinum: #ecdcb8;
+  --orchor-gold: #d6a44c;
 
-  /* Rarity Colors */
-  --rarity-common: #64748B;
-  --rarity-rare: #3B82F6;
-  --rarity-epic: #8B5CF6;
-  --rarity-legendary: #F59E0B;
-  --rarity-mythic: #EC4899;
+  /* Rarity Colors — muted retro tiers */
+  --rarity-common: #8a7d63;
+  --rarity-rare: #5a869c;
+  --rarity-epic: #8a6a9c;
+  --rarity-legendary: #d6a44c;
+  --rarity-mythic: #bf5b4b;
 
   /* Semantic Colors */
-  --orchor-success: #10B981;
-  --orchor-warning: #F59E0B;
-  --orchor-danger: #EF4444;
-  --orchor-info: #3B82F6;
+  --orchor-success: #7a9450;
+  --orchor-warning: #d6a44c;
+  --orchor-danger: #bf5b4b;
+  --orchor-info: #5a869c;
 
   /* Typography */
-  --font-display: "Orbitron", "Space Grotesk", "Inter", system-ui;
-  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "Fira Code", "JetBrains Mono", monospace;
+  --font-display: "Space Grotesk", "Inter", system-ui;
+  --font-pixel: "Press Start 2P", monospace;
+  --font-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
   /* Spacing */
   --space-1: 0.25rem;
@@ -55,10 +57,10 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
-  /* Glow Shadows */
-  --glow-violet: 0 0 20px rgba(124, 58, 237, 0.4);
-  --glow-fuchsia: 0 0 20px rgba(192, 38, 211, 0.4);
-  --glow-mythic: 0 0 40px rgba(236, 72, 153, 0.6);
+  /* Glow Shadows → hard pixel offset shadows */
+  --glow-violet: 4px 4px 0 rgba(0, 0, 0, 0.45);
+  --glow-fuchsia: 4px 4px 0 rgba(0, 0, 0, 0.45);
+  --glow-mythic: 0 0 0 3px rgba(191, 91, 75, 0.5), 6px 6px 0 rgba(0, 0, 0, 0.45);
 }
 
 /* === Base Styles === */
@@ -79,11 +81,19 @@ body {
 }
 
 body {
+  /* warm grain + faint scanlines — kept in sync with globals.css */
   background-image:
-    radial-gradient(1100px 700px at 14% -10%, rgba(124, 58, 237, 0.15), transparent 60%),
-    radial-gradient(900px 600px at 86% 6%, rgba(34, 211, 238, 0.1), transparent 60%),
-    radial-gradient(700px 500px at 50% 110%, rgba(192, 38, 211, 0.08), transparent 60%),
-    linear-gradient(to bottom, var(--orchor-black) 0%, var(--orchor-void) 50%, var(--orchor-black) 100%);
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.05) 0px,
+      rgba(0, 0, 0, 0.05) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    radial-gradient(1100px 700px at 12% -10%, rgba(214, 164, 76, 0.10), transparent 60%),
+    radial-gradient(900px 600px at 88% 4%, rgba(122, 148, 80, 0.07), transparent 60%),
+    radial-gradient(700px 500px at 50% 112%, rgba(191, 91, 75, 0.07), transparent 60%),
+    linear-gradient(to bottom, #161310 0%, #1b1712 50%, #161310 100%);
   background-attachment: fixed;
 }
 
@@ -123,19 +133,19 @@ p {
   background-clip: text;
 }
 
-/* === Glass Effect === */
+/* === Glass Effect → warm panel (kept in sync with globals.css) === */
 .glass {
-  background: rgba(19, 20, 26, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(229, 231, 235, 0.1);
+  background: rgba(43, 37, 29, 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 2px solid var(--r-line, #443c30);
 }
 
 .glass-strong {
-  background: rgba(19, 20, 26, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(229, 231, 235, 0.15);
+  background: rgba(32, 28, 23, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid var(--r-line-strong, #75654a);
 }
 
 /* === Card Effects === */
@@ -153,20 +163,13 @@ p {
   transform: translateY(-8px) scale(1.02);
 }
 
-/* === Holographic Effect === */
+/* === Holographic Effect → static pixel frame === */
 .holo-border {
   position: relative;
-  border-radius: var(--radius-card);
-  padding: 2px;
-  background: linear-gradient(
-    135deg,
-    rgba(124, 58, 237, 0.9),
-    rgba(34, 211, 238, 0.4) 35%,
-    rgba(192, 38, 211, 0.6) 65%,
-    rgba(124, 58, 237, 0.9)
-  );
-  background-size: 200% 200%;
-  animation: holoBorderShift 6s ease-in-out infinite;
+  border-radius: 6px;
+  padding: 3px;
+  background: var(--r-line-strong, #75654a);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
 .holo-shine {
@@ -190,27 +193,27 @@ p {
   animation: holoShine 3s ease-in-out infinite;
 }
 
-/* === Rarity Glows === */
+/* === Rarity Frames → hard pixel offset shadows === */
 .rarity-common {
-  box-shadow: 0 0 20px rgba(100, 116, 139, 0.3);
+  box-shadow: 0 0 0 2px rgba(138, 125, 99, 0.5), 4px 4px 0 rgba(0, 0, 0, 0.4);
 }
 
 .rarity-rare {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 0 2px rgba(90, 134, 156, 0.6), 4px 4px 0 rgba(0, 0, 0, 0.4);
 }
 
 .rarity-epic {
-  box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 0 2px rgba(138, 106, 156, 0.6), 4px 4px 0 rgba(0, 0, 0, 0.4);
 }
 
 .rarity-legendary {
-  box-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
-  animation: rarityPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 0 2px rgba(214, 164, 76, 0.7), 5px 5px 0 rgba(0, 0, 0, 0.4);
+  animation: rarityPulse 2.4s steps(2) infinite;
 }
 
 .rarity-mythic {
-  box-shadow: 0 0 40px rgba(236, 72, 153, 0.7);
-  animation: rarityPulse 2s ease-in-out infinite, mythicFloat 3s ease-in-out infinite;
+  box-shadow: 0 0 0 3px rgba(191, 91, 75, 0.7), 6px 6px 0 rgba(0, 0, 0, 0.4);
+  animation: rarityPulse 2.4s steps(2) infinite, mythicFloat 3s ease-in-out infinite;
 }
 
 /* === Animations === */
@@ -225,12 +228,8 @@ p {
 }
 
 @keyframes rarityPulse {
-  0%, 100% {
-    box-shadow: 0 0 20px currentColor;
-  }
-  50% {
-    box-shadow: 0 0 40px currentColor;
-  }
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.12); }
 }
 
 @keyframes mythicFloat {

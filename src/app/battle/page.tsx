@@ -71,7 +71,7 @@ export default function BattleArenaPage() {
                 </div>
                 <button
                   onClick={startBattle}
-                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-red-600 to-orange-600 text-white font-bold text-lg hover:shadow-lg hover:shadow-red-500/50 transition-all"
+                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-[#9c463a] to-orange-600 text-white font-bold text-lg hover:shadow-lg hover:shadow-[#bf5b4b]/50 transition-all"
                 >
                   🔥 {t("battle.start")}
                 </button>
@@ -148,7 +148,7 @@ export default function BattleArenaPage() {
                 </button>
                 <button
                   onClick={startBattle}
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all"
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#b07f2f] to-[#9c463a] text-white font-bold hover:shadow-lg hover:shadow-[#d6a44c]/50 transition-all"
                 >
                   {t("battle.rematch")}
                 </button>

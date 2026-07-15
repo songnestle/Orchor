@@ -21,7 +21,7 @@ export function HeroSection({ onOpenPack, onExplore }: Props) {
           className="max-w-3xl"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-[11px]">
-            <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400 animate-pulseDot" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#bf5b4b] animate-pulseDot" />
             <span className="text-mutedHi tracking-wide uppercase">
               Season 01 · Hosted Runtime live on Monad
             </span>
@@ -35,9 +35,9 @@ export function HeroSection({ onOpenPack, onExplore }: Props) {
           <p className="mt-5 text-base sm:text-lg text-mutedHi max-w-2xl leading-relaxed">
             Orchor turns AI capabilities into{" "}
             <span className="text-white">collectible, programmable Skills</span>{" "}
-            — packaged as <span className="font-mono text-cyan-300">.or</span>{" "}
+            — packaged as <span className="font-mono text-[#b6c98f]">.or</span>{" "}
             files, hosted on our runtime, and settled onchain by Monad. No API
-            keys. Just <span className="text-amber-200">⚡ Energy</span>.
+            keys. Just <span className="text-[#f0d493]">⚡ Energy</span>.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -59,7 +59,7 @@ export function HeroSection({ onOpenPack, onExplore }: Props) {
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-mutedHi">
             <Stat label="In your deck" value={owned.size} accent="text-gradient" />
             <span className="opacity-40">·</span>
-            <Stat label="Subscribed" value={subscribed.size} accent="text-cyan-300" />
+            <Stat label="Subscribed" value={subscribed.size} accent="text-[#b6c98f]" />
             <span className="opacity-40">·</span>
             <Stat label="Hosted skills" value={128} />
             <span className="opacity-40">·</span>

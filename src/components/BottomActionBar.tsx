@@ -29,7 +29,7 @@ export function BottomActionBar({ onOpenPack, onOpenDeck, onOpenTopUp }: Props) 
           className="absolute -inset-2 rounded-3xl blur-2xl opacity-60 pointer-events-none"
           style={{
             background:
-              "linear-gradient(90deg, rgba(139,92,246,0.5), rgba(34,211,238,0.5))",
+              "linear-gradient(90deg, rgba(214,164,76,0.5), rgba(122,148,80,0.5))",
           }}
         />
         <div className="relative rounded-2xl glass-strong px-4 py-3 flex items-center gap-3">

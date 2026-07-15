@@ -140,7 +140,7 @@ function TransactionRow({ tx }: { tx: Transaction }) {
       <div className="text-right">
         <div
           className={`font-mono text-[14px] font-semibold ${
-            tx.isCredit ? 'text-emerald-300' : 'text-rose-300'
+            tx.isCredit ? 'text-[#7a9450]' : 'text-[#d98a7d]'
           }`}
         >
           {tx.isCredit ? '+' : '-'}{Math.abs(Number(tx.amount)).toLocaleString()} credits
@@ -156,17 +156,17 @@ function TransactionRow({ tx }: { tx: Transaction }) {
 function getTypeInfo(type: Transaction['type']) {
   switch (type) {
     case 'deposit':
-      return { icon: '💳', label: 'Deposit', bgColor: 'bg-emerald-500/10' };
+      return { icon: '💳', label: 'Deposit', bgColor: 'bg-[#7a9450]/10' };
     case 'skill_run':
-      return { icon: '⚡', label: 'Skill Execution', bgColor: 'bg-cyan-500/10' };
+      return { icon: '⚡', label: 'Skill Execution', bgColor: 'bg-[#7a9450]/10' };
     case 'creator_revenue':
-      return { icon: '💰', label: 'Creator Revenue', bgColor: 'bg-amber-500/10' };
+      return { icon: '💰', label: 'Creator Revenue', bgColor: 'bg-[#d6a44c]/10' };
     case 'platform_fee':
-      return { icon: '🏦', label: 'Platform Fee', bgColor: 'bg-violet-500/10' };
+      return { icon: '🏦', label: 'Platform Fee', bgColor: 'bg-[#d6a44c]/10' };
     case 'runtime_cost':
-      return { icon: '⚙️', label: 'Runtime Cost', bgColor: 'bg-blue-500/10' };
+      return { icon: '⚙️', label: 'Runtime Cost', bgColor: 'bg-[#5a869c]/10' };
     case 'withdrawal':
-      return { icon: '📤', label: 'Withdrawal', bgColor: 'bg-rose-500/10' };
+      return { icon: '📤', label: 'Withdrawal', bgColor: 'bg-[#bf5b4b]/10' };
     default:
       return { icon: '📝', label: 'Transaction', bgColor: 'bg-white/5' };
   }

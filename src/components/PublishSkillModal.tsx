@@ -428,7 +428,7 @@ export function PublishSkillModal({ open, onClose }: Props) {
               className="absolute -top-24 left-1/2 -translate-x-1/2 h-44 w-[70%] blur-3xl opacity-60 pointer-events-none"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(139,92,246,0.55), rgba(34,211,238,0.55))",
+                  "linear-gradient(90deg, rgba(214,164,76,0.55), rgba(122,148,80,0.55))",
               }}
             />
 
@@ -452,7 +452,7 @@ export function PublishSkillModal({ open, onClose }: Props) {
                 </h2>
                 <p className="mt-1 text-[12px] text-mutedHi">
                   Mints a new skill onchain via{" "}
-                  <span className="font-mono text-cyan-300">registerSkill</span>.
+                  <span className="font-mono text-[#b6c98f]">registerSkill</span>.
                   Onchain stores name + rarity + economics. The rest of the
                   manifest lives off-chain (IPFS in production; localStorage
                   for this demo).
@@ -555,7 +555,7 @@ export function PublishSkillModal({ open, onClose }: Props) {
                   />
                 )}
                 {step === "done" && newSkillId != null && (
-                  <div className="mt-2 rounded-lg p-2 bg-emerald-500/10 border border-emerald-500/30 text-[11.5px] text-emerald-300">
+                  <div className="mt-2 rounded-lg p-2 bg-[#7a9450]/10 border border-[#7a9450]/30 text-[11.5px] text-[#7a9450]">
                     ✓ Skill <span className="font-mono text-white">#{newSkillId}</span> minted onchain. It now appears
                     in the Grid + carousel and can be unlocked / invoked by
                     anyone on Monad Testnet.
@@ -566,7 +566,7 @@ export function PublishSkillModal({ open, onClose }: Props) {
                           href={explorerTxUrl(txHash)}
                           target="_blank"
                           rel="noreferrer"
-                          className="underline hover:text-emerald-200"
+                          className="underline hover:text-[#7a9450]"
                         >
                           view tx
                         </a>
@@ -625,7 +625,7 @@ export function PublishSkillModal({ open, onClose }: Props) {
 
                 <div className="mt-3 text-[10px] text-muted text-center">
                   Calls{" "}
-                  <span className="font-mono text-cyan-300">
+                  <span className="font-mono text-[#b6c98f]">
                     OrchorCore.registerSkill
                   </span>{" "}
                   · payable gas in MON · creator becomes msg.sender · earns 70%
@@ -743,7 +743,7 @@ function FormPanel({
               min={1}
               value={form.energyCost}
               onChange={(e) => update("energyCost", Number(e.target.value))}
-              className="input font-mono text-amber-200"
+              className="input font-mono text-[#f0d493]"
             />
           </Field>
           <Field label={<><MonadIcon size={10} /> Unlock MON</>}>
@@ -845,7 +845,7 @@ function ManifestPanel({
   return (
     <div className="space-y-3">
       <div className="text-[12px] text-mutedHi leading-relaxed">
-        Paste a <span className="font-mono text-cyan-300">.or</span> manifest
+        Paste a <span className="font-mono text-[#b6c98f]">.or</span> manifest
         (or any compatible JSON exported from{" "}
         <span className="text-white">OpenClaw</span>,{" "}
         <span className="text-white">Claude Code</span>,{" "}
@@ -892,7 +892,7 @@ function PresetPanel({
             onClick={() => onPick(p)}
             className="text-left rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] p-3 transition"
           >
-            <div className="text-[10px] uppercase tracking-wider text-cyan-300">
+            <div className="text-[10px] uppercase tracking-wider text-[#b6c98f]">
               {p.origin}
             </div>
             <div className="mt-1 font-display text-[14px] font-semibold text-white">
@@ -901,7 +901,7 @@ function PresetPanel({
             <div className="mt-1 text-[10.5px] text-mutedHi line-clamp-2">
               {p.data.shortDescription}
             </div>
-            <div className="mt-2 text-[10px] font-mono text-amber-200">
+            <div className="mt-2 text-[10px] font-mono text-[#f0d493]">
               {p.data.energyCost} ⚡ · {p.data.priceMON} MON
             </div>
           </button>
@@ -940,7 +940,7 @@ function PublishTimeline({
             <span
               className={`h-3 w-3 rounded-full flex items-center justify-center text-[9px] ${
                 done
-                  ? "bg-emerald-400 text-black"
+                  ? "bg-[#7a9450] text-black"
                   : active
                   ? "bg-gradient-to-r from-accent to-accent2 animate-pulseDot"
                   : "bg-white/10"
@@ -952,7 +952,7 @@ function PublishTimeline({
               {it.label}
             </span>
             {done && it.key !== "done" && (
-              <span className="text-emerald-400 ml-auto font-mono">ok</span>
+              <span className="text-[#7a9450] ml-auto font-mono">ok</span>
             )}
           </div>
         );

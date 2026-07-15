@@ -150,7 +150,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
             exit={{ opacity: 0, scale: 0.95, y: 6 }}
             className="relative w-[min(600px,96vw)] max-h-[90vh] overflow-y-auto rounded-3xl glass-strong scrollbar-thin"
           >
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-44 w-[70%] blur-3xl opacity-60 pointer-events-none bg-gradient-to-r from-cyan-500 to-violet-500" />
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-44 w-[70%] blur-3xl opacity-60 pointer-events-none bg-gradient-to-r from-[#7a9450] to-[#d6a44c]" />
 
             <button
               onClick={onClose}
@@ -201,7 +201,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
                                 <div className="font-semibold text-white flex items-center gap-2">
                                   {chain.name}
                                   {chain.recommended && (
-                                    <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+                                    <span className="px-1.5 py-0.5 rounded text-[9px] bg-[#7a9450]/20 text-[#7a9450] border border-[#7a9450]/30">
                                       Recommended
                                     </span>
                                   )}
@@ -226,7 +226,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
                   <div className="space-y-4">
                     <button
                       onClick={() => setStep("select-chain")}
-                      className="text-[11px] text-cyan-300 hover:text-cyan-200 flex items-center gap-1"
+                      className="text-[11px] text-[#b6c98f] hover:text-[#b6c98f] flex items-center gap-1"
                     >
                       ← Back to chain selection
                     </button>
@@ -244,7 +244,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
                       />
                       <div className="mt-2 flex items-center justify-between text-[11px]">
                         <span className="text-muted">You will receive</span>
-                        <span className="font-mono text-amber-200 text-[14px]">
+                        <span className="font-mono text-[#f0d493] text-[14px]">
                           ~{expectedCredits.toLocaleString()} credits
                         </span>
                       </div>
@@ -284,7 +284,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
                     <button
                       onClick={handleDemoTopUp}
                       disabled={!address || parseFloat(amount) <= 0 || isDemoLoading}
-                      className="w-full h-11 rounded-xl text-[13px] font-semibold border border-emerald-400/40 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20 transition disabled:opacity-50"
+                      className="w-full h-11 rounded-xl text-[13px] font-semibold border border-[#7a9450]/40 bg-[#7a9450]/10 text-[#7a9450] hover:bg-[#7a9450]/20 transition disabled:opacity-50"
                     >
                       {isDemoLoading ? "Processing…" : `⚡ Instant Top-Up (Demo) · ${expectedCredits.toLocaleString()} credits`}
                     </button>
@@ -296,8 +296,8 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
 
                 {step === "show-address" && (
                   <div className="space-y-4">
-                    <div className="rounded-xl border border-emerald-400/30 bg-emerald-400/5 p-4">
-                      <div className="text-[11px] font-semibold text-emerald-300 mb-2">
+                    <div className="rounded-xl border border-[#7a9450]/30 bg-[#7a9450]/5 p-4">
+                      <div className="text-[11px] font-semibold text-[#7a9450] mb-2">
                         ✓ Deposit Address Generated
                       </div>
                       <div className="text-[10px] text-mutedHi">
@@ -319,7 +319,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
                         <div className="text-[11px] uppercase tracking-wider text-mutedHi mb-2">
                           Memo / Tag (Required)
                         </div>
-                        <div className="rounded-lg border border-amber-400/30 bg-amber-400/5 p-3 font-mono text-[11px] text-amber-200">
+                        <div className="rounded-lg border border-[#d6a44c]/30 bg-[#d6a44c]/5 p-3 font-mono text-[11px] text-[#f0d493]">
                           {memo}
                         </div>
                       </div>

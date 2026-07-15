@@ -11,69 +11,70 @@ export interface RarityTheme {
   tagText: string;
 }
 
+// Retro "aged cartridge" rarity themes — warm, muted, hard pixel shadows.
 export const RARITY: Record<Rarity, RarityTheme> = {
   Common: {
     label: "Common",
-    glow: "#7a8a9a",
-    accent: "#9aa6b2",
+    glow: "#8a7d63",
+    accent: "#a89a80",
     border:
-      "linear-gradient(135deg, rgba(154,166,178,0.55), rgba(154,166,178,0.15) 40%, rgba(154,166,178,0.55))",
+      "linear-gradient(135deg, rgba(138,125,99,0.7), rgba(138,125,99,0.25) 40%, rgba(138,125,99,0.7))",
     sheen:
-      "linear-gradient(135deg, rgba(154,166,178,0.10), rgba(255,255,255,0.02) 40%, rgba(154,166,178,0.06))",
-    shadow: "0 20px 60px -20px rgba(154,166,178,0.35)",
-    tagBg: "rgba(154,166,178,0.12)",
-    tagText: "#cdd5de",
+      "linear-gradient(135deg, rgba(236,220,184,0.08), rgba(255,255,255,0.02) 40%, rgba(236,220,184,0.05))",
+    shadow: "0 0 0 2px rgba(138,125,99,0.4), 4px 4px 0 rgba(0,0,0,0.4)",
+    tagBg: "rgba(138,125,99,0.18)",
+    tagText: "#cdbf9e",
   },
   Rare: {
     label: "Rare",
-    glow: "#22d3ee",
-    accent: "#38bdf8",
+    glow: "#5a869c",
+    accent: "#6d97ab",
     border:
-      "linear-gradient(135deg, rgba(34,211,238,0.7), rgba(56,189,248,0.25) 40%, rgba(34,211,238,0.7))",
+      "linear-gradient(135deg, rgba(90,134,156,0.8), rgba(90,134,156,0.3) 40%, rgba(90,134,156,0.8))",
     sheen:
-      "linear-gradient(135deg, rgba(34,211,238,0.15), rgba(56,189,248,0.05) 50%, rgba(34,211,238,0.10))",
-    shadow: "0 24px 70px -18px rgba(34,211,238,0.5)",
-    tagBg: "rgba(34,211,238,0.15)",
-    tagText: "#7dd3fc",
+      "linear-gradient(135deg, rgba(90,134,156,0.15), rgba(109,151,171,0.05) 50%, rgba(90,134,156,0.10))",
+    shadow: "0 0 0 2px rgba(90,134,156,0.5), 4px 4px 0 rgba(0,0,0,0.4)",
+    tagBg: "rgba(90,134,156,0.18)",
+    tagText: "#a9c6d5",
   },
   Epic: {
     label: "Epic",
-    glow: "#a855f7",
-    accent: "#8b5cf6",
+    glow: "#8a6a9c",
+    accent: "#9a7aac",
     border:
-      "linear-gradient(135deg, rgba(168,85,247,0.85), rgba(139,92,246,0.3) 40%, rgba(168,85,247,0.85))",
+      "linear-gradient(135deg, rgba(138,106,156,0.85), rgba(138,106,156,0.3) 40%, rgba(138,106,156,0.85))",
     sheen:
-      "linear-gradient(135deg, rgba(168,85,247,0.20), rgba(139,92,246,0.07) 50%, rgba(168,85,247,0.15))",
-    shadow: "0 28px 80px -16px rgba(168,85,247,0.55)",
-    tagBg: "rgba(168,85,247,0.18)",
-    tagText: "#d8b4fe",
+      "linear-gradient(135deg, rgba(138,106,156,0.20), rgba(154,122,172,0.07) 50%, rgba(138,106,156,0.15))",
+    shadow: "0 0 0 2px rgba(138,106,156,0.5), 5px 5px 0 rgba(0,0,0,0.4)",
+    tagBg: "rgba(138,106,156,0.20)",
+    tagText: "#c9aed5",
   },
   Legendary: {
     label: "Legendary",
-    glow: "#f59e0b",
-    accent: "#fb923c",
+    glow: "#d6a44c",
+    accent: "#edc26a",
     border:
-      "linear-gradient(135deg, rgba(251,191,36,0.95), rgba(244,114,182,0.55) 30%, rgba(168,85,247,0.85) 60%, rgba(251,191,36,0.95))",
+      "linear-gradient(135deg, rgba(214,164,76,0.95), rgba(191,91,75,0.5) 45%, rgba(214,164,76,0.95))",
     sheen:
-      "linear-gradient(135deg, rgba(251,191,36,0.22), rgba(244,114,182,0.10) 40%, rgba(168,85,247,0.18) 70%, rgba(251,191,36,0.22))",
+      "linear-gradient(135deg, rgba(237,194,106,0.22), rgba(191,91,75,0.10) 50%, rgba(237,194,106,0.18))",
     shadow:
-      "0 30px 90px -14px rgba(251,191,36,0.45), 0 0 60px -10px rgba(168,85,247,0.5)",
-    tagBg: "linear-gradient(90deg, rgba(251,191,36,0.25), rgba(168,85,247,0.25))",
-    tagText: "#fde68a",
+      "0 0 0 2px rgba(214,164,76,0.6), 5px 5px 0 rgba(0,0,0,0.4)",
+    tagBg: "linear-gradient(90deg, rgba(214,164,76,0.28), rgba(191,91,75,0.22))",
+    tagText: "#f0d493",
   },
   Mythic: {
     label: "Mythic",
-    glow: "#f472b6",
-    accent: "#67e8f9",
+    glow: "#bf5b4b",
+    accent: "#d6a44c",
     border:
-      "linear-gradient(135deg, #67e8f9 0%, #a78bfa 25%, #f472b6 50%, #fde68a 75%, #67e8f9 100%)",
+      "linear-gradient(135deg, #d6a44c 0%, #bf5b4b 40%, #8a6a9c 70%, #d6a44c 100%)",
     sheen:
-      "linear-gradient(135deg, rgba(103,232,249,0.25), rgba(167,139,250,0.18) 30%, rgba(244,114,182,0.22) 60%, rgba(253,230,138,0.18) 90%)",
+      "linear-gradient(135deg, rgba(214,164,76,0.22), rgba(191,91,75,0.18) 45%, rgba(138,106,156,0.16) 80%)",
     shadow:
-      "0 36px 110px -12px rgba(244,114,182,0.55), 0 0 90px -10px rgba(103,232,249,0.55), 0 0 120px -10px rgba(167,139,250,0.5)",
+      "0 0 0 3px rgba(191,91,75,0.6), 6px 6px 0 rgba(0,0,0,0.4)",
     tagBg:
-      "linear-gradient(90deg, rgba(103,232,249,0.30), rgba(244,114,182,0.30), rgba(253,230,138,0.30))",
-    tagText: "#fdf4ff",
+      "linear-gradient(90deg, rgba(214,164,76,0.3), rgba(191,91,75,0.3))",
+    tagText: "#f4e4c8",
   },
 };
 

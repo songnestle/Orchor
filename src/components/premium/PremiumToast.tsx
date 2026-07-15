@@ -24,7 +24,7 @@ const typeConfig = {
   },
   info: {
     icon: "ⓘ",
-    gradient: "from-blue-500 to-cyan-500",
+    gradient: "from-[#5a869c] to-[#7a9450]",
     glow: "shadow-blue-500/50",
   },
   warning: {

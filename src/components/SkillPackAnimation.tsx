@@ -85,7 +85,7 @@ export function SkillPackAnimation({ open, onClose }: Props) {
             transition={{ duration: 0.6 }}
             style={{
               background:
-                "radial-gradient(closest-side, rgba(168,85,247,0.45) 0%, rgba(34,211,238,0.25) 35%, transparent 70%)",
+                "radial-gradient(closest-side, rgba(214,164,76,0.45) 0%, rgba(122,148,80,0.25) 35%, transparent 70%)",
             }}
           />
 
@@ -120,10 +120,10 @@ export function SkillPackAnimation({ open, onClose }: Props) {
                 className="relative w-[280px] h-[400px] rounded-3xl overflow-hidden"
                 style={{
                   background:
-                    "linear-gradient(135deg, #a855f7 0%, #22d3ee 50%, #f472b6 100%)",
+                    "linear-gradient(135deg, #d6a44c 0%, #7a9450 50%, #bf5b4b 100%)",
                   backgroundSize: "200% 200%",
                   boxShadow:
-                    "0 40px 100px -20px rgba(168,85,247,0.6), 0 0 80px -10px rgba(34,211,238,0.5)",
+                    "0 40px 100px -20px rgba(214,164,76,0.6), 0 0 80px -10px rgba(122,148,80,0.5)",
                 }}
               >
                 <motion.div
@@ -260,9 +260,9 @@ function RevealCard({
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
             background:
-              "linear-gradient(135deg, #a855f7, #22d3ee, #f472b6)",
+              "linear-gradient(135deg, #d6a44c, #7a9450, #bf5b4b)",
             backgroundSize: "200% 200%",
-            boxShadow: "0 20px 60px -20px rgba(168,85,247,0.6)",
+            boxShadow: "0 20px 60px -20px rgba(214,164,76,0.6)",
           }}
         >
           <div className="h-full w-full rounded-2xl border border-white/20 flex items-center justify-center">
@@ -315,13 +315,13 @@ function RevealCard({
                 {skill.shortDescription}
               </div>
               {isMythic && skill.mintedOf && (
-                <div className="mt-2 text-[9px] font-mono text-pink-200">
+                <div className="mt-2 text-[9px] font-mono text-[#d98a7d]">
                   ✦ {skill.mintedOf.current}/{skill.mintedOf.cap} minted onchain
                 </div>
               )}
               <div className="mt-auto flex items-center justify-between text-[10px]">
                 <span className="text-muted">{skill.creator}</span>
-                <span className="font-mono text-amber-200">
+                <span className="font-mono text-[#f0d493]">
                   {skill.energyCost} ⚡
                 </span>
               </div>

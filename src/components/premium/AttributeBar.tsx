@@ -12,11 +12,11 @@ interface AttributeBarProps {
 }
 
 const colorClasses = {
-  violet: "from-violet-500 to-fuchsia-500",
-  blue: "from-blue-500 to-cyan-500",
-  green: "from-green-500 to-emerald-500",
-  amber: "from-amber-500 to-orange-500",
-  red: "from-red-500 to-rose-500",
+  violet: "from-[#d6a44c] to-[#bf5b4b]",
+  blue: "from-[#5a869c] to-[#476b7d]",
+  green: "from-[#7a9450] to-[#5f7540]",
+  amber: "from-[#edc26a] to-[#d6a44c]",
+  red: "from-[#bf5b4b] to-[#9c463a]",
 };
 
 export function AttributeBar({

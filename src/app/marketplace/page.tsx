@@ -52,7 +52,7 @@ export default function MarketplacePage() {
               onClick={() => setListingType(type.key as ListingType)}
               className={`px-6 py-3 rounded-xl font-semibold transition-all ${
                 listingType === type.key
-                  ? "bg-violet-600 text-white"
+                  ? "bg-[#b07f2f] text-white"
                   : "glass text-gray-400 hover:text-white"
               }`}
             >
@@ -84,7 +84,7 @@ export default function MarketplacePage() {
               <div className="mt-3 glass rounded-xl p-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-gray-400">{t("market.seller")}</span>
-                  <span className="text-xs text-violet-400 font-semibold">{listing.seller}</span>
+                  <span className="text-xs text-[#d6a44c] font-semibold">{listing.seller}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold text-white">
@@ -96,7 +96,7 @@ export default function MarketplacePage() {
                     </span>
                   )}
                 </div>
-                <button className="w-full mt-3 px-4 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white text-sm font-bold hover:shadow-lg transition-all">
+                <button className="w-full mt-3 px-4 py-2 rounded-lg bg-gradient-to-r from-[#b07f2f] to-[#9c463a] text-white text-sm font-bold hover:shadow-lg transition-all">
                   {listing.listingType === "auction" ? t("market.placeBid") : t("market.buyNow")}
                 </button>
               </div>

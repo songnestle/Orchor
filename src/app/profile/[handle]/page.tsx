@@ -41,14 +41,14 @@ export default function ProfilePage() {
         <div className="glass-strong rounded-3xl p-8 mb-8">
           <div className="flex items-start gap-6">
             {/* Avatar */}
-            <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-6xl">
+            <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-[#d6a44c] to-[#bf5b4b] flex items-center justify-center text-6xl">
               {creator.avatar}
             </div>
 
             {/* Info */}
             <div className="flex-1">
               <h2 className="text-3xl font-bold text-white mb-2">{creator.name}</h2>
-              <p className="text-violet-400 text-lg mb-4">@{creator.handle}</p>
+              <p className="text-[#d6a44c] text-lg mb-4">@{creator.handle}</p>
               <p className="text-gray-300 mb-6">{creator.bio}</p>
 
               {/* Stats */}
@@ -73,7 +73,7 @@ export default function ProfilePage() {
 
               {/* Actions */}
               <div className="flex gap-3">
-                <button className="px-6 py-3 rounded-xl bg-violet-600 text-white font-bold hover:bg-violet-700 transition-all">
+                <button className="px-6 py-3 rounded-xl bg-[#b07f2f] text-white font-bold hover:bg-[#b07f2f] transition-all">
                   {t("profile.follow")}
                 </button>
                 <button className="px-6 py-3 rounded-xl glass text-white font-bold hover:bg-white/10 transition-all">
@@ -96,7 +96,7 @@ export default function ProfilePage() {
               onClick={() => setTab(tabItem.key)}
               className={`px-6 py-3 font-semibold transition-all ${
                 tab === tabItem.key
-                  ? "text-violet-400 border-b-2 border-violet-400"
+                  ? "text-[#d6a44c] border-b-2 border-[#d6a44c]"
                   : "text-gray-400 hover:text-gray-300"
               }`}
             >

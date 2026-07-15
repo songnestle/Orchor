@@ -153,19 +153,19 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
                     {skill.category}
                   </div>
                   {skill.collectionName && (
-                    <div className="text-[10px] uppercase tracking-wider text-cyan-300">
+                    <div className="text-[10px] uppercase tracking-wider text-[#b6c98f]">
                       · {skill.collectionName}
                     </div>
                   )}
-                  <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] bg-emerald-400/10 border border-emerald-400/20 text-emerald-300">
-                    <span className="h-1 w-1 rounded-full bg-emerald-400 animate-pulseDot" />
+                  <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] bg-[#7a9450]/10 border border-[#7a9450]/20 text-[#7a9450]">
+                    <span className="h-1 w-1 rounded-full bg-[#7a9450] animate-pulseDot" />
                     Hosted on Orchor Runtime
                   </div>
                 </div>
 
                 <h2 className="mt-2 font-display text-3xl font-bold">{skill.title}</h2>
                 {isMythic && skill.mintedOf && (
-                  <div className="mt-1 text-[11px] font-mono text-pink-200">
+                  <div className="mt-1 text-[11px] font-mono text-[#d98a7d]">
                     ✦ {skill.mintedOf.current}/{skill.mintedOf.cap} minted onchain · Monad Testnet
                   </div>
                 )}
@@ -175,7 +175,7 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
                     className="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-display font-bold"
                     style={{
                       background:
-                        "linear-gradient(135deg, rgba(139,92,246,0.7), rgba(34,211,238,0.7))",
+                        "linear-gradient(135deg, rgba(214,164,76,0.7), rgba(122,148,80,0.7))",
                     }}
                   >
                     {skill.creatorAvatar}
@@ -268,7 +268,7 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
                     {mode === "invoke" ? (
                       <div className="mt-1 font-display text-3xl font-bold flex items-center gap-2">
                         <EnergyBolt size={20} />
-                        <span className="tabular text-amber-200">{energyPrice}</span>
+                        <span className="tabular text-[#f0d493]">{energyPrice}</span>
                         <span className="text-base text-mutedHi font-mono">⚡</span>
                       </div>
                     ) : (
@@ -364,7 +364,7 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
                   <div className="mt-3 grid grid-cols-2 gap-2 text-[10px]">
                     <div className="rounded-lg border border-white/5 bg-white/[0.02] px-2 py-1.5">
                       <div className="text-muted">Your Energy</div>
-                      <div className="font-mono text-amber-200 tabular">{energy} ⚡</div>
+                      <div className="font-mono text-[#f0d493] tabular">{energy} ⚡</div>
                     </div>
                     <div className="rounded-lg border border-white/5 bg-white/[0.02] px-2 py-1.5">
                       <div className="text-muted">After invoke</div>
@@ -459,7 +459,7 @@ function PackageTab({ orPkg }: { orPkg: ReturnType<typeof buildOrPackage> }) {
         <span className="text-white">Claude Code</span>,{" "}
         <span className="text-white">Dify</span>,{" "}
         <span className="text-white">LangGraph</span> or a custom agent — is
-        normalized to a <span className="font-mono text-cyan-300">.or</span>{" "}
+        normalized to a <span className="font-mono text-[#b6c98f]">.or</span>{" "}
         package on upload. The same manifest powers the card, the runtime, the
         invoke endpoint and the onchain record.
       </div>
@@ -492,7 +492,7 @@ function RuntimeTab({ skill }: { skill: SkillModule }) {
             {skill.runtime.tools.map((t) => (
               <span
                 key={t}
-                className="px-2 py-0.5 rounded text-[10px] font-mono text-cyan-200 bg-cyan-400/10 border border-cyan-400/20"
+                className="px-2 py-0.5 rounded text-[10px] font-mono text-[#b6c98f] bg-[#7a9450]/10 border border-[#7a9450]/20"
               >
                 {t}
               </span>
@@ -505,33 +505,33 @@ function RuntimeTab({ skill }: { skill: SkillModule }) {
         <SectionLabel>Execution Flow</SectionLabel>
         <div className="mt-2 rounded-xl border border-white/5 bg-bg2/40 p-4 text-[11.5px] leading-relaxed text-mutedHi font-mono">
           <div>
-            <span className="text-amber-200">user</span> ──▶{" "}
+            <span className="text-[#f0d493]">user</span> ──▶{" "}
             <span className="text-white">Orchor Gateway</span>
           </div>
           <div className="ml-12">
-            └─ deducts <span className="text-amber-200">{skill.energyCost} ⚡</span> from balance
+            └─ deducts <span className="text-[#f0d493]">{skill.energyCost} ⚡</span> from balance
           </div>
           <div className="mt-1">
             <span className="text-white">Gateway</span> ──▶{" "}
-            <span className="text-cyan-300">Skill Runtime</span> (.or sandbox)
+            <span className="text-[#b6c98f]">Skill Runtime</span> (.or sandbox)
           </div>
           <div className="ml-12">
             └─ loads model: <span className="text-white">{skill.runtime.model}</span>
           </div>
           <div className="ml-12">└─ binds tools: {skill.runtime.tools.length}</div>
           <div className="mt-1">
-            <span className="text-cyan-300">Runtime</span> ──▶{" "}
-            <span className="text-emerald-300">LLM + Tools</span>
+            <span className="text-[#b6c98f]">Runtime</span> ──▶{" "}
+            <span className="text-[#7a9450]">LLM + Tools</span>
           </div>
           <div className="ml-12">
             └─ token cost: <span className="text-white">${(skill.runtime.tokenCostCents / 100).toFixed(3)}</span> (paid by Orchor)
           </div>
           <div className="mt-1">
-            <span className="text-emerald-300">Response</span> ──▶{" "}
+            <span className="text-[#7a9450]">Response</span> ──▶{" "}
             <span className="text-white">user</span>
           </div>
           <div className="mt-1">
-            <span className="text-fuchsia-300">Settlement</span> ──▶ Monad onchain log + creator split (70%)
+            <span className="text-[#d98a7d]">Settlement</span> ──▶ Monad onchain log + creator split (70%)
           </div>
         </div>
       </div>
@@ -539,7 +539,7 @@ function RuntimeTab({ skill }: { skill: SkillModule }) {
       <div className="mt-3 text-[10.5px] text-mutedHi leading-relaxed">
         Users never bring their own API keys. Orchor routes inference through
         managed model providers and charges{" "}
-        <span className="text-amber-200">Energy</span> — a unified credit that
+        <span className="text-[#f0d493]">Energy</span> — a unified credit that
         abstracts model cost, platform service fee and onchain settlement.
       </div>
     </div>
@@ -585,7 +585,7 @@ function PaymentTimeline({
             <span
               className={`h-3 w-3 rounded-full flex items-center justify-center text-[9px] ${
                 done
-                  ? "bg-emerald-400 text-black"
+                  ? "bg-[#7a9450] text-black"
                   : active
                   ? "bg-gradient-to-r from-accent to-accent2 animate-pulseDot"
                   : "bg-white/10"
@@ -597,7 +597,7 @@ function PaymentTimeline({
               {it.label}
             </span>
             {done && it.key !== "done" && (
-              <span className="text-emerald-400 ml-auto font-mono">ok</span>
+              <span className="text-[#7a9450] ml-auto font-mono">ok</span>
             )}
           </div>
         );

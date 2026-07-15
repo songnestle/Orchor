@@ -102,8 +102,8 @@ export function SkillExecutionModal({
                   {skillTitle}
                 </h2>
                 <div className="mt-2 flex items-center gap-3">
-                  <div className="px-2 py-1 rounded bg-cyan-500/10 border border-cyan-500/30">
-                    <span className="text-[11px] text-cyan-300 font-mono">
+                  <div className="px-2 py-1 rounded bg-[#7a9450]/10 border border-[#7a9450]/30">
+                    <span className="text-[11px] text-[#b6c98f] font-mono">
                       {creditsPerRun} credits
                     </span>
                   </div>
@@ -164,8 +164,8 @@ export function SkillExecutionModal({
                 </h2>
               </div>
 
-              <div className="mt-4 rounded-xl border border-emerald-400/30 bg-emerald-400/5 p-4">
-                <div className="text-[11px] font-semibold text-emerald-300 mb-2">
+              <div className="mt-4 rounded-xl border border-[#7a9450]/30 bg-[#7a9450]/5 p-4">
+                <div className="text-[11px] font-semibold text-[#7a9450] mb-2">
                   ✓ Execution Successful
                 </div>
                 <div className="text-[10px] text-mutedHi">

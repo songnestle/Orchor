@@ -103,11 +103,11 @@ export function MyDeckDrawer({ open, onClose, onOpenSkill }: Props) {
               </div>
 
               <div className="mt-2 grid grid-cols-5 gap-1.5">
-                <RarityChip label="Mythic" count={mythicCount} color="#f9a8d4" />
-                <RarityChip label="Legend" count={legendaryCount} color="#fde68a" />
-                <RarityChip label="Epic" count={epicCount} color="#d8b4fe" />
-                <RarityChip label="Rare" count={rareCount} color="#7dd3fc" />
-                <RarityChip label="Common" count={commonCount} color="#cdd5de" />
+                <RarityChip label="Mythic" count={mythicCount} color="#d98a7d" />
+                <RarityChip label="Legend" count={legendaryCount} color="#f0d493" />
+                <RarityChip label="Epic" count={epicCount} color="#c9aed5" />
+                <RarityChip label="Rare" count={rareCount} color="#a9c6d5" />
+                <RarityChip label="Common" count={commonCount} color="#cdbf9e" />
               </div>
             </div>
 

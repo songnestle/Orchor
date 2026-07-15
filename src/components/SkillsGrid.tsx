@@ -179,9 +179,9 @@ function GridCard({
                 background: theme.tagBg,
                 color: theme.tagText,
                 textShadow: isMythic
-                  ? "0 0 10px rgba(244,114,182,0.7)"
+                  ? "0 0 10px rgba(191,91,75,0.7)"
                   : isLegendary
-                  ? "0 0 8px rgba(251,191,36,0.6)"
+                  ? "0 0 8px rgba(214,164,76,0.6)"
                   : "none",
               }}
             >
@@ -191,9 +191,9 @@ function GridCard({
               <span
                 className="px-1.5 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider"
                 style={{
-                  background: "rgba(16,185,129,0.12)",
-                  color: "#6ee7b7",
-                  border: "1px solid rgba(16,185,129,0.25)",
+                  background: "rgba(122,148,80,0.12)",
+                  color: "#7a9450",
+                  border: "1px solid rgba(122,148,80,0.25)",
                 }}
               >
                 {isOwned ? "Owned" : "Sub"}
@@ -242,7 +242,7 @@ function GridCard({
               className="h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-display font-bold"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(139,92,246,0.7), rgba(34,211,238,0.7))",
+                  "linear-gradient(135deg, rgba(214,164,76,0.7), rgba(122,148,80,0.7))",
               }}
             >
               {skill.creatorAvatar}
@@ -252,7 +252,7 @@ function GridCard({
 
           {/* mythic mint counter */}
           {isMythic && skill.mintedOf && (
-            <div className="mt-1.5 text-[9px] font-mono text-pink-200">
+            <div className="mt-1.5 text-[9px] font-mono text-[#d98a7d]">
               ✦ {skill.mintedOf.current}/{skill.mintedOf.cap} minted
             </div>
           )}
@@ -260,7 +260,7 @@ function GridCard({
           {/* footer */}
           <div className="mt-auto pt-3 flex items-center justify-between border-t border-white/5">
             <div className="flex items-center gap-2 text-[10.5px]">
-              <span className="font-mono text-amber-200 tabular">
+              <span className="font-mono text-[#f0d493] tabular">
                 {skill.energyCost} ⚡
               </span>
               <span className="text-muted">·</span>

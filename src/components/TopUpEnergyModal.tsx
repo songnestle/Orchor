@@ -94,7 +94,7 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
               className="absolute -top-24 left-1/2 -translate-x-1/2 h-44 w-[80%] blur-3xl opacity-60 pointer-events-none"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(251,191,36,0.5), rgba(34,211,238,0.5))",
+                  "linear-gradient(90deg, rgba(214,164,76,0.5), rgba(122,148,80,0.5))",
               }}
             />
 

@@ -43,9 +43,9 @@ export function HolographicEffect({
               background: `linear-gradient(
                 135deg,
                 transparent 0%,
-                rgba(124, 58, 237, ${config.opacity}) 25%,
-                rgba(34, 211, 238, ${config.opacity * 0.6}) 50%,
-                rgba(192, 38, 211, ${config.opacity * 0.8}) 75%,
+                rgba(214, 164, 76, ${config.opacity}) 25%,
+                rgba(122, 148, 80, ${config.opacity * 0.6}) 50%,
+                rgba(191, 91, 75, ${config.opacity * 0.8}) 75%,
                 transparent 100%
               )`,
               backgroundSize: "200% 200%",

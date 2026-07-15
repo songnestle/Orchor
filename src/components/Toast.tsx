@@ -21,9 +21,9 @@ export function Toast({ message, type = "info", duration = 3000 }: Props) {
   };
 
   const colors = {
-    success: "bg-emerald-500/20 border-emerald-500/30 text-emerald-300",
+    success: "bg-[#7a9450]/20 border-[#7a9450]/30 text-[#7a9450]",
     error: "bg-rose-500/20 border-rose-500/30 text-rose-300",
-    info: "bg-cyan-500/20 border-cyan-500/30 text-cyan-300",
+    info: "bg-[#7a9450]/20 border-[#7a9450]/30 text-[#b6c98f]",
   };
 
   return (

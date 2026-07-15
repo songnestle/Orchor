@@ -33,7 +33,7 @@ export function PremiumArena({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <span className="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[#bf5b4b] animate-pulse" />
             <span className="text-sm text-gray-300 font-semibold">
               Season 01 · AI Skill Runtime Economy
             </span>
@@ -78,7 +78,7 @@ export function PremiumArena({
           <h2 className="text-3xl font-bold text-white font-display">
             🔥 Trending Skills
           </h2>
-          <button className="text-violet-400 hover:text-violet-300 font-semibold text-sm transition-colors">
+          <button className="text-[#d6a44c] hover:text-[#f0d493] font-semibold text-sm transition-colors">
             View All →
           </button>
         </div>

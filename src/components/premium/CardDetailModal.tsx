@@ -142,7 +142,7 @@ export function CardDetailModal({
                         </div>
 
                         {/* Artwork */}
-                        <div className="w-full h-48 bg-gradient-to-br from-violet-600/20 via-purple-600/20 to-fuchsia-600/20 rounded-2xl mb-4" />
+                        <div className="w-full h-48 bg-gradient-to-br from-[#b07f2f]/20 via-[#6f547d]/20 to-[#9c463a]/20 rounded-2xl mb-4" />
 
                         {/* Info */}
                         <h2 className="text-2xl font-bold text-white mb-2 font-display">
@@ -150,13 +150,13 @@ export function CardDetailModal({
                         </h2>
 
                         <div className="flex items-center gap-2 mb-4">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500" />
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8a6a9c] to-[#bf5b4b]" />
                           <span className="text-sm text-gray-300">@{skill.creatorHandle}</span>
                         </div>
 
                         <div className="flex items-center gap-4 text-sm mb-6">
                           <div className="flex items-center gap-1">
-                            <span className="text-yellow-400">⭐</span>
+                            <span className="text-[#d6a44c]">⭐</span>
                             <span className="text-white font-bold">{skill.rating}</span>
                           </div>
                           <div className="text-gray-400">
@@ -184,8 +184,8 @@ export function CardDetailModal({
                     </h1>
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-sm text-gray-400">by</span>
-                      <span className="text-sm text-violet-400 font-semibold">@{skill.creatorHandle}</span>
-                      <span className="px-2 py-1 rounded-md bg-violet-500/10 text-violet-400 text-xs font-bold">
+                      <span className="text-sm text-[#d6a44c] font-semibold">@{skill.creatorHandle}</span>
+                      <span className="px-2 py-1 rounded-md bg-[#d6a44c]/10 text-[#d6a44c] text-xs font-bold">
                         {skill.category}
                       </span>
                     </div>
@@ -199,7 +199,7 @@ export function CardDetailModal({
                         runPaymentFlow();
                       }}
                       disabled={step === "submitting"}
-                      className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-[#b07f2f] to-[#9c463a] text-white font-bold hover:shadow-lg hover:shadow-[#d6a44c]/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {step === "submitting" && action === "run"
                         ? t("card.running")
@@ -222,7 +222,7 @@ export function CardDetailModal({
                   {/* Balance hint */}
                   <div className="flex items-center justify-between mb-4 px-3 py-2 rounded-lg glass text-sm">
                     <span className="text-gray-400">{t("card.balance")}</span>
-                    <span className={`font-semibold ${insufficientCredits ? "text-red-400" : "text-violet-400"}`}>
+                    <span className={`font-semibold ${insufficientCredits ? "text-red-400" : "text-[#d6a44c]"}`}>
                       {credits.toLocaleString()} Credits
                     </span>
                   </div>
@@ -238,7 +238,7 @@ export function CardDetailModal({
                         onClick={() => setActiveTab(tab)}
                         className={`px-4 py-2 font-semibold text-sm transition-all ${
                           activeTab === tab
-                            ? "text-violet-400 border-b-2 border-violet-400"
+                            ? "text-[#d6a44c] border-b-2 border-[#d6a44c]"
                             : "text-gray-400 hover:text-gray-300"
                         }`}
                       >
@@ -249,13 +249,13 @@ export function CardDetailModal({
 
                   {/* Status Messages */}
                   {step === "confirm" && (
-                    <div className="mb-4 p-4 rounded-xl glass border border-violet-500/30">
+                    <div className="mb-4 p-4 rounded-xl glass border border-[#d6a44c]/30">
                       <p className="text-sm text-white">{t("card.confirmWallet")}</p>
                     </div>
                   )}
 
                   {step === "submitting" && (
-                    <div className="mb-4 p-4 rounded-xl glass border border-blue-500/30">
+                    <div className="mb-4 p-4 rounded-xl glass border border-[#5a869c]/30">
                       <div className="flex items-center gap-3">
                         <div className="loading-spinner" />
                         <p className="text-sm text-white font-semibold">{t("card.processing")}</p>

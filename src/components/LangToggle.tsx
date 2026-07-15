@@ -13,7 +13,7 @@ export function LangToggle() {
       <button
         onClick={() => setLang("en")}
         className={`px-2.5 py-1.5 transition ${
-          lang === "en" ? "bg-violet-600 text-white" : "text-gray-400 hover:text-white"
+          lang === "en" ? "bg-[#b07f2f] text-white" : "text-gray-400 hover:text-white"
         }`}
       >
         EN
@@ -21,7 +21,7 @@ export function LangToggle() {
       <button
         onClick={() => setLang("zh")}
         className={`px-2.5 py-1.5 transition ${
-          lang === "zh" ? "bg-violet-600 text-white" : "text-gray-400 hover:text-white"
+          lang === "zh" ? "bg-[#b07f2f] text-white" : "text-gray-400 hover:text-white"
         }`}
       >
         中

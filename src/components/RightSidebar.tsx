@@ -41,8 +41,8 @@ export function RightSidebar({ onOpenSkill, onOpenCollection }: Props) {
           <div className="relative rounded-xl overflow-hidden p-3"
             style={{
               background:
-                "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(168,85,247,0.18))",
-              border: "1px solid rgba(251,191,36,0.30)",
+                "linear-gradient(135deg, rgba(214,164,76,0.18), rgba(214,164,76,0.18))",
+              border: "1px solid rgba(214,164,76,0.30)",
             }}
           >
             <div className="absolute inset-0 opacity-30 grid-bg pointer-events-none" />
@@ -51,14 +51,14 @@ export function RightSidebar({ onOpenSkill, onOpenCollection }: Props) {
                 className="h-12 w-12 rounded-lg flex items-center justify-center font-display font-bold text-sm shrink-0"
                 style={{
                   background:
-                    "linear-gradient(135deg, #fde68a, #f472b6, #a855f7)",
+                    "linear-gradient(135deg, #f0d493, #bf5b4b, #d6a44c)",
                   color: "#1a1a2a",
                 }}
               >
                 {dailyDrop.creatorAvatar}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-[10px] uppercase tracking-wider text-amber-200">
+                <div className="text-[10px] uppercase tracking-wider text-[#f0d493]">
                   ★ Legendary
                 </div>
                 <div className="text-[13px] font-display font-semibold text-white truncate">
@@ -143,7 +143,7 @@ export function RightSidebar({ onOpenSkill, onOpenCollection }: Props) {
                   {c.skillsPublished} skills · {(c.totalInvocations / 1000).toFixed(0)}k invokes
                 </div>
               </div>
-              <div className="font-mono text-[10px] text-cyan-300">
+              <div className="font-mono text-[10px] text-[#b6c98f]">
                 {(c.followers / 1000).toFixed(1)}k
               </div>
             </div>
@@ -185,10 +185,10 @@ export function RightSidebar({ onOpenSkill, onOpenCollection }: Props) {
       {/* Monad Network Status */}
       <Panel title="Monad Network">
         <div className="space-y-1.5 text-[11px]">
-          <Row label="Network" value="Testnet" valueClass="text-cyan-300" />
+          <Row label="Network" value="Testnet" valueClass="text-[#b6c98f]" />
           <Row label="Block" value="#8,124,902" mono />
           <Row label="Avg gas" value="0.0001 MON" mono />
-          <Row label="TPS (1m)" value="9,420" mono valueClass="text-emerald-300" />
+          <Row label="TPS (1m)" value="9,420" mono valueClass="text-[#7a9450]" />
         </div>
       </Panel>
     </aside>
@@ -218,7 +218,7 @@ function Panel({
           className="absolute -inset-px rounded-2xl opacity-50 pointer-events-none"
           style={{
             background:
-              "linear-gradient(135deg, rgba(251,191,36,0.4), rgba(168,85,247,0.3))",
+              "linear-gradient(135deg, rgba(214,164,76,0.4), rgba(214,164,76,0.3))",
             mask:
               "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
             WebkitMask:

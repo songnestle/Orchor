@@ -48,7 +48,7 @@ export default function ExplorePage() {
         <div className="space-y-3">
           {["#web3dev", "#research", "#automation", "#data"].map((tag) => (
             <div key={tag} className="p-3 rounded-lg glass hover:bg-white/10 cursor-pointer transition-all">
-              <div className="text-violet-400 font-semibold text-sm">{tag}</div>
+              <div className="text-[#d6a44c] font-semibold text-sm">{tag}</div>
               <div className="text-xs text-gray-400 mt-1">2.4k posts</div>
             </div>
           ))}
@@ -58,7 +58,7 @@ export default function ExplorePage() {
         <div className="space-y-3">
           {allSkills.slice(0, 5).map((skill) => (
             <div key={skill.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-all">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500" />
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d6a44c] to-[#bf5b4b]" />
               <div className="flex-1">
                 <div className="text-sm font-semibold text-white">@{skill.creatorHandle}</div>
                 <div className="text-xs text-gray-400">{skill.usageCount} {t("common.runs")}</div>

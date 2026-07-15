@@ -2,45 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+/* Retro pixel display fonts + clean body font (balanced legibility) */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 :root {
   color-scheme: dark;
-  --rarity-glow: 139, 92, 246;
+
+  /* ---- Retro pixel palette (global) ---- */
+  --r-bg: #161310;
+  --r-bg2: #201c17;
+  --r-panel: #2b251d;
+  --r-panel2: #332c22;
+  --r-ink: #f2e8d5;
+  --r-ink-dim: #9d9078;
+  --r-line: #443c30;
+  --r-line-strong: #75654a;
+  --r-red: #bf5b4b;
+  --r-gold: #d6a44c;
+  --r-gold-hi: #edc26a;
+  --r-green: #7a9450;
+  --r-blue: #5a869c;
+  --r-cream: #ecdcb8;
+
+  --r-common: #8a7d63;
+  --r-rare: #5a869c;
+  --r-epic: #8a6a9c;
+  --r-legendary: #d6a44c;
+  --r-mythic: #bf5b4b;
+
+  --font-pixel: "Press Start 2P", monospace;
+  --font-retro: "VT323", monospace;
+  --font-body: "DM Sans", system-ui, sans-serif;
+
+  --rarity-glow: 214, 164, 76;
 }
 
 html,
 body {
-  background: #05050d;
-  color: #e6e6f0;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+  background: var(--r-bg);
+  color: var(--r-ink);
+  font-family: var(--font-body);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
+  /* warm paper grain + faint scanlines + soft corner light — NO neon */
   background-image:
-    radial-gradient(1100px 700px at 14% -10%, rgba(139, 92, 246, 0.22), transparent 60%),
-    radial-gradient(900px 600px at 86% 6%, rgba(34, 211, 238, 0.16), transparent 60%),
-    radial-gradient(700px 500px at 50% 110%, rgba(244, 114, 182, 0.10), transparent 60%),
-    linear-gradient(to bottom, #05050d 0%, #06061a 50%, #05050d 100%);
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.05) 0px,
+      rgba(0, 0, 0, 0.05) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    radial-gradient(1100px 700px at 12% -10%, rgba(214, 164, 76, 0.10), transparent 60%),
+    radial-gradient(900px 600px at 88% 4%, rgba(122, 148, 80, 0.07), transparent 60%),
+    radial-gradient(700px 500px at 50% 112%, rgba(191, 91, 75, 0.07), transparent 60%),
+    linear-gradient(to bottom, #161310 0%, #1b1712 50%, #161310 100%);
   background-attachment: fixed;
 }
 
-/* ---------- holographic card layer ---------- */
+/* pixel-crisp rendering opt-in */
+.pixelated { image-rendering: pixelated; }
+.font-pixel { font-family: var(--font-pixel); letter-spacing: 0.5px; }
+.font-retro { font-family: var(--font-retro); }
+
+/* ============================================================
+   Retro reinterpretations of the legacy design-system classes.
+   Same class names → every existing component re-themes for free.
+   ============================================================ */
+
+/* ---------- "holographic" border → static rarity pixel frame ---------- */
 .holo-border {
   position: relative;
-  border-radius: 24px;
-  padding: 1.5px;
-  background: linear-gradient(
-    135deg,
-    rgba(139, 92, 246, 0.9),
-    rgba(34, 211, 238, 0.4) 35%,
-    rgba(244, 114, 182, 0.6) 65%,
-    rgba(139, 92, 246, 0.9)
-  );
-  background-size: 200% 200%;
-  animation: holoBorderShift 6s ease-in-out infinite;
+  border-radius: 6px;
+  padding: 3px;
+  background: var(--r-line-strong);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes holoBorderShift {
@@ -48,6 +87,7 @@ body {
   50% { background-position: 100% 50%; }
 }
 
+/* legacy sheen kept but neutralized (warm, subtle) */
 .holo-sheen::before {
   content: "";
   position: absolute;
@@ -55,156 +95,141 @@ body {
   border-radius: inherit;
   background: linear-gradient(
     115deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.12) 45%,
-    rgba(255, 255, 255, 0.02) 55%,
-    transparent 70%
+    transparent 40%,
+    rgba(237, 194, 106, 0.08) 50%,
+    transparent 60%
   );
-  background-size: 220% 100%;
   pointer-events: none;
-  mix-blend-mode: screen;
-  animation: holoSheenMove 4s ease-in-out infinite;
 }
 
-@keyframes holoSheenMove {
-  0% { background-position: 200% 0; }
-  100% { background-position: -100% 0; }
-}
-
-/* ---------- legendary aura ---------- */
+/* ---------- legendary aura → warm glow ---------- */
 .legendary-aura {
   position: absolute;
-  inset: -30px;
-  border-radius: 32px;
-  background:
-    radial-gradient(closest-side, rgba(251, 191, 36, 0.35), transparent 70%),
-    radial-gradient(closest-side, rgba(168, 85, 247, 0.30), transparent 70%);
-  filter: blur(28px);
+  inset: -20px;
+  border-radius: 12px;
+  background: radial-gradient(closest-side, rgba(214, 164, 76, 0.30), transparent 70%);
+  filter: blur(22px);
   z-index: -1;
   animation: auraPulse 3.4s ease-in-out infinite;
 }
 
 @keyframes auraPulse {
-  0%, 100% { opacity: 0.55; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.04); }
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.03); }
 }
 
-/* ---------- glass panel ---------- */
+/* ---------- glass panel → warm wooden/paper panel ---------- */
 .glass {
-  background: linear-gradient(180deg, rgba(20, 20, 42, 0.55), rgba(12, 12, 31, 0.55));
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(43, 37, 29, 0.78);
+  border: 2px solid var(--r-line);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .glass-strong {
-  background: linear-gradient(180deg, rgba(20, 20, 42, 0.78), rgba(12, 12, 31, 0.78));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(32, 28, 23, 0.94);
+  border: 2px solid var(--r-line-strong);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-/* ---------- grid bg ---------- */
+/* ---------- grid bg → warm hairline grid ---------- */
 .grid-bg {
   background-image:
-    linear-gradient(to right, rgba(139, 92, 246, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
-  background-size: 56px 56px;
+    linear-gradient(to right, rgba(117, 101, 74, 0.10) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(117, 101, 74, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
   mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 70%);
   -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 70%);
 }
 
-/* ---------- floating particle dots ---------- */
+/* ---------- floating dust motes ---------- */
 .particle {
   position: absolute;
-  border-radius: 9999px;
+  border-radius: 0;             /* square pixels, not round dots */
   pointer-events: none;
-  filter: blur(0.5px);
 }
 
-/* ---------- neon CTA ---------- */
+/* ---------- primary CTA → pixel raised button ---------- */
 .btn-neon {
   position: relative;
-  background: linear-gradient(90deg, #7c3aed 0%, #22d3ee 100%);
-  color: white;
-  font-weight: 600;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.10) inset,
-    0 12px 36px -8px rgba(124, 58, 237, 0.55),
-    0 0 0 0 rgba(124, 58, 237, 0.0);
-  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+  font-family: var(--font-pixel);
+  font-size: 0.72em;
+  letter-spacing: 0.5px;
+  background: var(--r-gold);
+  color: #161310;
+  font-weight: 700;
+  border: 2px solid #161310;
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.45);
+  transition: transform 80ms steps(2), box-shadow 80ms steps(2), filter 80ms steps(2);
 }
-
 .btn-neon:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.08);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.14) inset,
-    0 16px 48px -8px rgba(34,211,238,0.55),
-    0 0 36px 0 rgba(124, 58, 237, 0.45);
+  filter: brightness(1.06);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.45);
 }
-
+.btn-neon:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.45);
+}
 .btn-neon:disabled {
   opacity: 0.5;
   transform: none;
-  filter: none;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 .btn-ghost {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #d8d8ee;
-  transition: all 180ms ease;
+  background: transparent;
+  border: 2px solid var(--r-line-strong);
+  color: var(--r-cream);
+  border-radius: 3px;
+  transition: all 120ms steps(2);
 }
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(117, 101, 74, 0.18);
+  border-color: var(--r-gold);
 }
 
 /* ---------- scrollbars ---------- */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+.scrollbar-thin::-webkit-scrollbar { width: 10px; height: 10px; }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.25);
-  border-radius: 8px;
+  background: var(--r-line-strong);
+  border: 2px solid var(--r-bg);
 }
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
 
 /* ---------- form inputs ---------- */
 .input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 2px solid var(--r-line);
+  border-radius: 3px;
   padding: 8px 10px;
-  font-size: 12.5px;
-  color: white;
+  font-size: 13px;
+  color: var(--r-ink);
   outline: none;
-  transition: all 160ms ease;
+  transition: all 120ms steps(2);
+  font-family: var(--font-body);
 }
-.input::placeholder { color: rgba(255, 255, 255, 0.30); }
-.input:hover { border-color: rgba(255, 255, 255, 0.14); }
+.input::placeholder { color: var(--r-ink-dim); }
+.input:hover { border-color: var(--r-line-strong); }
 .input:focus {
-  border-color: rgba(139, 92, 246, 0.55);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
-  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--r-gold);
+  box-shadow: 0 0 0 2px rgba(214, 164, 76, 0.25);
+  background: rgba(0, 0, 0, 0.30);
 }
 textarea.input { resize: vertical; min-height: 60px; line-height: 1.5; }
 
-/* ---------- text gradient ---------- */
+/* ---------- text "gradient" → warm gold ---------- */
 .text-gradient {
-  background: linear-gradient(90deg, #c4b5fd 0%, #67e8f9 50%, #f9a8d4 100%);
+  background: linear-gradient(90deg, var(--r-gold-hi) 0%, var(--r-gold) 55%, var(--r-red) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-
 .text-gradient-gold {
-  background: linear-gradient(90deg, #fde68a 0%, #fb923c 50%, #f472b6 100%);
+  background: linear-gradient(90deg, var(--r-gold-hi) 0%, var(--r-gold) 60%, #b07f2f 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -212,10 +237,9 @@ textarea.input { resize: vertical; min-height: 60px; line-height: 1.5; }
 
 /* ---------- mini sparkline ---------- */
 .spark {
-  stroke: rgba(139, 92, 246, 0.9);
+  stroke: var(--r-gold);
   fill: none;
   stroke-width: 1.5;
-  filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.6));
 }
 
 /* hide carousel scroll */
@@ -224,3 +248,96 @@ textarea.input { resize: vertical; min-height: 60px; line-height: 1.5; }
 
 /* utility */
 .tabular { font-variant-numeric: tabular-nums; }
+
+/* ============================================================
+   Retro trading-card component classes (global, un-scoped so any
+   component can use them without a .retro page wrapper).
+   ============================================================ */
+.retro-card {
+  position: relative;
+  background: var(--r-bg2);
+  border: 3px solid var(--r-line-strong);
+  border-radius: 6px;
+  box-shadow: 0 0 0 3px var(--r-bg), 6px 6px 0 0 rgba(0, 0, 0, 0.4);
+  transition: transform 120ms steps(3), box-shadow 120ms steps(3);
+}
+.retro-card[data-rarity="Legendary"] { border-color: var(--r-legendary); }
+.retro-card[data-rarity="Mythic"]    { border-color: var(--r-mythic); }
+.retro-card[data-rarity="Epic"]      { border-color: var(--r-epic); }
+.retro-card[data-rarity="Rare"]      { border-color: var(--r-rare); }
+
+.retro-plate {
+  background: var(--r-panel);
+  border-bottom: 3px solid var(--r-line-strong);
+}
+.retro-name {
+  font-family: var(--font-pixel);
+  line-height: 1.5;
+  color: var(--r-cream);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.retro-art {
+  position: relative;
+  border: 3px solid var(--r-line-strong);
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--r-bg);
+}
+.retro-art img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+  filter: saturate(0.9) contrast(1.04) sepia(0.06);
+}
+.retro-art::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, rgba(0, 0, 0, 0.12) 0px, rgba(0, 0, 0, 0.12) 1px, transparent 1px, transparent 2px
+  );
+  pointer-events: none;
+}
+
+.retro-badge {
+  font-family: var(--font-pixel);
+  color: #161310;
+  border: 2px solid #161310;
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
+}
+.retro-badge[data-rarity="Common"]    { background: var(--r-common); }
+.retro-badge[data-rarity="Rare"]      { background: var(--r-rare); color: var(--r-cream); }
+.retro-badge[data-rarity="Epic"]      { background: var(--r-epic); color: var(--r-cream); }
+.retro-badge[data-rarity="Legendary"] { background: var(--r-legendary); }
+.retro-badge[data-rarity="Mythic"]    { background: var(--r-mythic); color: var(--r-cream); }
+
+.retro-bar {
+  height: 10px;
+  background: var(--r-bg);
+  border: 2px solid var(--r-line);
+  border-radius: 2px;
+  display: flex;
+  gap: 2px;
+  padding: 1px;
+}
+.retro-bar__seg { flex: 1; background: var(--r-line); }
+.retro-bar__seg.on { background: var(--r-gold); }
+
+.retro-btn {
+  font-family: var(--font-pixel);
+  color: #161310;
+  background: var(--r-gold);
+  border: 2px solid #161310;
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 80ms steps(2), box-shadow 80ms steps(2);
+}
+.retro-btn:hover { transform: translate(1px, 1px); box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4); }
+.retro-btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 rgba(0, 0, 0, 0.4); }
+.retro-btn--ghost {
+  background: transparent;
+  color: var(--r-cream);
+  border-color: var(--r-line-strong);
+}

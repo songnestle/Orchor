@@ -5,29 +5,36 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#05050d",
-        bg2: "#08081a",
-        panel: "#0c0c1f",
-        panel2: "#11112a",
-        border: "#1c1c36",
-        borderSoft: "#15152b",
-        accent: "#8b5cf6",
-        accent2: "#22d3ee",
-        accent3: "#f472b6",
-        muted: "#7a7a95",
-        mutedHi: "#9a9ab5",
+        // Retro pixel palette — "aged game cartridge" warm tones.
+        // Semantic token names kept so existing components re-theme for free.
+        bg: "#161310",       // deep warm charcoal
+        bg2: "#201c17",      // interior
+        panel: "#2b251d",    // raised panel
+        panel2: "#332c22",
+        border: "#443c30",
+        borderSoft: "#332c22",
+        accent: "#d6a44c",   // aged brass (was violet)
+        accent2: "#7a9450",  // sage moss (was cyan)
+        accent3: "#bf5b4b",  // faded terracotta (was pink)
+        muted: "#9d9078",
+        mutedHi: "#c5b79a",
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system"],
+        sans: ["'DM Sans'", "Inter", "ui-sans-serif", "system-ui", "-apple-system"],
         display: ["'Space Grotesk'", "Inter", "ui-sans-serif", "system-ui"],
+        pixel: ["'Press Start 2P'", "monospace"],
+        retro: ["'VT323'", "monospace"],
         mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
       },
       boxShadow: {
-        glow: "0 0 0 1px rgba(139,92,246,0.25), 0 12px 40px -12px rgba(139,92,246,0.45)",
-        glowCyan: "0 0 0 1px rgba(34,211,238,0.30), 0 12px 40px -12px rgba(34,211,238,0.45)",
-        soft: "0 0 0 1px rgba(255,255,255,0.04), 0 12px 36px -16px rgba(0,0,0,0.6)",
+        // hard, offset pixel shadows (no blur) — the "sticker lift" look
+        glow: "4px 4px 0 0 rgba(0,0,0,0.45)",
+        glowCyan: "4px 4px 0 0 rgba(0,0,0,0.45)",
+        soft: "0 0 0 3px rgba(0,0,0,0.35), 4px 4px 0 0 rgba(0,0,0,0.35)",
+        pixel: "4px 4px 0 0 rgba(0,0,0,0.5)",
+        pixelLg: "6px 6px 0 0 rgba(0,0,0,0.5)",
         cardDeep:
-          "0 30px 80px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04)",
+          "0 0 0 3px rgba(0,0,0,0.5), 8px 8px 0 0 rgba(0,0,0,0.45)",
       },
       keyframes: {
         pulseDot: {

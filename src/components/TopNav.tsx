@@ -83,10 +83,10 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
             >
               <CreditIcon size={12} />
               {isLoading ? (
-                <span className="font-mono text-[12px] text-cyan-200 animate-pulse">...</span>
+                <span className="font-mono text-[12px] text-[#edc26a] animate-pulse">...</span>
               ) : (
                 <>
-                  <span className="font-mono text-[12px] tabular text-cyan-200">{creditsFormatted}</span>
+                  <span className="font-mono text-[12px] tabular text-[#edc26a]">{creditsFormatted}</span>
                   <span className="text-[10px] text-muted">credits</span>
                 </>
               )}
@@ -186,13 +186,13 @@ function WalletButton() {
 function OrchorLogo() {
   return (
     <div className="relative h-9 w-9">
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-accent via-fuchsia-500 to-accent2 animate-gradientShift bg-[length:200%_200%]" />
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#edc26a] via-[#d6a44c] to-[#bf5b4b] animate-gradientShift bg-[length:200%_200%]" />
       <div className="absolute inset-[2px] rounded-[10px] bg-bg2 flex items-center justify-center overflow-hidden">
         <svg viewBox="0 0 32 32" className="h-5 w-5 text-white">
           <defs>
             <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#22d3ee" />
-              <stop offset="100%" stopColor="#a855f7" />
+              <stop offset="0%" stopColor="#edc26a" />
+              <stop offset="100%" stopColor="#d6a44c" />
             </linearGradient>
           </defs>
           <circle cx="16" cy="16" r="10" fill="none" stroke="url(#logoGrad)" strokeWidth="2" />
@@ -214,8 +214,8 @@ export function CreditIcon({ size = 12 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <defs>
         <linearGradient id="creditGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="100%" stopColor="#06b6d4" />
+          <stop offset="0%" stopColor="#edc26a" />
+          <stop offset="100%" stopColor="#d6a44c" />
         </linearGradient>
       </defs>
       <circle cx="12" cy="12" r="9" stroke="url(#creditGrad)" strokeWidth="2" />
@@ -234,8 +234,8 @@ export function EnergyBolt({ size = 12 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <defs>
         <linearGradient id="energyGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#fde68a" />
-          <stop offset="100%" stopColor="#22d3ee" />
+          <stop offset="0%" stopColor="#f0d493" />
+          <stop offset="100%" stopColor="#d6a44c" />
         </linearGradient>
       </defs>
       <path
@@ -255,8 +255,8 @@ export function MonadIcon({ size = 12 }: { size?: number }) {
       <circle cx="16" cy="16" r="14" fill="url(#monadGrad)" />
       <defs>
         <linearGradient id="monadGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#8b5cf6" />
-          <stop offset="100%" stopColor="#6366f1" />
+          <stop offset="0%" stopColor="#5a869c" />
+          <stop offset="100%" stopColor="#476b7d" />
         </linearGradient>
       </defs>
       <text

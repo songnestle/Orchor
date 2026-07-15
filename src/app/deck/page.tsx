@@ -50,7 +50,7 @@ export default function DeckPage() {
             <p className="text-gray-400 mb-6">{t("deck.emptyHint")}</p>
             <a
               href="/"
-              className="inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all"
+              className="inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-[#b07f2f] to-[#9c463a] text-white font-bold hover:shadow-lg hover:shadow-[#d6a44c]/50 transition-all"
             >
               {t("deck.browse")}
             </a>

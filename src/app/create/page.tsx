@@ -31,7 +31,7 @@ export default function CreatePage() {
             <div key={s} className="flex items-center flex-1">
               <div className={`flex items-center gap-3 ${step === s ? "opacity-100" : "opacity-40"}`}>
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                  step === s ? "bg-violet-600 text-white" : "glass text-gray-400"
+                  step === s ? "bg-[#b07f2f] text-white" : "glass text-gray-400"
                 }`}>
                   {i + 1}
                 </div>
@@ -51,7 +51,7 @@ export default function CreatePage() {
           >
             <div className="text-center">
               <div className="w-24 h-24 mx-auto mb-6 rounded-2xl glass flex items-center justify-center">
-                <svg className="w-12 h-12 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-12 h-12 text-[#d6a44c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
               </div>
@@ -73,7 +73,7 @@ export default function CreatePage() {
               />
               <label
                 htmlFor="file-upload"
-                className="inline-block px-8 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold cursor-pointer hover:shadow-lg hover:shadow-violet-500/50 transition-all"
+                className="inline-block px-8 py-3 rounded-xl bg-gradient-to-r from-[#b07f2f] to-[#9c463a] text-white font-bold cursor-pointer hover:shadow-lg hover:shadow-[#d6a44c]/50 transition-all"
               >
                 {t("common.chooseFile")}
               </label>
@@ -117,7 +117,7 @@ export default function CreatePage() {
                 <button onClick={() => setStep("upload")} className="px-6 py-3 rounded-xl glass text-white font-bold hover:bg-white/10 transition-all">
                   {t("common.back")}
                 </button>
-                <button onClick={() => setStep("preview")} className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold hover:shadow-lg hover:shadow-violet-500/50 transition-all">
+                <button onClick={() => setStep("preview")} className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-[#b07f2f] to-[#9c463a] text-white font-bold hover:shadow-lg hover:shadow-[#d6a44c]/50 transition-all">
                   {t("common.continue")}
                 </button>
               </div>
@@ -129,7 +129,7 @@ export default function CreatePage() {
         {step === "preview" && (
           <div className="glass-strong rounded-2xl p-8 text-center">
             <h2 className="text-xl font-bold text-white mb-4">{t("create.preview")}</h2>
-            <button onClick={() => setStep("deploy")} className="px-8 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold">
+            <button onClick={() => setStep("deploy")} className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#b07f2f] to-[#9c463a] text-white font-bold">
               {t("common.deploy")}
             </button>
           </div>
