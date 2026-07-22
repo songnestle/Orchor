@@ -76,9 +76,15 @@ class BaiRuntimeClient {
         costUsdCents: 2, // Approximate cost
       };
     } catch (error) {
-      console.error('[BaiClient] OpenAI error:', error);
+      // Provider hiccup (rate limit / balance / network): degrade to the
+      // skill's sample output instead of surfacing an error string the user
+      // paid credits for. Real inference resumes when the provider recovers.
+      console.error('[BaiClient] provider error, serving sample output:', error);
+      const mod = SKILL_MODULES.find((s) => s.id === params.skillId);
       return {
-        output: `Error executing skill: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        output:
+          (mod?.outputPreview ?? `Processed: ${params.input}`) +
+          `\n\n— sample output (${mod?.title ?? 'skill'}) · provider temporarily unavailable`,
         costUsdCents: 0,
       };
     }
