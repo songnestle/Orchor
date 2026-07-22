@@ -29,12 +29,17 @@ function markDone(id: number) {
 
 // Key comes from env only — never hardcode credentials in a tracked file.
 // (A previous key hardcoded here leaked via git history and must be revoked.)
+// IMAGE_API_KEY / IMAGE_API_BASE_URL take priority so the image provider can
+// differ from the text-inference provider (OPENAI_*).
 import * as dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 
 const openai = new OpenAI({
   apiKey: process.env.IMAGE_API_KEY || process.env.OPENAI_API_KEY || "",
-  baseURL: process.env.OPENAI_BASE_URL || "https://openapi.junliai.org/v1",
+  baseURL:
+    process.env.IMAGE_API_BASE_URL ||
+    process.env.OPENAI_BASE_URL ||
+    "https://openapi.junliai.org/v1",
 });
 
 // Shared style suffix — keeps all 12 visually consistent.
@@ -71,7 +76,11 @@ const skills: { id: number; scene: string }[] = [
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Both models are valid but flaky/overloaded; rotate through them.
-const MODELS = ["gpt-image-2", "gpt-image-1"];
+// Override with IMAGE_MODELS=gpt-image-2 when the provider only carries one.
+const MODELS = (process.env.IMAGE_MODELS || "gpt-image-2,gpt-image-1")
+  .split(",")
+  .map((m) => m.trim())
+  .filter(Boolean);
 
 async function generateOnce(skill: { id: number; scene: string }, model: string) {
   const prompt = `A retro pixel-art game icon: ${skill.scene}. ${STYLE}`;
