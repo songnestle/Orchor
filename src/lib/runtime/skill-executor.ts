@@ -46,7 +46,12 @@ class BaiRuntimeClient {
 
     try {
       const { default: OpenAI } = await import('openai');
-      const client = new OpenAI({ apiKey: openaiKey });
+      const client = new OpenAI({
+        apiKey: openaiKey,
+        // Optional OpenAI-compatible proxy (e.g. set OPENAI_BASE_URL to a
+        // relay endpoint); defaults to api.openai.com when unset.
+        baseURL: process.env.OPENAI_BASE_URL || undefined,
+      });
 
       const completion = await client.chat.completions.create({
         model: 'gpt-4o-mini',

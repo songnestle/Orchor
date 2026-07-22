@@ -34,6 +34,20 @@ const config: HardhatUserConfig = {
       accounts: INJECTIVE_PRIVATE_KEY ? [INJECTIVE_PRIVATE_KEY] : [],
     },
   },
+  etherscan: {
+    // Blockscout instances accept any non-empty apiKey string.
+    apiKey: { injectiveTestnet: "blockscout" },
+    customChains: [
+      {
+        network: "injectiveTestnet",
+        chainId: 1439,
+        urls: {
+          apiURL: "https://testnet.blockscout-api.injective.network/api",
+          browserURL: "https://testnet.blockscout.injective.network",
+        },
+      },
+    ],
+  },
 };
 
 export default config;

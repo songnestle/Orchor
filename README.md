@@ -16,17 +16,17 @@
 
 ---
 
-## ⚡ 60-Second Verification for Judges / 评委 60 秒链上验证
+## ⚡ Verify It On-Chain / 链上验证
 
-Everything below marked **LIVE** is on-chain right now — not a slide:
+Everything marked **LIVE** in this document is on-chain right now and takes about a minute to reproduce:
 
-1. Open the [contract on Blockscout](https://testnet.blockscout.injective.network/address/0x26129909CFEA99D0c5D17d93090B8D36179C96d3)
-2. Read `nextSkillId` → returns **12** (twelve Skill Cards registered on-chain)
+1. Open the [verified contract source on Blockscout](https://testnet.blockscout.injective.network/address/0x26129909CFEA99D0c5D17d93090B8D36179C96d3#code) — `OrchorCore.sol` is verified, so `registerSkill`, `hasAccess` and `_splitRevenue` are readable as source, not bytecode
+2. Read `nextSkillId` → returns **20** (twenty Skill Cards registered on-chain)
 3. Read `getSkill(1)` → `"Solidity Security Scanner"`, Mythic, mint cap 100, priced in INJ
 4. Read `CREATOR_BPS / PLATFORM_BPS / ONCHAIN_BPS` → **7000 / 2500 / 500** — the 70/25/5 revenue split is a contract constant, not a promise
 5. Visit [orchor.webpsy.net](https://orchor.webpsy.net), connect a wallet — it auto-switches to Injective Testnet (EVM chainId 1439)
 
-打开 Blockscout 合约页 → 读 `nextSkillId` 得 12 → 读 `getSkill(1)` 看到链上注册的技能卡 → 读分账常量 7000/2500/500 → 打开网站连钱包自动切到 Injective 测试网。**全部可当场复现。**
+打开 Blockscout 合约页（源码已验证开源）→ 读 `nextSkillId` 得 20 → 读 `getSkill(1)` 看到链上注册的技能卡 → 读分账常量 7000/2500/500 → 打开网站连钱包自动切到 Injective 测试网。**全部可复现。**
 
 ---
 
@@ -106,8 +106,8 @@ Orchor is a settlement-heavy, high-frequency product whose endgame is a **market
 
 ## 🚀 The Injective Blueprint — Six Deep Integrations / 深度结合 Injective 的六大创新蓝图
 
-> Status legend: **LIVE** = on-chain now · **NEXT** = post-Demo-Day engineering · **VISION** = designed, sequenced on the roadmap.
-> 状态标注：**LIVE** 已上链 · **NEXT** 赛后立刻开发 · **VISION** 已设计、按路线图推进。
+> Status legend: **LIVE** = on-chain now · **NEXT** = next engineering phase · **VISION** = designed, sequenced on the roadmap.
+> 状态标注：**LIVE** 已上链 · **NEXT** 下一阶段开发 · **VISION** 已设计、按路线图推进。
 
 ### §1 · Skill Cards on the Native Orderbook — "The Nasdaq for AI Capabilities" 【NEXT】
 ### 技能卡上原生订单簿 —— AI 能力的纳斯达克

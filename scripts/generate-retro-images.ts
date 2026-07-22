@@ -27,9 +27,14 @@ function markDone(id: number) {
   writeFileSync(STATE_FILE, JSON.stringify([...s].sort((a, b) => a - b)));
 }
 
+// Key comes from env only — never hardcode credentials in a tracked file.
+// (A previous key hardcoded here leaked via git history and must be revoked.)
+import * as dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+
 const openai = new OpenAI({
-  apiKey: "sk-ca945276d582a1f88fe37af6d241d4525d75d2fe654d88df8407b2436afbf357",
-  baseURL: "https://openapi.junliai.org/v1",
+  apiKey: process.env.IMAGE_API_KEY || process.env.OPENAI_API_KEY || "",
+  baseURL: process.env.OPENAI_BASE_URL || "https://openapi.junliai.org/v1",
 });
 
 // Shared style suffix — keeps all 12 visually consistent.
