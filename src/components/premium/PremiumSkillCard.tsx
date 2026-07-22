@@ -80,7 +80,7 @@ export function PremiumSkillCard({ skill, onClick, onRun, onCollect }: PremiumSk
           {/* art window */}
           <div className="retro-art mx-2.5 mt-2.5 h-[150px]">
             <img
-              src={`/skills/skill-${skill.id}.png`}
+              src={`/skills/skill-${skill.id}.jpg`}
               alt={skill.title}
               loading="lazy"
               onError={(e) => {

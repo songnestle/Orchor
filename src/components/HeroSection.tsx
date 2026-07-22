@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useOrchorState } from "@/lib/useOrchorState";
+import { useNextSkillId } from "@/lib/useOrchor";
 
 interface Props {
   onOpenPack: () => void;
@@ -10,6 +11,7 @@ interface Props {
 
 export function HeroSection({ onOpenPack, onExplore }: Props) {
   const { owned, subscribed } = useOrchorState();
+  const { nextSkillId } = useNextSkillId();
 
   return (
     <section className="relative pt-10 pb-8">
@@ -62,9 +64,9 @@ export function HeroSection({ onOpenPack, onExplore }: Props) {
             <span className="opacity-40">·</span>
             <Stat label="Subscribed" value={subscribed.size} accent="text-[#b6c98f]" />
             <span className="opacity-40">·</span>
-            <Stat label="Hosted skills" value={128} />
+            <Stat label="Skills onchain" value={nextSkillId} />
             <span className="opacity-40">·</span>
-            <Stat label="Invokes today" value="34.2k" />
+            <Stat label="Energy rate" value="1 INJ = 100 ⚡" />
           </div>
         </motion.div>
       </div>

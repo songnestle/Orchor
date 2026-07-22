@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 /* Retro pixel display fonts + clean body font (balanced legibility) */
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 :root {
   color-scheme: dark;
@@ -30,9 +29,9 @@
   --r-legendary: #d6a44c;
   --r-mythic: #bf5b4b;
 
-  --font-pixel: "Press Start 2P", monospace;
-  --font-retro: "VT323", monospace;
-  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-pixel: var(--nf-pixel), "Press Start 2P", monospace;
+  --font-retro: var(--nf-retro), "VT323", monospace;
+  --font-body: var(--nf-body), "DM Sans", system-ui, sans-serif;
 
   --rarity-glow: 214, 164, 76;
 }

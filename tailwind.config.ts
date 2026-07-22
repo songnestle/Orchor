@@ -20,11 +20,11 @@ const config: Config = {
         mutedHi: "#c5b79a",
       },
       fontFamily: {
-        sans: ["'DM Sans'", "Inter", "ui-sans-serif", "system-ui", "-apple-system"],
-        display: ["'Space Grotesk'", "Inter", "ui-sans-serif", "system-ui"],
-        pixel: ["'Press Start 2P'", "monospace"],
-        retro: ["'VT323'", "monospace"],
-        mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
+        sans: ["var(--nf-body)", "'DM Sans'", "Inter", "ui-sans-serif", "system-ui", "-apple-system"],
+        display: ["var(--nf-display)", "'Space Grotesk'", "Inter", "ui-sans-serif", "system-ui"],
+        pixel: ["var(--nf-pixel)", "'Press Start 2P'", "monospace"],
+        retro: ["var(--nf-retro)", "'VT323'", "monospace"],
+        mono: ["var(--nf-mono)", "'JetBrains Mono'", "ui-monospace", "monospace"],
       },
       boxShadow: {
         // hard, offset pixel shadows (no blur) — the "sticker lift" look

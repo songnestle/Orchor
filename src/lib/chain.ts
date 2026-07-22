@@ -47,6 +47,14 @@ export const injectiveTestnet = defineChain({
       url: "https://testnet.blockscout.injective.network",
     },
   },
+  // Standard Multicall3 is deployed on Injective testnet — lets wagmi batch
+  // the per-skill owned/subscriptionExpiry/getSkill reads into ~1 RPC call
+  // instead of 3 × nextSkillId individual requests.
+  contracts: {
+    multicall3: {
+      address: "0xcA11bde05977b3631167028862bE2a173976CA11",
+    },
+  },
   testnet: true,
 });
 

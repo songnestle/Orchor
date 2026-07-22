@@ -303,6 +303,16 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
                 Conversion settled on Injective Testnet · INJ sent to platform treasury,
                 used to cover model token cost + creator settlement
               </div>
+              <div className="mt-1.5 text-[10px] text-center">
+                <a
+                  href="https://testnet.faucet.injective.network/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[#b6c98f] underline hover:text-white transition"
+                >
+                  Need testnet INJ? Get some from the faucet →
+                </a>
+              </div>
             </div>
           </motion.div>
         </motion.div>
