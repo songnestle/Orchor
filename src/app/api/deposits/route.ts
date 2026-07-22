@@ -9,7 +9,7 @@ export const runtime = 'nodejs';
  */
 export async function GET(req: NextRequest) {
   try {
-    const userId = req.nextUrl.searchParams.get('userId');
+    const userId = req.nextUrl.searchParams.get('userId')?.toLowerCase() ?? null;
     const status = req.nextUrl.searchParams.get('status');
 
     if (!userId) {

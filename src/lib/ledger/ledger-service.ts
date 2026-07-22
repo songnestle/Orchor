@@ -12,6 +12,15 @@ export interface LedgerEntry {
 
 export class LedgerService {
   /**
+   * Wallet addresses arrive in mixed casing (checksummed from wagmi, lowercased
+   * from some API callers). Normalize at the service boundary so deposits and
+   * debits always hit the same user row.
+   */
+  private norm(userId: string): string {
+    return userId.toLowerCase();
+  }
+
+  /**
    * Add credits to user balance (atomic operation)
    */
   async creditUser(params: {
@@ -20,6 +29,7 @@ export class LedgerService {
     entryType: LedgerEntry['entryType'];
     metadata?: Record<string, any>;
   }): Promise<LedgerEntry> {
+    params = { ...params, userId: this.norm(params.userId) };
     if (params.amount <= 0n) {
       throw new Error('Credit amount must be positive');
     }
@@ -93,6 +103,7 @@ export class LedgerService {
     entryType: LedgerEntry['entryType'];
     metadata?: Record<string, any>;
   }): Promise<LedgerEntry> {
+    params = { ...params, userId: this.norm(params.userId) };
     if (params.amount <= 0n) {
       throw new Error('Debit amount must be positive');
     }
@@ -148,7 +159,7 @@ export class LedgerService {
    */
   async getBalance(userId: string): Promise<bigint> {
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: this.norm(userId) },
       select: { credits: true },
     });
 
@@ -159,6 +170,7 @@ export class LedgerService {
    * Get transaction history
    */
   async getHistory(userId: string, limit = 50, offset = 0): Promise<LedgerEntry[]> {
+    userId = this.norm(userId);
     const entries = await prisma.ledgerEntry.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
@@ -181,6 +193,7 @@ export class LedgerService {
    * Get user summary stats
    */
   async getUserStats(userId: string) {
+    userId = this.norm(userId);
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {

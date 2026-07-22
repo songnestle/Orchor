@@ -9,7 +9,7 @@ export const runtime = 'nodejs';
  */
 export async function GET(req: NextRequest) {
   try {
-    const address = req.nextUrl.searchParams.get('address');
+    const address = req.nextUrl.searchParams.get('address')?.toLowerCase() ?? null;
     const limit = parseInt(req.nextUrl.searchParams.get('limit') || '50');
     const offset = parseInt(req.nextUrl.searchParams.get('offset') || '0');
 

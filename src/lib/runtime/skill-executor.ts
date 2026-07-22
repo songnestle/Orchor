@@ -150,7 +150,10 @@ const revenueManager = new RevenueManager();
  */
 export class SkillExecutor {
   async execute(params: SkillExecutionParams): Promise<SkillExecutionResult> {
-    const { userId, skillId, input } = params;
+    // Normalize wallet casing so the skillRun row joins the same user row
+    // the ledger writes to (ledgerService also lowercases internally).
+    const userId = params.userId.toLowerCase();
+    const { skillId, input } = params;
 
     // 1. Get skill details
     const skill = await this.getSkill(skillId);

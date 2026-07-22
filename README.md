@@ -177,6 +177,28 @@ The hardest problem in AI markets is quality assurance. Orchor's answer is finan
 
 为什么重要：借助 MTS，Energy 从 EVM 内部账本升级为横跨 EVM/WASM 的一等资产，Cosmos 生态的任何 agent 都能经 IBC 调用 Orchor 技能——Orchor 成为跨链世界的 AI 技能枢纽。
 
+### §7 · Skill Battles as Prediction Markets — "Watch AI Compete, Trade the Outcome" 【VISION】
+### 技能对战预测市场 —— 围观 AI 竞技，交易比赛结果
+
+Orchor already ships a **Battle Arena** (live in the product today): two Skill Cards face off on the same task, and outputs are compared head-to-head. Injective turns spectation into a market:
+
+- Each battle spawns a **binary outcome market** on Injective's orderbook — spectators take positions on which skill wins
+- Injective's **frequent batch auctions** make these micro-markets manipulation-resistant; its **native oracle module** carries the judged result on-chain for settlement
+- Battle records accumulate into an **on-chain Elo** per skill — a price-relevant, provable performance history that feeds back into card valuation (§1) and revenue-share pricing (§2)
+
+为什么重要：产品里**已经有 Battle 竞技场页面**——两张技能卡同题对战、输出对比。接上 Injective 后，每场对战生成一个订单簿上的二元结果市场，观众可以对"哪个 AI 赢"下注；原生预言机把裁决结果带上链结算；对战积累出每张卡的**链上 Elo 等级分**，成为可证明的性能履历，反哺卡价（§1）与收益权定价（§2）。竞技 → 数据 → 定价，闭环成立。
+
+### §8 · Task Orderbook — "Post a Bounty, Let Skills Bid" 【VISION】
+### 任务订单簿 —— 发布悬赏，让技能来竞标
+
+Flip the marketplace: instead of users browsing skills, **tasks come to the market and skills compete for them**:
+
+- A user (or an agent) posts a task with a bounty in INJ — "audit this contract, 0.5 INJ"
+- Qualified skills (matched by category + on-chain Elo from §7) **bid in a reverse auction**; lowest credible bid wins execution
+- This is a **labor market for machine intelligence**, cleared the same way Injective clears any market — by its matching engine, not a middleman
+
+为什么重要：把市场反过来——不是人找技能，而是**任务进场、技能竞价**。用户或 agent 发布带 INJ 悬赏的任务，符合条件的技能按链上 Elo 资质进入反向拍卖，最低可信报价成交。这就是**机器智能的劳动力市场**，用 Injective 的撮合引擎清算，而不是靠平台中介抽成定价。
+
 ---
 
 ## 🗺️ Roadmap — Three-Stage Ladder / 路线图三级火箭
@@ -186,6 +208,7 @@ The hardest problem in AI markets is quality assurance. Orchor's answer is finan
 | **Now · LIVE** | Skill registry, Energy economy, 70/25/5 split, 12 cards on testnet | Native EVM, sub-second finality |
 | **Stage 1 · Market** | Mainnet (chainId 1776) · orderbook listing for mint-capped cards (§1) · burn-auction contribution (§3) · x402 + iAgent pilots (§4) | CLOB, Burn Auction, iAgent |
 | **Stage 2 · Capital** | Revenue-share tokenization & Skill Index (§2) · skill staking bonds (§5) · MTS Energy + IBC reach (§6) | TokenFactory, iAssets pattern, MTS, IBC |
+| **Stage 3 · Arena** | Battle prediction markets + on-chain skill Elo (§7) · task orderbook / reverse auctions (§8) | CLOB micro-markets, FBA, oracle module |
 
 **Microsoft angle / 微软协同:** the hosted skill runtime moves onto **Azure** inference (Nova Program Azure credits) — **"Azure computes, Injective clears."** 托管运行时迁移到 Azure 算力——**「Azure 负责算，Injective 负责清算」**。
 

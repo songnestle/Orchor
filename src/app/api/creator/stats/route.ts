@@ -9,7 +9,7 @@ export const runtime = 'nodejs';
  */
 export async function GET(req: NextRequest) {
   try {
-    const address = req.nextUrl.searchParams.get('address');
+    const address = req.nextUrl.searchParams.get('address')?.toLowerCase() ?? null;
 
     if (!address) {
       return NextResponse.json(
@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
     // structurally-complete payload (HTTP 200) so the dashboard renders an
     // empty state instead of crashing. `degraded` flags the fallback.
     console.error('[API] Error fetching creator stats:', error);
-    const address = req.nextUrl.searchParams.get('address') ?? '';
+    const address = req.nextUrl.searchParams.get('address')?.toLowerCase() ?? '';
     return NextResponse.json({
       address,
       degraded: true,
