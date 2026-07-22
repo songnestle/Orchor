@@ -40,7 +40,7 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
           <div className="hidden sm:block font-display text-lg font-bold tracking-tight">
             Orch<span className="text-gradient">or</span>
             <span className="ml-2 align-middle inline-block px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider bg-accent/20 text-accent border border-accent/40">
-              Multi-Chain
+              on Injective
             </span>
           </div>
         </div>
@@ -126,7 +126,7 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
 
           <div className="hidden lg:flex items-center gap-2 px-3 h-8 rounded-full glass text-xs">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulseDot" />
-            <span className="text-mutedHi">Multi-Chain Runtime</span>
+            <span className="text-mutedHi">Injective · MultiVM</span>
           </div>
 
           {isConnected && (

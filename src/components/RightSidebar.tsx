@@ -185,10 +185,10 @@ export function RightSidebar({ onOpenSkill, onOpenCollection }: Props) {
       {/* Injective Network Status */}
       <Panel title="Injective Network">
         <div className="space-y-1.5 text-[11px]">
-          <Row label="Network" value="Testnet" valueClass="text-[#b6c98f]" />
-          <Row label="Block" value="#8,124,902" mono />
-          <Row label="Avg gas" value="0.0001 INJ" mono />
-          <Row label="TPS (1m)" value="9,420" mono valueClass="text-[#7a9450]" />
+          <Row label="Network" value="Testnet · EVM 1439" valueClass="text-[#b6c98f]" />
+          <Row label="Finality" value="~0.65s" mono />
+          <Row label="Avg gas" value="<$0.01" mono />
+          <Row label="Max TPS" value="25,000" mono valueClass="text-[#7a9450]" />
         </div>
       </Panel>
     </aside>
