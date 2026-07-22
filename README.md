@@ -201,6 +201,37 @@ Flip the marketplace: instead of users browsing skills, **tasks come to the mark
 
 ---
 
+## 📦 The `.or` Package — A Sealed, Executable Skill Format
+## `.or` 封装 —— 密封可执行的技能格式
+
+A skill's real IP is its prompt, examples and tool wiring. If those leak, the asset is worthless — so the `.or` format splits every skill into a **public manifest** and a **sealed payload**:
+
+技能的真正 IP 是它的 prompt、示例与工具编排。这些一旦泄露，资产就一文不值 —— 所以 `.or` 格式把每个技能拆成**公开清单**与**密封载荷**两层：
+
+```
+or:solidity-security-scanner@1.2.1
+├── manifest        # PUBLIC — name, creator, category, rarity, version
+├── runtime         # PUBLIC — model, tools, memory, latency
+├── economics       # PUBLIC — energy cost, 70/25/5 bps (mirrors contract)
+├── permissions     # PUBLIC — network / filesystem / onchain_write flags
+├── onchain         # PUBLIC — Injective chain id, skillId, mint cap
+├── signature       # PUBLIC — creator's signature over the manifest
+└── payload         # SEALED — system prompt, few-shot examples, tool configs
+```
+
+**How the sealing works / 密封机制** — status-labelled like everything else:
+
+1. **【LIVE】Prompt isolation / Prompt 隔离** — skill system prompts never ship to the browser. They live server-side only (`src/lib/runtime/skill-prompts.ts`); the client bundle contains catalog metadata, nothing executable. 系统 prompt 只存在于运行时服务端，前端 bundle 里没有任何可执行 IP。
+2. **【LIVE】Manifest + on-chain anchor / 清单与链上锚定** — every skill's public manifest (the `.or Package` tab in the product) carries its Injective `chain_id`, `skillId` and mint data; economics mirror the contract's bps constants. 产品内可见的 `.or` 清单与链上数据一一对应。
+3. **【NEXT】Envelope encryption / 信封加密** — the creator encrypts the payload locally (AES-256-GCM); the content key is wrapped to the runtime's enclave key (TEE attestation). Neither Orchor's web tier nor the database ever sees plaintext. 创作者本地加密载荷，内容密钥只封装给运行时飞地——平台自身也看不到明文。
+4. **【NEXT】On-chain key release / 链上门控解封** — the runtime unseals a payload **only after** `OrchorCore.hasAccess(user, skillId)` passes on Injective, and each unseal is tied to an `invokeSkill` tx. Access control isn't a database row — it's the chain. 解封前必须通过链上 `hasAccess` 校验，每次解封绑定一笔 `invokeSkill` 交易——权限不是数据库字段，而是链本身。
+5. **【NEXT】Integrity anchoring / 完整性锚定** — `keccak256(payload)` is committed at `registerSkill` time; the runtime refuses payloads whose hash doesn't match the chain. Creators sign manifests with EIP-712. 载荷哈希注册时上链，运行时拒绝执行哈希不匹配的载荷。
+6. **【VISION】Threshold unsealing / 门限解封** — replace the single TEE with t-of-n threshold decryption across independent runtime nodes, so no single party ever holds a complete key. 用 t-of-n 门限解密替代单一 TEE，任何单方都拿不到完整密钥。
+
+> **Why it matters for the market / 为什么这对市场重要:** revenue-share tokens (§2) and orderbook prices (§1) are only meaningful if the underlying asset can't be copied for free. The `.or` seal is what makes a skill **scarce enough to price**. 收益权与订单簿定价成立的前提，是底层资产不能被免费复制 —— `.or` 密封正是让技能**稀缺到可以定价**的那一层。
+
+---
+
 ## 🗺️ Roadmap — Three-Stage Ladder / 路线图三级火箭
 
 | Stage | Milestone | Injective primitive |

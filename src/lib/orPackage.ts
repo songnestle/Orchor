@@ -1,4 +1,5 @@
 import type { SkillModule } from "./skills";
+import { activeChain } from "./chain";
 
 /**
  * Build a synthetic `.or Skill Package` manifest from a SkillModule.
@@ -28,7 +29,7 @@ export function buildOrPackage(skill: SkillModule) {
     },
     runtime: {
       hosted: true,
-      network: "orchor.mainnet-1",
+      network: "orchor.injective-testnet",
       model: skill.runtime.model,
       memory: skill.runtime.memory,
       tools: skill.runtime.tools,
@@ -57,8 +58,8 @@ export function buildOrPackage(skill: SkillModule) {
       onchain_write: false,
     },
     onchain: {
-      chain: "monad-testnet",
-      chain_id: 10143,
+      chain: activeChain.name.toLowerCase().replace(/\s+/g, "-"),
+      chain_id: activeChain.id,
       skill_id: skill.id,
       ...(skill.mintedOf ? { minted: skill.mintedOf.current, cap: skill.mintedOf.cap } : {}),
     },
