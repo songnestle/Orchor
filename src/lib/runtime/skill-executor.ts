@@ -1,5 +1,6 @@
 import { ledgerService } from '../ledger/ledger-service';
 import { SKILL_MODULES } from '../skills';
+import { systemPromptFor } from './skill-prompts';
 import { prisma } from '../db';
 import { createHash } from 'crypto';
 
@@ -31,9 +32,14 @@ class BaiRuntimeClient {
     const openaiKey = process.env.OPENAI_API_KEY;
 
     if (!openaiKey) {
-      // Return mock output
+      // No provider key configured — return the skill's representative
+      // sample output so the runtime demo stays coherent.
+      const mod = SKILL_MODULES.find((s) => s.id === params.skillId);
+      const preview = mod?.outputPreview
+        ? `${mod.outputPreview}\n\n— sample output (${mod.title}) · live inference enables when a provider key is configured`
+        : `Processed: ${params.input}\n\n— sample output · live inference enables when a provider key is configured`;
       return {
-        output: `[Mock B.ai Output for Skill ${params.skillId}]\n\nInput: ${params.input}\n\nThis is a simulated response. In production, this would be powered by B.ai Runtime or OpenAI.`,
+        output: preview,
         costUsdCents: 2,
       };
     }
@@ -47,7 +53,8 @@ class BaiRuntimeClient {
         messages: [
           {
             role: 'system',
-            content: `You are an AI skill executor. Process the user's request concisely and helpfully.`,
+            // Per-skill system prompt (real imported prompts for ids 12-19)
+            content: systemPromptFor(params.skillId),
           },
           {
             role: 'user',

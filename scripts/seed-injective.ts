@@ -29,6 +29,15 @@ const SEED: Array<{
   { id:  9, name: "Onchain Data Pulse",        rarity: "Epic",      energyCost:  30, unlockMON: "0.08", subMON: "2.6", mintCap:   0 },
   { id: 10, name: "Agent Workflow Runner",     rarity: "Mythic",    energyCost: 120, unlockMON: "0.15", subMON: "4.5", mintCap:  50 },
   { id: 11, name: "Crypto Meme Stylist",       rarity: "Common",    energyCost:   6, unlockMON: "0.02", subMON: "0.8", mintCap:   0 },
+  // Imported from the open-source skills ecosystem (see src/lib/skills.ts)
+  { id: 12, name: "MCP Server Builder",        rarity: "Legendary", energyCost:  52, unlockMON: "0.13", subMON: "3.9", mintCap:   0 },
+  { id: 13, name: "Webapp Testing Agent",      rarity: "Epic",      energyCost:  30, unlockMON: "0.08", subMON: "2.6", mintCap:   0 },
+  { id: 14, name: "Frontend Design Director",  rarity: "Epic",      energyCost:  26, unlockMON: "0.07", subMON: "2.4", mintCap:   0 },
+  { id: 15, name: "Skill Creator",             rarity: "Mythic",    energyCost:  90, unlockMON: "0.16", subMON: "4.8", mintCap:  80 },
+  { id: 16, name: "Ethereum Contract Engineer",rarity: "Legendary", energyCost:  44, unlockMON: "0.11", subMON: "3.5", mintCap:   0 },
+  { id: 17, name: "Cyber Security Strategist", rarity: "Epic",      energyCost:  28, unlockMON: "0.08", subMON: "2.5", mintCap:   0 },
+  { id: 18, name: "Data Science Analyst",      rarity: "Rare",      energyCost:  16, unlockMON: "0.05", subMON: "1.8", mintCap:   0 },
+  { id: 19, name: "RegEx Forge",               rarity: "Common",    energyCost:   6, unlockMON: "0.02", subMON: "0.8", mintCap:   0 },
 ];
 
 async function withRetry<T>(label: string, fn: () => Promise<T>, tries = 6): Promise<T> {

@@ -52,6 +52,15 @@ const skills: { id: number; scene: string }[] = [
   { id: 9, scene: "a glowing crystal heart pulsing with energy streams, a magical data core" },
   { id: 10, scene: "a party of small glowing robot familiars working together in a chain" },
   { id: 11, scene: "a playful jester with floating emoji orbs and confetti, a cheerful trickster" },
+  // Imported open-source skills (12-19)
+  { id: 12, scene: "a dwarven forge assembling glowing connector bridges between floating machines, plug and socket motif" },
+  { id: 13, scene: "a clockwork automaton inspecting a miniature castle with a checklist scroll and lantern, quality inspector" },
+  { id: 14, scene: "an artist's atelier with floating color swatches, golden ratio grids and a single glowing gem centerpiece" },
+  { id: 15, scene: "a wizard forging a small glowing spellbook that births tinier spellbooks, meta-magic creation altar" },
+  { id: 16, scene: "a blacksmith hammering a glowing ethereum crystal diamond on an anvil, sparks of code runes" },
+  { id: 17, scene: "a fortress gate with layered magical barriers, watchful sentry owls and warning sigils" },
+  { id: 18, scene: "an alchemist distilling swirling data potions into a clear insight elixir, charts on parchment" },
+  { id: 19, scene: "a tiny gnome weaving an intricate glowing thread pattern on a small loom, precise lacework" },
 ];
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
