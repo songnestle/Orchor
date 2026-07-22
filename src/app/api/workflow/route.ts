@@ -49,7 +49,7 @@ const SKILL_SYSTEM_PROMPTS: Record<string, string> = {
   "Copywriting Engine":
     "You are a senior marketing copywriter. Turn the prior research insights into one tight piece of persuasive marketing copy. Max 360 chars. Confident, specific, no fluff.",
   "Viral Twitter Agent":
-    "You are a crypto-native Twitter ghostwriter. Turn the prior copy into one viral tweet plus a 3-tweet thread. Use crypto Twitter cadence. Mention Monad, AI workflows, agent economy and micropayments where natural. No emojis spam.",
+    "You are a crypto-native Twitter ghostwriter. Turn the prior copy into one viral tweet plus a 3-tweet thread. Use crypto Twitter cadence. Mention Injective, AI workflows, agent economy and micropayments where natural. No emojis spam.",
   "Meme Context Adapter":
     "You are a CT meme strategist. Reframe the prior output with CT-native tone and one subtle meme reference. Keep substance. Max 280 chars.",
   "Brand Positioning Agent":
@@ -107,10 +107,10 @@ function mockFor(name: string, type: string, subject: string): string {
       return [
         `• Audience: crypto-native builders & AI-curious devs.`,
         `• Hook: "${subject}" — composability + speed are the unlock.`,
-        `• Angle: position Monad as the settlement layer for AI workflows.`,
+        `• Angle: position Injective as the settlement layer for AI workflows.`,
       ].join("\n");
     case "Copywriting Engine":
-      return `Stop bolting AI onto chains. Compose it. ${subject} on SkillFlow turns AI capabilities into modular skills you can stack, run and pay for in one click — settled on Monad in milliseconds. The agent economy needs a rail. Monad is it.`;
+      return `Stop bolting AI onto chains. Compose it. ${subject} on SkillFlow turns AI capabilities into modular skills you can stack, run and pay for in one click — settled on Injective in milliseconds. The agent economy needs a rail. Injective is it.`;
     case "Viral Twitter Agent":
       return [
         `gm. AI agents don't need another chatbot — they need a settlement layer.`,
@@ -120,15 +120,15 @@ function mockFor(name: string, type: string, subject: string): string {
         `→ compose a workflow`,
         `→ pay once, split onchain`,
         ``,
-        `the agent economy runs on micropayments. Monad makes them free-feeling.`,
+        `the agent economy runs on micropayments. Injective makes them free-feeling.`,
       ].join("\n");
     case "Meme Context Adapter":
-      return `${subject} but it's modular AI skills paying each other in MON while you sip coffee. agents have rent now. they pay it onchain.`;
+      return `${subject} but it's modular AI skills paying each other in INJ while you sip coffee. agents have rent now. they pay it onchain.`;
     case "Brand Positioning Agent":
       return [
         `For: crypto-native builders shipping AI products.`,
         `Replaces: siloed AI tools & off-chain Stripe-style billing.`,
-        `Wins because: composable skills + Monad-speed settlement = an agent economy that actually clears.`,
+        `Wins because: composable skills + Injective-speed settlement = an agent economy that actually clears.`,
       ].join("\n");
     default:
       return `[${type}] processed "${subject}" with ${name}.`;

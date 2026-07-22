@@ -5,7 +5,7 @@ import { useAllSkills } from "@/lib/useAllSkills";
 import { useOrchorState } from "@/lib/useOrchorState";
 import { RARITY, rarityOrder } from "@/lib/rarity";
 import { useMemo } from "react";
-import { EnergyBolt, MonadIcon } from "./TopNav";
+import { EnergyBolt, InjectiveIcon } from "./TopNav";
 
 interface Props {
   open: boolean;
@@ -82,11 +82,11 @@ export function MyDeckDrawer({ open, onClose, onOpenSkill }: Props) {
                 <div className="rounded-xl p-3 border border-white/5 bg-white/[0.02]">
                   <div className="text-[10px] uppercase tracking-wider text-muted">Wallet</div>
                   <div className="mt-1 flex items-baseline gap-1.5">
-                    <MonadIcon size={14} />
+                    <InjectiveIcon size={14} />
                     <span className="font-display text-lg tabular text-white">
                       {balance.toFixed(2)}
                     </span>
-                    <span className="text-[10px] text-mutedHi font-mono">MON</span>
+                    <span className="text-[10px] text-mutedHi font-mono">INJ</span>
                   </div>
                 </div>
                 <div className="rounded-xl p-3 border border-white/5 bg-white/[0.02]">

@@ -1,7 +1,8 @@
 import { defineChain } from "viem";
 
 /**
- * Monad Testnet chain definition.
+ * Monad Testnet chain definition. Kept for backwards-compat / rollback —
+ * OrchorCore is no longer live here, see `activeChain` below.
  */
 export const monadTestnet = defineChain({
   id: 10143,
@@ -22,6 +23,39 @@ export const monadTestnet = defineChain({
   },
   testnet: true,
 });
+
+/**
+ * Injective Testnet — native EVM (MultiVM) layer. Chain ID 1439 maps to the
+ * Cosmos chain `injective-888`. This is the production chain for the
+ * Injective Nova Program Final Demo Day build.
+ */
+export const injectiveTestnet = defineChain({
+  id: 1439,
+  name: "Injective Testnet",
+  nativeCurrency: { name: "Injective", symbol: "INJ", decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: [
+        process.env.NEXT_PUBLIC_INJECTIVE_TESTNET_RPC ||
+          "https://k8s.testnet.json-rpc.injective.network/",
+      ],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Injective Blockscout",
+      url: "https://testnet.blockscout.injective.network",
+    },
+  },
+  testnet: true,
+});
+
+/** The chain OrchorCore is currently deployed to and the app defaults to.
+ *  Swap this one line to roll back to `monadTestnet` if needed. */
+export const activeChain = injectiveTestnet;
+
+/** Native currency symbol of the active chain, used in UI price labels. */
+export const NATIVE_SYMBOL = activeChain.nativeCurrency.symbol;
 
 /* ─────────── Legacy SkillFlow.sol (kept for backwards compat) ─────────── */
 
@@ -214,11 +248,11 @@ export const ORCHOR_ABI = [
 ] as const;
 
 export function explorerTxUrl(hash: string): string {
-  return `${monadTestnet.blockExplorers.default.url}/tx/${hash}`;
+  return `${activeChain.blockExplorers.default.url}/tx/${hash}`;
 }
 
 export function explorerAddrUrl(addr: string): string {
-  return `${monadTestnet.blockExplorers.default.url}/address/${addr}`;
+  return `${activeChain.blockExplorers.default.url}/address/${addr}`;
 }
 
 export function shortAddress(addr?: string | null): string {

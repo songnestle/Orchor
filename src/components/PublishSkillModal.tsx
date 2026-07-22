@@ -17,7 +17,7 @@ import { ORCHOR_ABI, explorerTxUrl } from "@/lib/chain";
 import { buildSkillFromForm, usePublished } from "@/lib/publishedStore";
 import { useDeck } from "@/lib/deckStore";
 import { SkillCard } from "./SkillCard";
-import { EnergyBolt, MonadIcon } from "./TopNav";
+import { EnergyBolt, InjectiveIcon } from "./TopNav";
 
 interface Props {
   open: boolean;
@@ -97,9 +97,9 @@ const EMPTY: FormState = {
   memory: "ephemeral",
   tools: "web.search, chart.render",
   pipeline: "Frame, Score, Render",
-  inputExample: "Analyze the on-chain activity of Monad Labs treasury",
+  inputExample: "Analyze the on-chain activity of Injective Labs treasury",
   outputPreview:
-    "▸ 14 outflows / 22 inflows (30d)\n▸ Net change: +1.2k MON\n▸ Active counterparties: 8\n▸ Notable: 1 CEX deposit (Binance)",
+    "▸ 14 outflows / 22 inflows (30d)\n▸ Net change: +1.2k INJ\n▸ Active counterparties: 8\n▸ Notable: 1 CEX deposit (Binance)",
 };
 
 const PRESETS: { id: string; label: string; origin: OrigPlatform; data: Partial<FormState> }[] = [
@@ -190,9 +190,9 @@ const PRESETS: { id: string; label: string; origin: OrigPlatform; data: Partial<
       memory: "persistent",
       tools: "chain.index, cohort.build, anomaly.zscore",
       pipeline: "Index, Cohort, Detect, Report",
-      inputExample: "Find anomalous MON transfer patterns in the last 24h",
+      inputExample: "Find anomalous INJ transfer patterns in the last 24h",
       outputPreview:
-        "▸ 3 anomalous wallets\n▸ Net outflow +124k MON\n▸ Z-score: 3.6",
+        "▸ 3 anomalous wallets\n▸ Net outflow +124k INJ\n▸ Z-score: 3.6",
     },
   },
 ];
@@ -521,12 +521,12 @@ export function PublishSkillModal({ open, onClose }: Props) {
                     <Row k="Rarity index" v={`${RARITY_INDEX[form.rarity]}`} mono />
                     <Row
                       k="Unlock price"
-                      v={`${form.priceMON} MON`}
+                      v={`${form.priceMON} INJ`}
                       mono
                     />
                     <Row
                       k="Subscription"
-                      v={`${form.subscriptionMON} MON / 30d`}
+                      v={`${form.subscriptionMON} INJ / 30d`}
                       mono
                     />
                     <Row
@@ -558,7 +558,7 @@ export function PublishSkillModal({ open, onClose }: Props) {
                   <div className="mt-2 rounded-lg p-2 bg-[#7a9450]/10 border border-[#7a9450]/30 text-[11.5px] text-[#7a9450]">
                     ✓ Skill <span className="font-mono text-white">#{newSkillId}</span> minted onchain. It now appears
                     in the Grid + carousel and can be unlocked / invoked by
-                    anyone on Monad Testnet.
+                    anyone on Injective Testnet.
                     {txHash && (
                       <>
                         {" "}·{" "}
@@ -611,11 +611,11 @@ export function PublishSkillModal({ open, onClose }: Props) {
                       {!isConnected
                         ? "Connect wallet to publish"
                         : step === "idle" || step === "error"
-                        ? `Publish Skill · register on Monad`
+                        ? `Publish Skill · register on Injective`
                         : step === "confirm"
                         ? "Awaiting wallet…"
                         : isConfirming
-                        ? "Confirming on Monad…"
+                        ? "Confirming on Injective…"
                         : step === "indexing"
                         ? "Indexing off-chain metadata…"
                         : "Submitting…"}
@@ -628,7 +628,7 @@ export function PublishSkillModal({ open, onClose }: Props) {
                   <span className="font-mono text-[#b6c98f]">
                     OrchorCore.registerSkill
                   </span>{" "}
-                  · payable gas in MON · creator becomes msg.sender · earns 70%
+                  · payable gas in INJ · creator becomes msg.sender · earns 70%
                   of every unlock + subscription forever
                 </div>
               </div>
@@ -746,7 +746,7 @@ function FormPanel({
               className="input font-mono text-[#f0d493]"
             />
           </Field>
-          <Field label={<><MonadIcon size={10} /> Unlock MON</>}>
+          <Field label={<><InjectiveIcon size={10} /> Unlock INJ</>}>
             <input
               type="number"
               step={0.01}
@@ -756,7 +756,7 @@ function FormPanel({
               className="input font-mono"
             />
           </Field>
-          <Field label={<><MonadIcon size={10} /> Sub MON / 30d</>}>
+          <Field label={<><InjectiveIcon size={10} /> Sub INJ / 30d</>}>
             <input
               type="number"
               step={0.01}
@@ -902,7 +902,7 @@ function PresetPanel({
               {p.data.shortDescription}
             </div>
             <div className="mt-2 text-[10px] font-mono text-[#f0d493]">
-              {p.data.energyCost} ⚡ · {p.data.priceMON} MON
+              {p.data.energyCost} ⚡ · {p.data.priceMON} INJ
             </div>
           </button>
         ))}
@@ -924,7 +924,7 @@ function PublishTimeline({
     { key: "confirm", label: "Awaiting wallet signature" },
     {
       key: "submitting",
-      label: isConfirming ? "Confirming registerSkill on Monad…" : "Submitted to Monad",
+      label: isConfirming ? "Confirming registerSkill on Injective…" : "Submitted to Injective",
     },
     { key: "indexing", label: "Parsing SkillRegistered event + saving manifest" },
     { key: "done", label: "Skill live · listed in marketplace" },

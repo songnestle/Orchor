@@ -10,7 +10,7 @@ import { useOrchorState } from "@/lib/useOrchorState";
 import { useOrchorWrites } from "@/lib/useOrchor";
 import { buildOrPackage } from "@/lib/orPackage";
 import { explorerTxUrl } from "@/lib/chain";
-import { EnergyBolt, MonadIcon } from "./TopNav";
+import { EnergyBolt, InjectiveIcon } from "./TopNav";
 
 type Step = "idle" | "confirm" | "submitting" | "done" | "error";
 type Mode = "invoke" | "subscribe" | "unlock";
@@ -166,7 +166,7 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
                 <h2 className="mt-2 font-display text-3xl font-bold">{skill.title}</h2>
                 {isMythic && skill.mintedOf && (
                   <div className="mt-1 text-[11px] font-mono text-[#d98a7d]">
-                    ✦ {skill.mintedOf.current}/{skill.mintedOf.cap} minted onchain · Monad Testnet
+                    ✦ {skill.mintedOf.current}/{skill.mintedOf.cap} minted onchain · Injective Testnet
                   </div>
                 )}
 
@@ -273,9 +273,9 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
                       </div>
                     ) : (
                       <div className="mt-1 font-display text-3xl font-bold flex items-center gap-2">
-                        <MonadIcon size={20} />
+                        <InjectiveIcon size={20} />
                         <span className="tabular">{monPrice}</span>
-                        <span className="text-base text-mutedHi font-mono">MON</span>
+                        <span className="text-base text-mutedHi font-mono">INJ</span>
                       </div>
                     )}
                     {mode === "subscribe" && (
@@ -348,14 +348,14 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
                       >
                         {step === "idle" || step === "error"
                           ? mode === "subscribe"
-                            ? `Subscribe · ${monPrice} MON`
+                            ? `Subscribe · ${monPrice} INJ`
                             : mode === "unlock"
-                            ? `Unlock · ${monPrice} MON`
+                            ? `Unlock · ${monPrice} INJ`
                             : `Invoke · ${energyPrice} ⚡`
                           : step === "confirm"
                           ? "Awaiting wallet…"
                           : isConfirming
-                          ? "Confirming on Monad…"
+                          ? "Confirming on Injective…"
                           : "Submitting…"}
                       </button>
                     )}
@@ -377,12 +377,12 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
                   <div className="mt-3 text-[10px] text-muted text-center leading-relaxed">
                     {mode === "invoke"
                       ? "Hosted on Orchor Runtime · no API keys needed · invocation logged onchain"
-                      : "Gas paid in MON · Monad Testnet · 70% creator / 25% platform / 5% onchain"}
+                      : "Gas paid in INJ · Injective Testnet · 70% creator / 25% platform / 5% onchain"}
                   </div>
                 </div>
 
                 <div className="mt-3 text-center text-[10px] text-muted">
-                  Powered by <span className="text-gradient">Monad</span> · Orchor Skill Protocol v0.1
+                  Powered by <span className="text-gradient">Injective</span> · Orchor Skill Protocol v0.1
                 </div>
               </div>
             </div>
@@ -531,7 +531,7 @@ function RuntimeTab({ skill }: { skill: SkillModule }) {
             <span className="text-white">user</span>
           </div>
           <div className="mt-1">
-            <span className="text-[#d98a7d]">Settlement</span> ──▶ Monad onchain log + creator split (70%)
+            <span className="text-[#d98a7d]">Settlement</span> ──▶ Injective onchain log + creator split (70%)
           </div>
         </div>
       </div>
@@ -559,12 +559,12 @@ function PaymentTimeline({
     mode === "invoke"
       ? [
           { key: "confirm", label: "Awaiting wallet signature" },
-          { key: "submitting", label: isConfirming ? "Confirming on Monad…" : "Submitted to Monad" },
+          { key: "submitting", label: isConfirming ? "Confirming on Injective…" : "Submitted to Injective" },
           { key: "done", label: "Energy debited · invocation logged onchain" },
         ]
       : [
           { key: "confirm", label: "Awaiting wallet signature" },
-          { key: "submitting", label: isConfirming ? "Confirming on Monad…" : "Submitted to Monad" },
+          { key: "submitting", label: isConfirming ? "Confirming on Injective…" : "Submitted to Injective" },
           {
             key: "done",
             label:

@@ -265,7 +265,7 @@ function GridCard({
               </span>
               <span className="text-muted">·</span>
               <span className="font-mono text-mutedHi tabular">
-                {skill.priceMON} MON
+                {skill.priceMON} INJ
               </span>
             </div>
             <span className="text-[9px] text-mutedHi opacity-0 group-hover:opacity-100 transition-opacity">

@@ -131,11 +131,11 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
 
           {isConnected && (
             <div className="hidden xl:flex items-center gap-2 px-3 h-8 rounded-full glass">
-              <MonadIcon />
+              <InjectiveIcon />
               <span className="font-mono text-[12px] tabular text-white">
                 {balance.toFixed(2)}
               </span>
-              <span className="text-[10px] text-muted">MON</span>
+              <span className="text-[10px] text-muted">INJ</span>
             </div>
           )}
 
@@ -249,14 +249,14 @@ export function EnergyBolt({ size = 12 }: { size?: number }) {
   );
 }
 
-export function MonadIcon({ size = 12 }: { size?: number }) {
+export function InjectiveIcon({ size = 12 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden>
-      <circle cx="16" cy="16" r="14" fill="url(#monadGrad)" />
+      <circle cx="16" cy="16" r="14" fill="url(#injectiveGrad)" />
       <defs>
-        <linearGradient id="monadGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#5a869c" />
-          <stop offset="100%" stopColor="#476b7d" />
+        <linearGradient id="injectiveGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#5ec9f8" />
+          <stop offset="100%" stopColor="#0b63c9" />
         </linearGradient>
       </defs>
       <text
@@ -267,7 +267,7 @@ export function MonadIcon({ size = 12 }: { size?: number }) {
         fontSize="14"
         fontWeight="bold"
       >
-        M
+        I
       </text>
     </svg>
   );

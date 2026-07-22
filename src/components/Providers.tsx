@@ -9,7 +9,7 @@ import {
   darkTheme,
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
-import { monadTestnet } from "@/lib/chain";
+import { injectiveTestnet, monadTestnet } from "@/lib/chain";
 import { I18nProvider } from "@/lib/i18n";
 
 const wagmiConfig = getDefaultConfig({
@@ -19,7 +19,7 @@ const wagmiConfig = getDefaultConfig({
   // to enable mobile + WC wallets. Falls back to a demo id locally.
   projectId:
     process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "orchor-demo-projectid",
-  chains: [monadTestnet],
+  chains: [injectiveTestnet, monadTestnet],
   ssr: true,
 });
 
@@ -29,7 +29,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
-          initialChain={monadTestnet}
+          initialChain={injectiveTestnet}
           theme={darkTheme({
             accentColor: "#d6a44c",
             accentColorForeground: "white",

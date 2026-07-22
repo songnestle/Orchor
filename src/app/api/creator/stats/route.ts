@@ -97,20 +97,20 @@ export async function GET(req: NextRequest) {
       })),
       settlementChains: [
         {
+          chain: 'evm-injective',
+          name: 'Injective',
+          available: true,
+          minWithdrawal: 20,
+          estimatedFee: 1,
+          recommendedFor: 'Native chain, sub-cent fees',
+        },
+        {
           chain: 'tron',
           name: 'TRON',
           available: true,
           minWithdrawal: 100, // 100 credits = $1
           estimatedFee: 150, // ~$1.50
           recommendedFor: 'Low fees, fast confirmation',
-        },
-        {
-          chain: 'evm-monad',
-          name: 'Monad',
-          available: true,
-          minWithdrawal: 50,
-          estimatedFee: 10,
-          recommendedFor: 'Native chain, very low fees',
         },
         {
           chain: 'evm-base',

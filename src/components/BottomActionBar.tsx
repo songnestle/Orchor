@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useOrchorState } from "@/lib/useOrchorState";
-import { EnergyBolt, MonadIcon } from "./TopNav";
+import { EnergyBolt, InjectiveIcon } from "./TopNav";
 
 interface Props {
   onOpenPack: () => void;
@@ -60,7 +60,7 @@ export function BottomActionBar({ onOpenPack, onOpenDeck, onOpenTopUp }: Props) 
             <PackIcon />
             <span className="relative">Open New Skill Pack</span>
             <span className="relative font-mono text-[11px] opacity-80">
-              · {PACK_PRICE_MON} MON
+              · {PACK_PRICE_MON} INJ
             </span>
           </motion.button>
 
@@ -77,11 +77,11 @@ export function BottomActionBar({ onOpenPack, onOpenDeck, onOpenTopUp }: Props) 
               <span className="text-[10px] text-muted">⚡</span>
             </button>
             <div className="flex items-center gap-2 px-3 h-10 rounded-xl border border-white/5 bg-white/[0.02]">
-              <MonadIcon size={12} />
+              <InjectiveIcon size={12} />
               <span className="font-mono text-[12px] text-white tabular">
                 {balance.toFixed(2)}
               </span>
-              <span className="text-[10px] text-muted">MON</span>
+              <span className="text-[10px] text-muted">INJ</span>
             </div>
             <button
               onClick={onOpenDeck}

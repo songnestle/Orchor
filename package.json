@@ -9,7 +9,8 @@
     "lint": "next lint",
     "compile": "hardhat compile",
     "deploy:monad": "hardhat run scripts/deploy.ts --network monadTestnet",
-    "deploy:orchor:monad": "hardhat run scripts/deploy-orchor.ts --network monadTestnet"
+    "deploy:orchor:monad": "hardhat run scripts/deploy-orchor.ts --network monadTestnet",
+    "deploy:orchor:injective": "hardhat run scripts/deploy-orchor.ts --network injectiveTestnet"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"

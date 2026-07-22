@@ -3,7 +3,7 @@
 import { create } from "zustand";
 
 /**
- * 1 MON = 100 Energy. Mirrors OrchorCore.MON_TO_ENERGY().
+ * 1 INJ = 100 Energy. Mirrors OrchorCore.MON_TO_ENERGY().
  */
 export const MON_TO_ENERGY = 100;
 

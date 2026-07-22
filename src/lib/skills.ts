@@ -35,7 +35,7 @@ export interface SkillModule {
   category: SkillCategory;
   rarity: Rarity;
   pricingType: PricingType;
-  /** Legacy MON prices for unlock / subscription. */
+  /** Legacy INJ prices for unlock / subscription. */
   priceMON: number;
   subscriptionMON?: number;
   /** Energy (⚡) cost per invocation — what the user actually sees. */
@@ -80,7 +80,7 @@ export const SKILL_MODULES: SkillModule[] = [
     usageCount: 18420,
     shortDescription:
       "Deep VC-grade research on any company, team, or thesis. Crawls filings, signals, and team graph.",
-    inputExample: "Research the team and traction behind Monad Labs",
+    inputExample: "Research the team and traction behind Injective Labs",
     outputPreview:
       "▸ Team: 4 ex-Jump Crypto, 2 ex-Lido core\n▸ Capital: $244M raised (Paradigm lead)\n▸ Edge: parallel EVM @ 10k TPS\n▸ Risk: testnet → mainnet token unlock cliff",
     collectionName: "VC Analyst Toolkit",
@@ -174,7 +174,7 @@ export const SKILL_MODULES: SkillModule[] = [
     usageCount: 8930,
     shortDescription:
       "Tracks new product launches, pricing changes, and team moves at named competitors.",
-    inputExample: "Track competitor moves in Monad ecosystem this month",
+    inputExample: "Track competitor moves in Injective ecosystem this month",
     outputPreview:
       "▸ 3 new launches detected\n▸ 1 pricing change (-22%)\n▸ 2 senior hires (eng / growth)\n▸ Signal score: 8.4/10",
     collectionName: "VC Analyst Toolkit",
@@ -267,7 +267,7 @@ export const SKILL_MODULES: SkillModule[] = [
     usageCount: 11280,
     shortDescription:
       "Generates channel-by-channel launch plans with sequencing, copy hooks, and KPIs.",
-    inputExample: "Plan the launch of a Monad-native AI agent SDK",
+    inputExample: "Plan the launch of an Injective-native AI agent SDK",
     outputPreview:
       "▸ 5 channels sequenced over 14d\n▸ 9 copy hooks per ICP\n▸ KPI targets: 5k signups, 18% activation\n▸ Risk: dev-rel bandwidth in week 2",
     collectionName: "Product Growth OS",
@@ -298,7 +298,7 @@ export const SKILL_MODULES: SkillModule[] = [
     usageCount: 9640,
     shortDescription:
       "Reads any contract address and explains risks in plain English with severity.",
-    inputExample: "Explain the risks of 0xC74...3001 on Monad Testnet",
+    inputExample: "Explain the risks of 0xC74...3001 on Injective Testnet",
     outputPreview:
       "▸ Owner can pause transfers (HIGH)\n▸ Upgradeable proxy detected\n▸ No timelock on admin functions\n▸ Reentrancy guard: present",
     collectionName: "Web3 Dev Security Pack",
@@ -328,10 +328,10 @@ export const SKILL_MODULES: SkillModule[] = [
     rating: 4.7,
     usageCount: 6840,
     shortDescription:
-      "Guides you through deploying & verifying a contract to Monad Testnet step by step.",
-    inputExample: "Deploy and verify SkillFlow.sol on Monad Testnet",
+      "Guides you through deploying & verifying a contract to Injective Testnet step by step.",
+    inputExample: "Deploy and verify SkillFlow.sol on Injective Testnet",
     outputPreview:
-      "▸ Step 1/4: compile (ok)\n▸ Step 2/4: fund deployer (1.2 MON)\n▸ Step 3/4: deploy (gas 2.1M)\n▸ Step 4/4: verify on explorer",
+      "▸ Step 1/4: compile (ok)\n▸ Step 2/4: fund deployer (1.2 INJ)\n▸ Step 3/4: deploy (gas 2.1M)\n▸ Step 4/4: verify on explorer",
     collectionName: "Web3 Dev Security Pack",
     pipeline: ["Compile", "Deploy", "Verify"],
     sparkline: [1, 2, 3, 3, 5, 7, 6, 9, 11, 10, 13, 16],
@@ -359,10 +359,10 @@ export const SKILL_MODULES: SkillModule[] = [
     rating: 4.82,
     usageCount: 13420,
     shortDescription:
-      "Streams onchain analytics: wallet cohorts, flow graphs, anomaly alerts, all on Monad.",
-    inputExample: "Surface anomalies in MON transfer flows last 24h",
+      "Streams onchain analytics: wallet cohorts, flow graphs, anomaly alerts, all on Injective.",
+    inputExample: "Surface anomalies in INJ transfer flows last 24h",
     outputPreview:
-      "▸ 2 anomalous wallets flagged\n▸ Net flow: +124k MON to CEX\n▸ Active cohort: builders (+18%)\n▸ Z-score: 3.4",
+      "▸ 2 anomalous wallets flagged\n▸ Net flow: +124k INJ to CEX\n▸ Active cohort: builders (+18%)\n▸ Z-score: 3.4",
     pipeline: ["Index", "Cohort", "Detect"],
     sparkline: [6, 8, 7, 10, 13, 12, 16, 18, 17, 21, 25, 28],
     origin: "Custom Agent",

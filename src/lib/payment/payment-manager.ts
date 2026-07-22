@@ -1,7 +1,7 @@
 import { ChainAdapter } from './adapter';
 import { TronAdapter } from './tron-adapter';
 import { EVMAdapter } from './evm-adapter';
-import { monadTestnet } from '../chain';
+import { injectiveTestnet, monadTestnet } from '../chain';
 
 /**
  * Payment Manager - Central orchestration for all payment adapters
@@ -21,7 +21,15 @@ export class PaymentManager {
     });
     this.adapters.set('tron', tronAdapter);
 
-    // Monad EVM Adapter
+    // Injective Testnet EVM Adapter — active chain
+    const injectiveAdapter = new EVMAdapter({
+      chainId: injectiveTestnet.id,
+      chainName: injectiveTestnet.name,
+      depositAddress: process.env.EVM_DEPOSIT_WALLET,
+    });
+    this.adapters.set('evm-injective', injectiveAdapter);
+
+    // Monad EVM Adapter (legacy)
     const monadAdapter = new EVMAdapter({
       chainId: monadTestnet.id,
       chainName: monadTestnet.name,

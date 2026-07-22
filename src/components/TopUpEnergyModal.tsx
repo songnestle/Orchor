@@ -8,7 +8,7 @@ import { useOrchorState } from "@/lib/useOrchorState";
 import { useOrchorWrites } from "@/lib/useOrchor";
 import { useDeck } from "@/lib/deckStore";
 import { explorerTxUrl } from "@/lib/chain";
-import { EnergyBolt, MonadIcon } from "./TopNav";
+import { EnergyBolt, InjectiveIcon } from "./TopNav";
 
 interface Props {
   open: boolean;
@@ -119,7 +119,7 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
                 <h2 className="font-display text-2xl font-bold">Top up Energy</h2>
               </div>
               <p className="mt-1 text-[12px] text-mutedHi">
-                Convert MON into ⚡ Energy. 1 MON = {MON_TO_ENERGY} ⚡. Used to
+                Convert INJ into ⚡ Energy. 1 INJ = {MON_TO_ENERGY} ⚡. Used to
                 invoke any hosted skill on Orchor.
               </p>
 
@@ -129,11 +129,11 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
                     Wallet
                   </div>
                   <div className="mt-1 flex items-baseline gap-1.5">
-                    <MonadIcon size={14} />
+                    <InjectiveIcon size={14} />
                     <span className="font-mono text-lg tabular text-white">
                       {balance.toFixed(2)}
                     </span>
-                    <span className="text-[10px] text-mutedHi">MON</span>
+                    <span className="text-[10px] text-mutedHi">INJ</span>
                   </div>
                 </div>
                 <div className="rounded-xl p-3 border border-white/5 bg-white/[0.02]">
@@ -171,7 +171,7 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
                           {p.label}
                         </div>
                         <div className="mt-1 font-display text-base font-bold text-white">
-                          {p.mon} MON
+                          {p.mon} INJ
                         </div>
                         <div className="text-[10px] font-mono text-amber-200">
                           {p.mon * MON_TO_ENERGY} ⚡
@@ -186,7 +186,7 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
                 <div className="flex items-center justify-between text-[12px]">
                   <span className="text-mutedHi">You pay</span>
                   <span className="font-mono text-white tabular">
-                    {selected.toFixed(2)} MON
+                    {selected.toFixed(2)} INJ
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[12px] mt-1">
@@ -208,7 +208,7 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
                 <div className="mt-4 space-y-1.5">
                   {[
                     { key: "confirm", label: "Wallet confirmation" },
-                    { key: "submitting", label: isConfirming ? "Confirming on Monad…" : "Submit to Monad" },
+                    { key: "submitting", label: isConfirming ? "Confirming on Injective…" : "Submit to Injective" },
                     { key: "done", label: "Energy credited" },
                   ].map((it, i, arr) => {
                     const idx = arr.findIndex((x) => x.key === step);
@@ -288,9 +288,9 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
                       {!isConnected
                         ? "Connect wallet"
                         : insufficient
-                        ? "Not enough MON"
+                        ? "Not enough INJ"
                         : step === "idle" || step === "error"
-                        ? `Top up ${selected} MON → ${energyAdded} ⚡`
+                        ? `Top up ${selected} INJ → ${energyAdded} ⚡`
                         : step === "confirm"
                         ? "Awaiting wallet…"
                         : "Submitting…"}
@@ -300,7 +300,7 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
               </div>
 
               <div className="mt-3 text-[10px] text-muted text-center">
-                Conversion settled on Monad Testnet · MON sent to platform treasury,
+                Conversion settled on Injective Testnet · INJ sent to platform treasury,
                 used to cover model token cost + creator settlement
               </div>
             </div>

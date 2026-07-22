@@ -2,7 +2,7 @@ import { ChainAdapter, Asset, DepositAddress, TransactionStatus, WithdrawParams,
 
 /**
  * EVM Adapter - Mock implementation for Phase 1
- * Supports Monad, Base, Ethereum, etc.
+ * Supports Injective, Base, Ethereum, etc.
  * Will be replaced with real viem integration in Phase 4
  */
 export class EVMAdapter extends ChainAdapter {

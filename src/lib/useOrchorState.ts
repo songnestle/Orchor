@@ -1,7 +1,7 @@
 "use client";
 
 import { useAccount, useBalance } from "wagmi";
-import { monadTestnet } from "./chain";
+import { activeChain } from "./chain";
 import { useEnergy, useOwnedSet, useSubscribedSet, useMintProgress } from "./useOrchor";
 import { useDeck } from "./deckStore";
 import { useEffect } from "react";
@@ -15,7 +15,7 @@ export function useOrchorState() {
   const { address, isConnected } = useAccount();
   const { data: balData, refetch: refetchBal } = useBalance({
     address,
-    chainId: monadTestnet.id,
+    chainId: activeChain.id,
     query: { enabled: Boolean(address) },
   });
 

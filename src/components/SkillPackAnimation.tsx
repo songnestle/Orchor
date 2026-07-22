@@ -150,7 +150,7 @@ export function SkillPackAnimation({ open, onClose }: Props) {
                     3 hosted skills inside
                   </div>
                   <div className="mt-auto text-[10px] text-white/60">
-                    Settled on Monad
+                    Settled on Injective
                   </div>
                 </div>
               </motion.div>
@@ -188,7 +188,7 @@ export function SkillPackAnimation({ open, onClose }: Props) {
                     : "Pack opened — added to your deck."}
                 </div>
                 <div className="mt-1 text-[12px] text-mutedHi">
-                  Paid {PACK_PRICE} MON · settled on Monad Testnet
+                  Paid {PACK_PRICE} INJ · settled on Injective Testnet
                 </div>
               </div>
               <button

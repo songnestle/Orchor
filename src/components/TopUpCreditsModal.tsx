@@ -11,12 +11,12 @@ interface Props {
 }
 
 type Step = "select-chain" | "enter-amount" | "show-address" | "waiting" | "success";
-type Chain = "tron" | "evm-monad" | "evm-base" | "evm-ethereum";
+type Chain = "tron" | "evm-injective" | "evm-base" | "evm-ethereum";
 
 export function TopUpCreditsModal({ open, onClose }: Props) {
   const { address } = useAccount();
   const [step, setStep] = useState<Step>("select-chain");
-  const [selectedChain, setSelectedChain] = useState<Chain>("tron");
+  const [selectedChain, setSelectedChain] = useState<Chain>("evm-injective");
   const [selectedAsset, setSelectedAsset] = useState("USDT");
   const [amount, setAmount] = useState("10");
   const [depositAddress, setDepositAddress] = useState<string>("");
@@ -26,22 +26,22 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
 
   const chains = [
     {
+      id: "evm-injective" as Chain,
+      name: "Injective",
+      icon: "🟣",
+      fee: "$0.01",
+      time: "<1 min",
+      recommended: true,
+      description: "Native chain, sub-cent fees",
+    },
+    {
       id: "tron" as Chain,
       name: "TRON",
       icon: "🟢",
       fee: "$1-3",
       time: "1-2 min",
-      recommended: true,
-      description: "Lowest fees, fastest confirmation",
-    },
-    {
-      id: "evm-monad" as Chain,
-      name: "Monad",
-      icon: "🟣",
-      fee: "$0.10",
-      time: "2-5 min",
       recommended: false,
-      description: "Native chain, very low fees",
+      description: "Lowest fees, fastest confirmation",
     },
     {
       id: "evm-base" as Chain,

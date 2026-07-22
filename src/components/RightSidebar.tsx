@@ -7,7 +7,7 @@ import { useAllSkills } from "@/lib/useAllSkills";
 import type { SkillModule } from "@/lib/skills";
 import { RARITY } from "@/lib/rarity";
 import { useDeck } from "@/lib/deckStore";
-import { MonadIcon } from "./TopNav";
+import { InjectiveIcon } from "./TopNav";
 
 interface Props {
   onOpenSkill: (id: number) => void;
@@ -72,8 +72,8 @@ export function RightSidebar({ onOpenSkill, onOpenCollection }: Props) {
             <div className="relative mt-3 flex items-center justify-between text-[11px]">
               <span className="text-mutedHi">Today only</span>
               <span className="font-mono text-white flex items-center gap-1">
-                <MonadIcon size={10} />
-                {dailyDrop.priceMON} MON
+                <InjectiveIcon size={10} />
+                {dailyDrop.priceMON} INJ
               </span>
             </div>
           </div>
@@ -116,7 +116,7 @@ export function RightSidebar({ onOpenSkill, onOpenCollection }: Props) {
                     Pack
                   </div>
                   <div className="font-mono text-[11px] text-white">
-                    {c.unlockPriceMON} MON
+                    {c.unlockPriceMON} INJ
                   </div>
                 </div>
               </button>
@@ -174,7 +174,7 @@ export function RightSidebar({ onOpenSkill, onOpenCollection }: Props) {
                   {s.title}
                 </span>
                 <span className="text-[10px] font-mono text-muted">
-                  {s.priceMON} MON
+                  {s.priceMON} INJ
                 </span>
               </button>
             ))}
@@ -182,12 +182,12 @@ export function RightSidebar({ onOpenSkill, onOpenCollection }: Props) {
         )}
       </Panel>
 
-      {/* Monad Network Status */}
-      <Panel title="Monad Network">
+      {/* Injective Network Status */}
+      <Panel title="Injective Network">
         <div className="space-y-1.5 text-[11px]">
           <Row label="Network" value="Testnet" valueClass="text-[#b6c98f]" />
           <Row label="Block" value="#8,124,902" mono />
-          <Row label="Avg gas" value="0.0001 MON" mono />
+          <Row label="Avg gas" value="0.0001 INJ" mono />
           <Row label="TPS (1m)" value="9,420" mono valueClass="text-[#7a9450]" />
         </div>
       </Panel>

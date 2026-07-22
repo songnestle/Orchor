@@ -11,12 +11,12 @@ import {
   useWaitForTransactionReceipt,
 } from "wagmi";
 import { keccak256, parseEther, toHex } from "viem";
-import { ORCHOR_ABI, ORCHOR_CORE_ADDRESS, monadTestnet } from "./chain";
+import { ORCHOR_ABI, ORCHOR_CORE_ADDRESS, activeChain } from "./chain";
 
 const orchor = {
   abi: ORCHOR_ABI,
   address: ORCHOR_CORE_ADDRESS,
-  chainId: monadTestnet.id,
+  chainId: activeChain.id,
 } as const;
 
 /** Returns the live set of all skillIds onchain: [0, nextSkillId). */
@@ -131,17 +131,17 @@ export function useOrchorWrites() {
   const chainId = useChainId();
   const { switchChainAsync } = useSwitchChain();
 
-  /** Ensure the wallet is on Monad Testnet before any write. */
+  /** Ensure the wallet is on the active chain (Injective Testnet) before any write. */
   const ensureChain = useCallback(async () => {
-    if (chainId === monadTestnet.id) return;
+    if (chainId === activeChain.id) return;
     try {
-      await switchChainAsync({ chainId: monadTestnet.id });
+      await switchChainAsync({ chainId: activeChain.id });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       throw new Error(
         msg.toLowerCase().includes("user rejected")
-          ? "Please switch to Monad Testnet to continue"
-          : "Wallet is not on Monad Testnet — switch network and try again"
+          ? `Please switch to ${activeChain.name} to continue`
+          : `Wallet is not on ${activeChain.name} — switch network and try again`
       );
     }
   }, [chainId, switchChainAsync]);

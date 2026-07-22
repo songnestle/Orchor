@@ -23,7 +23,7 @@ export function HeroSection({ onOpenPack, onExplore }: Props) {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-[11px]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#bf5b4b] animate-pulseDot" />
             <span className="text-mutedHi tracking-wide uppercase">
-              Season 01 · Hosted Runtime live on Monad
+              Season 01 · Hosted Runtime live on Injective
             </span>
           </div>
 
@@ -36,7 +36,7 @@ export function HeroSection({ onOpenPack, onExplore }: Props) {
             Orchor turns AI capabilities into{" "}
             <span className="text-white">collectible, programmable Skills</span>{" "}
             — packaged as <span className="font-mono text-[#b6c98f]">.or</span>{" "}
-            files, hosted on our runtime, and settled onchain by Monad. No API
+            files, hosted on our runtime, and settled onchain by Injective. No API
             keys. Just <span className="text-[#f0d493]">⚡ Energy</span>.
           </p>
 
