@@ -9,7 +9,7 @@
 
 🌐 **Live Demo:** [orchor.webpsy.net](https://orchor.webpsy.net)
 🏆 **Built for:** Injective Nova Program — *Injective × Microsoft × Web3Labs*
-⛓️ **Contract (Injective Testnet, chainId 1439):** [`0x26129909CFEA99D0c5D17d93090B8D36179C96d3`](https://testnet.blockscout.injective.network/address/0x26129909CFEA99D0c5D17d93090B8D36179C96d3)
+⛓️ **Contract (Injective Testnet, chainId 1439):** [`0xc5DBA06ECdb428f5072a12CEc61cd544BFe54078`](https://testnet.blockscout.injective.network/address/0xc5DBA06ECdb428f5072a12CEc61cd544BFe54078)
 
 > **Injective financialized assets. Orchor financializes intelligence.**
 > **Injective 金融化了资产，Orchor 金融化了智能。**
@@ -20,7 +20,7 @@
 
 Everything marked **LIVE** in this document is on-chain right now and takes about a minute to reproduce:
 
-1. Open the [verified contract source on Blockscout](https://testnet.blockscout.injective.network/address/0x26129909CFEA99D0c5D17d93090B8D36179C96d3#code) — `OrchorCore.sol` is verified, so `registerSkill`, `hasAccess` and `_splitRevenue` are readable as source, not bytecode
+1. Open the [verified contract source on Blockscout](https://testnet.blockscout.injective.network/address/0xc5DBA06ECdb428f5072a12CEc61cd544BFe54078#code) — `OrchorCore.sol` is verified, so `registerSkill`, `hasAccess` and `_splitRevenue` are readable as source, not bytecode
 2. Read `nextSkillId` → returns **20** (twenty Skill Cards registered on-chain)
 3. Read `getSkill(1)` → `"Solidity Security Scanner"`, Mythic, mint cap 100, priced in INJ
 4. Read `CREATOR_BPS / PLATFORM_BPS / ONCHAIN_BPS` → **7000 / 2500 / 500** — the 70/25/5 revenue split is a contract constant, not a promise
@@ -75,7 +75,7 @@ Top up Energy (INJ)  →  Unlock / Subscribe skill  →  Invoke (spend Energy)
 ```
 
 - ✅ `OrchorCore` deployed to **Injective Testnet** (native EVM / MultiVM, chainId 1439)
-- ✅ **12 Skill Cards registered on-chain** — 5 rarity tiers, Mythic cards mint-capped (50 / 100) at the contract level
+- ✅ **20 Skill Cards registered on-chain** — 5 rarity tiers, 8 imported from the open-source skills ecosystem, Mythic cards mint-capped (50 / 100) at the contract level
 - ✅ On-chain **Energy** ledger (`topUpEnergy`, `1 INJ = 100 ⚡`)
 - ✅ One-time **unlock** + 30-day **subscription** access models, enforced by `hasAccess`
 - ✅ On-chain **invocation** with `SkillInvoked(user, skillId, energySpent, inputHash)` events — every AI run leaves an auditable on-chain trail

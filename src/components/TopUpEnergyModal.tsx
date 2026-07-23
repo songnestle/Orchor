@@ -18,10 +18,10 @@ interface Props {
 type Step = "idle" | "confirm" | "submitting" | "done" | "error";
 
 const PRESETS = [
-  { mon: 1, label: "Starter" },
-  { mon: 5, label: "Builder" },
-  { mon: 20, label: "Power" },
-  { mon: 100, label: "Whale" },
+  { mon: 0.25, label: "Starter" },
+  { mon: 0.5, label: "Builder" },
+  { mon: 1, label: "Power" },
+  { mon: 2, label: "Whale" },
 ];
 
 export function TopUpEnergyModal({ open, onClose }: Props) {
@@ -30,7 +30,7 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
   const { topUp, isConfirming, isConfirmed, hash } = useOrchorWrites();
   const bumpRefetch = useDeck((s) => s.bumpRefetch);
 
-  const [selected, setSelected] = useState(5);
+  const [selected, setSelected] = useState(0.5);
   const [step, setStep] = useState<Step>("idle");
   const [err, setErr] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
@@ -38,7 +38,7 @@ export function TopUpEnergyModal({ open, onClose }: Props) {
   useEffect(() => {
     if (open) {
       setStep("idle");
-      setSelected(5);
+      setSelected(0.5);
       setErr(null);
       setTxHash(null);
     }

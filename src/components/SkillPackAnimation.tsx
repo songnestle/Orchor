@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
 }
 
-const PACK_PRICE = 0.5;
+const PACK_PRICE = 0.15;
 
 export function SkillPackAnimation({ open, onClose }: Props) {
   const [phase, setPhase] = useState<Phase>("intro");

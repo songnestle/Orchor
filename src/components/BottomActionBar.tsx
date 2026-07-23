@@ -11,7 +11,7 @@ interface Props {
   onOpenTopUp: () => void;
 }
 
-export const PACK_PRICE_MON = 0.5;
+export const PACK_PRICE_MON = 0.15;
 
 export function BottomActionBar({ onOpenPack, onOpenDeck, onOpenTopUp }: Props) {
   const { owned, subscribed, walletBalanceMON: balance, energy } = useOrchorState();
