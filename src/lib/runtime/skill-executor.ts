@@ -45,31 +45,34 @@ class BaiRuntimeClient {
     }
 
     try {
-      const { default: OpenAI } = await import('openai');
-      const client = new OpenAI({
-        apiKey: openaiKey,
-        // Optional OpenAI-compatible proxy (e.g. set OPENAI_BASE_URL to a
-        // relay endpoint); defaults to api.openai.com when unset.
-        baseURL: process.env.OPENAI_BASE_URL || undefined,
-      });
+      const systemPrompt = systemPromptFor(params.skillId);
+      const wireApi = (process.env.OPENAI_WIRE_API || 'chat').toLowerCase();
 
-      const completion = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
+      let output: string;
+      if (wireApi === 'responses') {
+        // Responses-API relays (Codex/ChatGPT-backed pools) reject
+        // chat.completions and reply with SSE even without stream:true, so
+        // we speak the wire format directly instead of going through the SDK.
+        output = await this.callResponsesApi(systemPrompt, params.input);
+      } else {
+        const { default: OpenAI } = await import('openai');
+        const client = new OpenAI({
+          apiKey: openaiKey,
+          // Optional OpenAI-compatible proxy (e.g. set OPENAI_BASE_URL to a
+          // relay endpoint); defaults to api.openai.com when unset.
+          baseURL: process.env.OPENAI_BASE_URL || undefined,
+        });
+        const completion = await client.chat.completions.create({
+          model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+          messages: [
             // Per-skill system prompt (real imported prompts for ids 12-19)
-            content: systemPromptFor(params.skillId),
-          },
-          {
-            role: 'user',
-            content: params.input,
-          },
-        ],
-        temperature: 0.8,
-      });
-
-      const output = completion.choices[0]?.message?.content || 'No output generated';
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: params.input },
+          ],
+          temperature: 0.8,
+        });
+        output = completion.choices[0]?.message?.content || 'No output generated';
+      }
 
       return {
         output,
@@ -88,6 +91,63 @@ class BaiRuntimeClient {
         costUsdCents: 0,
       };
     }
+  }
+
+  /**
+   * Minimal Responses-API client for OpenAI-compatible relays.
+   * Known relay quirks handled here: SSE responses even without stream:true,
+   * no `instructions` support (system prompt folded into `input`), and a
+   * flaky upstream pool (per-call retries with backoff).
+   */
+  private async callResponsesApi(systemPrompt: string, userInput: string): Promise<string> {
+    const base = (process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1').replace(/\/$/, '');
+    const model = process.env.OPENAI_MODEL || 'gpt-5.2';
+    const input = `${systemPrompt}\n\n---\n\nUser request:\n${userInput}`;
+
+    let lastErr: unknown;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const res = await fetch(`${base}/responses`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ model, input }),
+        });
+        const text = await res.text();
+        if (!res.ok) throw new Error(`responses api ${res.status}: ${text.slice(0, 120)}`);
+
+        // SSE stream: accumulate output_text deltas.
+        if (text.includes('event:') || text.startsWith('data:')) {
+          let out = '';
+          for (const line of text.split('\n')) {
+            if (!line.startsWith('data:')) continue;
+            try {
+              const ev = JSON.parse(line.slice(5).trim());
+              if (ev.type === 'response.output_text.delta' && ev.delta) out += ev.delta;
+              else if (ev.type === 'response.output_text.done' && !out && ev.text) out = ev.text;
+            } catch { /* keep-alive / non-JSON line */ }
+          }
+          if (out) return out;
+          throw new Error('responses api: SSE stream contained no output text');
+        }
+
+        // Plain JSON shape.
+        const json = JSON.parse(text);
+        const out =
+          json.output_text ??
+          json.output?.flatMap((o: any) => o.content ?? [])
+            .map((c: any) => c.text ?? '')
+            .join('');
+        if (out) return out;
+        throw new Error('responses api: empty output');
+      } catch (e) {
+        lastErr = e;
+        if (attempt < 3) await new Promise((r) => setTimeout(r, 2500 * attempt));
+      }
+    }
+    throw lastErr;
   }
 }
 
