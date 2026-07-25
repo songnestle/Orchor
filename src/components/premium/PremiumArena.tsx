@@ -64,7 +64,7 @@ export function PremiumArena({
             </div>
             <div className="glass px-6 py-3 rounded-xl">
               <div className="text-2xl font-bold text-white mb-1">
-                4.7⭐
+                4.7
               </div>
               <div className="text-gray-400">Avg Rating</div>
             </div>
@@ -76,7 +76,7 @@ export function PremiumArena({
       <div className="max-w-7xl mx-auto px-6 mb-16">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold text-white font-display">
-            🔥 Trending Skills
+            Trending Skills
           </h2>
           <button className="text-[#d6a44c] hover:text-[#f0d493] font-semibold text-sm transition-colors">
             View All →

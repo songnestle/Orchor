@@ -73,7 +73,7 @@ export default function BattleArenaPage() {
                   onClick={startBattle}
                   className="px-8 py-4 rounded-xl bg-gradient-to-r from-[#9c463a] to-orange-600 text-white font-bold text-lg hover:shadow-lg hover:shadow-[#bf5b4b]/50 transition-all"
                 >
-                  🔥 {t("battle.start")}
+                  {t("battle.start")}
                 </button>
               </div>
             ) : (
@@ -123,7 +123,7 @@ export default function BattleArenaPage() {
             className="max-w-2xl mx-auto"
           >
             <div className="glass-strong rounded-3xl p-12 text-center">
-              <div className="text-8xl mb-6">{winner === "player" ? "🏆" : "😔"}</div>
+              <div className="text-8xl mb-6">{winner === "player" ? "★" : "✕"}</div>
               <h2 className="text-4xl font-bold text-white mb-4">
                 {winner === "player" ? t("battle.victory") : t("battle.defeat")}
               </h2>

@@ -44,7 +44,7 @@ export default function ExplorePage() {
 
       {/* Right Sidebar - Trending */}
       <div className="fixed right-0 top-20 w-80 h-[calc(100vh-5rem)] overflow-y-auto p-6 glass-strong hidden xl:block">
-        <h3 className="text-lg font-bold text-white mb-4">🔥 {t("explore.trending")}</h3>
+        <h3 className="text-lg font-bold text-white mb-4">{t("explore.trending")}</h3>
         <div className="space-y-3">
           {["#web3dev", "#research", "#automation", "#data"].map((tag) => (
             <div key={tag} className="p-3 rounded-lg glass hover:bg-white/10 cursor-pointer transition-all">
@@ -54,7 +54,7 @@ export default function ExplorePage() {
           ))}
         </div>
 
-        <h3 className="text-lg font-bold text-white mt-8 mb-4">⭐ {t("explore.topCreators")}</h3>
+        <h3 className="text-lg font-bold text-white mt-8 mb-4">{t("explore.topCreators")}</h3>
         <div className="space-y-3">
           {allSkills.slice(0, 5).map((skill) => (
             <div key={skill.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-all">

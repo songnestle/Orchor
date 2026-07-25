@@ -156,18 +156,18 @@ function TransactionRow({ tx }: { tx: Transaction }) {
 function getTypeInfo(type: Transaction['type']) {
   switch (type) {
     case 'deposit':
-      return { icon: '💳', label: 'Deposit', bgColor: 'bg-[#7a9450]/10' };
+      return { icon: '▥', label: 'Deposit', bgColor: 'bg-[#7a9450]/10' };
     case 'skill_run':
       return { icon: '⚡', label: 'Skill Execution', bgColor: 'bg-[#7a9450]/10' };
     case 'creator_revenue':
-      return { icon: '💰', label: 'Creator Revenue', bgColor: 'bg-[#d6a44c]/10' };
+      return { icon: '◆', label: 'Creator Revenue', bgColor: 'bg-[#d6a44c]/10' };
     case 'platform_fee':
-      return { icon: '🏦', label: 'Platform Fee', bgColor: 'bg-[#d6a44c]/10' };
+      return { icon: '▦', label: 'Platform Fee', bgColor: 'bg-[#d6a44c]/10' };
     case 'runtime_cost':
-      return { icon: '⚙️', label: 'Runtime Cost', bgColor: 'bg-[#5a869c]/10' };
+      return { icon: '⚙', label: 'Runtime Cost', bgColor: 'bg-[#5a869c]/10' };
     case 'withdrawal':
-      return { icon: '📤', label: 'Withdrawal', bgColor: 'bg-[#bf5b4b]/10' };
+      return { icon: '↥', label: 'Withdrawal', bgColor: 'bg-[#bf5b4b]/10' };
     default:
-      return { icon: '📝', label: 'Transaction', bgColor: 'bg-white/5' };
+      return { icon: '▪', label: 'Transaction', bgColor: 'bg-white/5' };
   }
 }

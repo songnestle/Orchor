@@ -186,7 +186,7 @@ export function CardDetailModal({
 
                         <div className="flex items-center gap-4 text-sm mb-6">
                           <div className="flex items-center gap-1">
-                            <span className="text-[#d6a44c]">⭐</span>
+                            <span className="text-[#d6a44c]">★</span>
                             <span className="text-white font-bold">{skill.rating}</span>
                           </div>
                           <div className="text-gray-400">
@@ -379,7 +379,7 @@ export function CardDetailModal({
                         <div className="glass p-4 rounded-xl">
                           <div className="text-sm text-gray-400 mb-1">Average Rating</div>
                           <div className="text-2xl font-bold text-white">
-                            {skill.rating} ⭐
+                            {skill.rating} ★
                           </div>
                         </div>
 

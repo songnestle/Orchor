@@ -130,7 +130,7 @@ export default function ProfilePage() {
         {tab === "stats" && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="glass-strong rounded-xl p-6">
-              <div className="text-4xl mb-3">📊</div>
+              <div className="text-4xl mb-3 text-[#d6a44c]">▤</div>
               <div className="text-2xl font-bold text-white mb-2">
                 {createdSkills.length}
               </div>
@@ -144,7 +144,7 @@ export default function ProfilePage() {
               <div className="text-sm text-gray-400">{t("creator.totalRuns")}</div>
             </div>
             <div className="glass-strong rounded-xl p-6">
-              <div className="text-4xl mb-3">💰</div>
+              <div className="text-4xl mb-3 text-[#d6a44c]">◆</div>
               <div className="text-2xl font-bold text-white mb-2">
                 {creator.totalEarnings} INJ
               </div>

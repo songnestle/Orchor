@@ -119,7 +119,7 @@ export function CreatorDashboard() {
         <StatCard
           label={t("creator.totalSkills")}
           value={stats.summary.totalSkills.toString()}
-          icon="📦"
+          icon="◇"
         />
         <StatCard
           label={t("creator.totalRuns")}
@@ -130,13 +130,13 @@ export function CreatorDashboard() {
           label={t("creator.grossRevenue")}
           value={`${stats.summary.grossRevenueFormatted} credits`}
           subtitle={`≈ $${(Number(stats.summary.grossRevenue) * 0.01).toFixed(2)}`}
-          icon="💰"
+          icon="◆"
         />
         <StatCard
           label={t("creator.withdrawable")}
           value={`${stats.summary.withdrawableBalanceFormatted} credits`}
           subtitle={`≈ $${stats.summary.usdValue}`}
-          icon="💳"
+          icon="▥"
           highlight
         />
       </div>

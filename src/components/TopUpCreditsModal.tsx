@@ -28,7 +28,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
     {
       id: "evm-injective" as Chain,
       name: "Injective",
-      icon: "🟣",
+      icon: "◆",
       fee: "$0.01",
       time: "<1 min",
       recommended: true,
@@ -37,7 +37,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
     {
       id: "tron" as Chain,
       name: "TRON",
-      icon: "🟢",
+      icon: "●",
       fee: "$1-3",
       time: "1-2 min",
       recommended: false,
@@ -46,7 +46,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
     {
       id: "evm-base" as Chain,
       name: "Base",
-      icon: "🔵",
+      icon: "◉",
       fee: "$0.50",
       time: "3-5 min",
       recommended: false,
@@ -55,7 +55,7 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
     {
       id: "evm-ethereum" as Chain,
       name: "Ethereum",
-      icon: "⬛",
+      icon: "■",
       fee: "$5-20",
       time: "5-15 min",
       recommended: false,

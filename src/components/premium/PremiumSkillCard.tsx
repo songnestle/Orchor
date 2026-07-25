@@ -21,17 +21,17 @@ const rarityColors: Record<Rarity, string> = {
   Mythic: "#bf5b4b",
 };
 
-// Pixel category glyphs
+// Plain-text category glyphs — pixel-font friendly, no emoji.
 function getCategoryIcon(category: string): string {
   const icons: Record<string, string> = {
-    Research: "🔬",
-    Product: "🚀",
-    Marketing: "📢",
-    Automation: "⚙️",
-    "Web3 Dev": "⛓️",
-    Data: "📊",
+    Research: "◆",
+    Product: "▲",
+    Marketing: "▶",
+    Automation: "⚙",
+    "Web3 Dev": "⛓",
+    Data: "▤",
   };
-  return icons[category] || "✨";
+  return icons[category] || "◇";
 }
 
 export function PremiumSkillCard({ skill, onClick, onRun, onCollect }: PremiumSkillCardProps) {

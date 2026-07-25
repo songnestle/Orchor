@@ -137,7 +137,7 @@ export default function CreatePage() {
 
         {step === "deploy" && (
           <div className="glass-strong rounded-2xl p-8 text-center">
-            <div className="text-6xl mb-4">🚀</div>
+            <div className="text-6xl mb-4 text-[#d6a44c]">★</div>
             <h2 className="text-2xl font-bold text-white mb-2">Deploying...</h2>
             <p className="text-gray-400">Your skill card is being minted onchain</p>
           </div>

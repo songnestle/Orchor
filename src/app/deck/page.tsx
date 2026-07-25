@@ -45,7 +45,7 @@ export default function DeckPage() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {deck.length === 0 ? (
           <div className="text-center py-20">
-            <div className="text-6xl mb-4">📦</div>
+            <div className="text-6xl mb-4 text-[#75654a]">◇</div>
             <h2 className="text-2xl font-bold text-white mb-2">{t("deck.empty")}</h2>
             <p className="text-gray-400 mb-6">{t("deck.emptyHint")}</p>
             <a
