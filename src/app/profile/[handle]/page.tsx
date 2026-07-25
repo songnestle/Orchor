@@ -62,7 +62,7 @@ export default function ProfilePage() {
                   <div className="text-sm text-gray-400">{t("profile.following")}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-white">{creator.totalEarnings} ETH</div>
+                  <div className="text-2xl font-bold text-white">{creator.totalEarnings} INJ</div>
                   <div className="text-sm text-gray-400">{t("profile.totalEarnings")}</div>
                 </div>
                 <div>
@@ -146,7 +146,7 @@ export default function ProfilePage() {
             <div className="glass-strong rounded-xl p-6">
               <div className="text-4xl mb-3">💰</div>
               <div className="text-2xl font-bold text-white mb-2">
-                {creator.totalEarnings} ETH
+                {creator.totalEarnings} INJ
               </div>
               <div className="text-sm text-gray-400">{t("creator.totalRevenue")}</div>
             </div>

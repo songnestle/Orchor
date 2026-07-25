@@ -1,12 +1,14 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import type { SkillModule } from "@/lib/skills";
 import { RarityBadge } from "./RarityBadge";
 import { AttributeBar } from "./AttributeBar";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
+import { useOrchorWrites } from "@/lib/useOrchor";
+import { useDeck } from "@/lib/deckStore";
 import { useI18n } from "@/lib/i18n";
 
 type Step = "idle" | "confirm" | "submitting" | "done" | "error";
@@ -34,36 +36,64 @@ export function CardDetailModal({
   const { isConnected, address } = useAccount();
   const { t } = useI18n();
   const { credits } = useCreditBalance();
+  const { unlock, isConfirmed } = useOrchorWrites();
+  const bumpRefetch = useDeck((s) => s.bumpRefetch);
+
+  // Collect = real on-chain unlockSkill. When the tx confirms, refresh the
+  // chain-read `owned` set so the card appears in the Deck immediately.
+  useEffect(() => {
+    if (isConfirmed && step === "submitting" && action === "collect") {
+      bumpRefetch();
+      setStep("done");
+    }
+  }, [isConfirmed, step, action, bumpRefetch]);
 
   if (!skill) return null;
 
-  // Pure Credits pricing (multi-chain funded)
-  const runCost = skill.energyCost * 10;            // Credits per run
-  const collectCost = Math.round(skill.priceMON * 1000); // Credits to own the card
-  const currentCost = action === "run" ? runCost : collectCost;
-  const insufficientCredits = credits < currentCost;
+  // Run is priced in Credits (multi-chain funded); Collect is an on-chain
+  // unlock priced in INJ (skill.priceMON).
+  const runCost = skill.energyCost * 10; // Credits per run
+  const insufficientCredits = credits < runCost;
 
   async function runPaymentFlow() {
     if (!skill || !isConnected) return;
+
+    setErr(null);
+
+    if (action === "collect") {
+      // On-chain path: wallet signs OrchorCore.unlockSkill, ownership is
+      // recorded in the contract's `owned` mapping (what the Deck reads).
+      setStep("confirm");
+      try {
+        await unlock(skill.id, skill.priceMON);
+        setOutput(
+          `Card #${skill.id} unlock submitted on-chain — it will appear in your Deck once confirmed.`
+        );
+        setStep("submitting");
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "Transaction failed";
+        setErr(msg.split("\n")[0]);
+        setStep("error");
+      }
+      return;
+    }
 
     if (insufficientCredits) {
       if (onOpenTopUpCredits) onOpenTopUpCredits(); else window.dispatchEvent(new Event("orchor:open-topup"));
       return;
     }
 
-    setErr(null);
     setStep("confirm");
 
     try {
-      const endpoint = action === "run" ? "/api/skills/execute" : "/api/skills/collect";
-      const res = await fetch(endpoint, {
+      const res = await fetch("/api/skills/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: address?.toLowerCase(),
           skillId: skill.id,
-          input: action === "run" ? skill.inputExample : undefined,
-          credits: currentCost,
+          input: skill.inputExample,
+          credits: runCost,
         }),
       });
 
@@ -75,10 +105,10 @@ export function CardDetailModal({
           setStep("idle");
           return;
         }
-        throw new Error(errData.error || (action === "run" ? "Execution failed" : "Collect failed"));
+        throw new Error(errData.error || "Execution failed");
       }
       const data = await res.json();
-      setOutput(data.output || (action === "run" ? "Execution completed" : "Card collected!"));
+      setOutput(data.output || "Execution completed");
       // Balance changed (credits were spent) — refresh it everywhere.
       window.dispatchEvent(new Event("orchor:credits-updated"));
 
@@ -215,7 +245,7 @@ export function CardDetailModal({
                     >
                       {step === "submitting" && action === "collect"
                         ? t("card.collecting")
-                        : `${t("card.collect")} · ${collectCost} ${t("topup.creditsUnit")}`}
+                        : `${t("card.collect")} · ${skill.priceMON} INJ`}
                     </button>
                   </div>
 

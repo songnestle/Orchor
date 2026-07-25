@@ -88,7 +88,7 @@ export default function MarketplacePage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold text-white">
-                    {listing.listingPrice.toFixed(3)} ETH
+                    {listing.listingPrice.toFixed(3)} INJ
                   </span>
                   {listing.listingType === "auction" && (
                     <span className="text-xs text-gray-400">

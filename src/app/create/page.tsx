@@ -100,7 +100,7 @@ export default function CreatePage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-300 mb-2">Price (ETH)</label>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">Price (INJ)</label>
                   <input type="number" placeholder="0.01" step="0.001" className="w-full px-4 py-3 rounded-xl glass text-white" />
                 </div>
                 <div>

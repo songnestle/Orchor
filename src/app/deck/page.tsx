@@ -33,7 +33,7 @@ export default function DeckPage() {
               <div className="glass px-4 py-2 rounded-xl">
                 <div className="text-xs text-gray-400">{t("deck.totalValue")}</div>
                 <div className="text-lg font-bold text-white">
-                  {(deck.reduce((sum, s) => sum + s.priceMON, 0)).toFixed(2)} ETH
+                  {(deck.reduce((sum, s) => sum + s.priceMON, 0)).toFixed(2)} INJ
                 </div>
               </div>
             </div>

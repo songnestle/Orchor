@@ -135,7 +135,7 @@ export default function HistoryPage() {
 
                   <div className="flex items-center gap-4 text-sm">
                     <span className="text-[#d6a44c] font-semibold">
-                      {entry.action === "run" ? `${entry.cost} Energy` : `${entry.cost} ETH`}
+                      {entry.action === "run" ? `${entry.cost} Energy` : `${entry.cost} INJ`}
                     </span>
                     {entry.txHash && (
                       <a
