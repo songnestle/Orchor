@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { isAddress } from "viem";
 import { useOrchorWrites } from "@/lib/useOrchor";
 import { useI18n } from "@/lib/i18n";
+import { useErrorText } from "@/lib/errorText";
 import type { SkillModule } from "@/lib/skills";
 
 /**
@@ -21,6 +22,7 @@ interface Props {
 
 export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
   const { t } = useI18n();
+  const errText = useErrorText();
   const { transfer, isPending, isConfirming, isConfirmed } = useOrchorWrites();
   const [to, setTo] = useState("");
   const [amount, setAmount] = useState(1);
@@ -48,7 +50,7 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
     try {
       await transfer(to as `0x${string}`, skill!.id, amount);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("xfer.failed"));
+      setError(errText(e));
     }
   }
 

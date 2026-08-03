@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAllSkills } from "@/lib/useAllSkills";
+import { useSkillStats } from "@/lib/hooks/useSkillStats";
 import { useI18n } from "@/lib/i18n";
 import { CertificateCard } from "@/components/CertificateCard";
 import type { SkillModule } from "@/lib/skills";
@@ -11,6 +12,7 @@ type BattlePhase = "select" | "battle" | "result";
 
 export default function BattleArenaPage() {
   const allSkills = useAllSkills();
+  const { stats } = useSkillStats();
   const { t } = useI18n();
   const [phase, setPhase] = useState<BattlePhase>("select");
   const [playerCard, setPlayerCard] = useState<SkillModule | null>(null);
@@ -28,8 +30,9 @@ export default function BattleArenaPage() {
 
     // Simulate battle after 2s
     setTimeout(() => {
-      const playerPower = playerCard.usageCount + (playerCard.priceMON * 1000);
-      const opponentPower = opponent.usageCount + (opponent.priceMON * 1000);
+      // 战力 = 链上真实调用数 + 价格权重。usageCount 是 skills.ts 里编的数字,不能进公式。
+      const playerPower = (stats?.[playerCard.id]?.calls ?? 0) + playerCard.priceMON * 1000;
+      const opponentPower = (stats?.[opponent.id]?.calls ?? 0) + opponent.priceMON * 1000;
       setWinner(playerPower > opponentPower ? "player" : "opponent");
       setPhase("result");
     }, 2000);

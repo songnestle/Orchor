@@ -7,6 +7,7 @@ import type { SkillModule } from "@/lib/skills";
 import { RarityBadge } from "./RarityBadge";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
 import { useOrchorWrites, useOnchainSkills } from "@/lib/useOrchor";
+import { useSkillStats } from "@/lib/hooks/useSkillStats";
 import { useDeck } from "@/lib/deckStore";
 import { useI18n } from "@/lib/i18n";
 import { useSession } from "@/lib/hooks/useSession";
@@ -41,6 +42,7 @@ export function CardDetailModal({
   const { credits } = useCreditBalance();
   const { unlock, isConfirmed } = useOrchorWrites();
   const { skills: onchainSkills } = useOnchainSkills();
+  const { stats } = useSkillStats();
   const bumpRefetch = useDeck((s) => s.bumpRefetch);
 
   // Collect = real on-chain unlockSkill. When the tx confirms, refresh the
@@ -194,10 +196,9 @@ export function CardDetailModal({
                         <div className="flex items-center gap-4 text-sm mb-6">
                           <div className="flex items-center gap-1">
                             <span className="text-[#d6a44c]">★</span>
-                            <span className="text-white font-bold">{skill.rating}</span>
                           </div>
                           <div className="text-gray-400">
-                            {skill.usageCount.toLocaleString()} runs
+                            {stats?.[skill.id]?.calls === undefined ? "—" : stats[skill.id].calls.toLocaleString()} runs
                           </div>
                         </div>
 
@@ -376,14 +377,14 @@ export function CardDetailModal({
                         <div className="glass p-4 rounded-xl">
                           <div className="text-sm text-gray-400 mb-1">Total Runs</div>
                           <div className="text-2xl font-bold text-white">
-                            {skill.usageCount.toLocaleString()}
+                            {stats?.[skill.id]?.calls === undefined ? "—" : stats[skill.id].calls.toLocaleString()}
                           </div>
                         </div>
 
                         <div className="glass p-4 rounded-xl">
                           <div className="text-sm text-gray-400 mb-1">Average Rating</div>
                           <div className="text-2xl font-bold text-white">
-                            {skill.rating} ★
+                            —
                           </div>
                         </div>
 

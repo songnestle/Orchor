@@ -50,6 +50,12 @@ interface Props {
   creatorEarned?: number;
   /** 持有份数。> 0 时主按钮变为已持有。 */
   balance?: number;
+  /**
+   * 近 30 日调用曲线,来自链上事件索引。
+   * undefined = 索引不可用(显示破折号语义);[] 或全零 = 真实的零。
+   * 绝不回退到 skills.ts 里手写的 sparkline —— 那是编的。
+   */
+  series?: number[];
   onUnlock?: () => void;
   onVerify?: () => void;
   onClick?: () => void;
@@ -62,6 +68,7 @@ export function CertificateCard({
   onchainCalls,
   creatorEarned,
   balance = 0,
+  series,
   onUnlock,
   onVerify,
   onClick,
@@ -70,11 +77,15 @@ export function CertificateCard({
   const isMythic = skill.rarity === "Mythic";
   const owned = balance > 0;
 
-  const series = skill.sparkline ?? [];
+  const line = series ?? [];
   const pct = useMemo(() => {
-    if (series.length < 2 || !series[0]) return null;
-    return Math.round(((series[series.length - 1] - series[0]) / series[0]) * 100);
-  }, [series]);
+    if (line.length < 2) return null;
+    const head = line.slice(0, Math.floor(line.length / 2)).reduce((a, b) => a + b, 0);
+    const tail = line.slice(Math.floor(line.length / 2)).reduce((a, b) => a + b, 0);
+    if (head === 0 && tail === 0) return null;      // 全零:显示「暂无记录」而不是 +0%
+    if (head === 0) return 100;
+    return Math.round(((tail - head) / head) * 100);
+  }, [line]);
   const down = pct !== null && pct < 0;
 
   const price =
@@ -109,7 +120,7 @@ export function CertificateCard({
         </span>
       </header>
 
-      <Sparkline series={series} down={down} />
+      <Sparkline series={line} down={down} />
 
       <div className="flex justify-between mt-1.5 mb-5">
         <span className="text-[11px]" style={{ color: "#5f5949" }}>

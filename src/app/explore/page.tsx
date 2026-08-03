@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { SkillGrid } from "@/components/SkillGrid";
+import { useSkillStats } from "@/lib/hooks/useSkillStats";
 import { useAllSkills } from "@/lib/useAllSkills";
 import { useI18n } from "@/lib/i18n";
 import type { SkillModule } from "@/lib/skills";
@@ -9,6 +10,7 @@ import type { SkillModule } from "@/lib/skills";
 export default function ExplorePage() {
   const allSkills = useAllSkills();
   const { t } = useI18n();
+  const { stats } = useSkillStats();
   const [selected, setSelected] = useState<SkillModule | null>(null);
 
   return (
@@ -46,7 +48,7 @@ export default function ExplorePage() {
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d6a44c] to-[#bf5b4b]" />
               <div className="flex-1">
                 <div className="text-sm font-semibold text-white">@{skill.creatorHandle}</div>
-                <div className="text-xs text-gray-400">{skill.usageCount} {t("common.runs")}</div>
+                <div className="text-xs text-gray-400">{stats?.[skill.id]?.calls === undefined ? "—" : stats[skill.id].calls.toLocaleString()} {t("common.runs")}</div>
               </div>
             </div>
           ))}

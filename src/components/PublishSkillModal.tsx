@@ -16,7 +16,7 @@ import { useOrchorWrites, useNextSkillId } from "@/lib/useOrchor";
 import { ORCHOR_ABI, explorerTxUrl } from "@/lib/chain";
 import { buildSkillFromForm, usePublished } from "@/lib/publishedStore";
 import { useDeck } from "@/lib/deckStore";
-import { SkillCard } from "./SkillCard";
+import { CertificateCard } from "./CertificateCard";
 import { EnergyBolt, InjectiveIcon } from "./TopNav";
 
 interface Props {
@@ -509,10 +509,8 @@ export function PublishSkillModal({ open, onClose }: Props) {
                   </div>
                   <div className="flex items-start justify-center">
                     <div className="scale-[0.78] origin-top">
-                      <SkillCard
-                        skill={previewSkill}
-                        variant="main"
-                      />
+                      {/* 预览即上架后的真实形态:曲线是平基线、调用为 0 —— 新卡就该长这样 */}
+                      <CertificateCard skill={previewSkill} series={[]} onchainCalls={0} creatorEarned={0} />
                     </div>
                   </div>
 

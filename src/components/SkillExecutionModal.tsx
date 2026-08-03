@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
 import { useSession } from "@/lib/hooks/useSession";
+import { useErrorText } from "@/lib/errorText";
+import { useI18n } from "@/lib/i18n";
 
 interface Props {
   open: boolean;
@@ -26,6 +28,9 @@ export function SkillExecutionModal({
   const { credits, refetch } = useCreditBalance();
   // 需要鉴权的请求走 authedFetch：未登录会先弹一次签名。
   const { authedFetch } = useSession();
+  const errText = useErrorText();
+  const { t } = useI18n();
+  const [errMsg, setErrMsg] = useState<string | null>(null);
 
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
@@ -37,10 +42,11 @@ export function SkillExecutionModal({
 
     const userCredits = Number(credits);
     if (userCredits < creditsPerRun) {
-      alert(`Insufficient credits. Need ${creditsPerRun}, have ${userCredits}`);
+      setErrMsg(t("err.INSUFFICIENT_CREDITS", { need: String(creditsPerRun), have: String(userCredits) }));
       return;
     }
 
+    setErrMsg(null);
     setIsExecuting(true);
     setStep("executing");
 
@@ -62,11 +68,11 @@ export function SkillExecutionModal({
         refetch(); // Refresh credit balance
         onSuccess?.(data.output);
       } else {
-        alert(`Error: ${data.error}`);
+        setErrMsg(errText(data.error));
         setStep("input");
       }
     } catch (error) {
-      alert(`Error: ${error}`);
+      setErrMsg(errText(error));
       setStep("input");
     } finally {
       setIsExecuting(false);
@@ -97,6 +103,14 @@ export function SkillExecutionModal({
         <div className="p-6">
           {step === "input" && (
             <>
+              {errMsg ? (
+                <p
+                  className="mb-4 px-3 py-2.5 text-[12px] leading-relaxed rounded-[2px]"
+                  style={{ background: "rgba(168,112,95,.1)", color: "var(--o-down)" }}
+                >
+                  {errMsg}
+                </p>
+              ) : null}
               <div>
                 <div className="text-[10px] uppercase tracking-[0.2em] text-mutedHi">
                   Execute Skill

@@ -1,12 +1,17 @@
 "use client";
 
 import { useAllSkills } from "@/lib/useAllSkills";
+import { useSkillStats } from "@/lib/hooks/useSkillStats";
 import { useI18n } from "@/lib/i18n";
 
 export default function RankingsPage() {
   const allSkills = useAllSkills();
   const { t } = useI18n();
-  const sorted = [...allSkills].sort((a, b) => b.usageCount - a.usageCount);
+  const { stats } = useSkillStats();
+  // 排行以链上真实调用数为准。索引未就绪时不假排序 —— 按编号列出并显示破折号。
+  const sorted = [...allSkills].sort(
+    (a, b) => (stats?.[b.id]?.calls ?? 0) - (stats?.[a.id]?.calls ?? 0) || a.id - b.id
+  );
 
   return (
     <div className="min-h-screen bg-transparent">
@@ -39,7 +44,7 @@ export default function RankingsPage() {
                     <div className="text-xs text-gray-400">{skill.category}</div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-300">@{skill.creatorHandle}</td>
-                  <td className="px-6 py-4 text-right font-mono text-white">{skill.usageCount.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-right font-mono text-white">{stats?.[skill.id]?.calls === undefined ? "—" : stats[skill.id].calls.toLocaleString()}</td>
                   <td className="px-6 py-4 text-right font-mono text-[#d6a44c]">{skill.priceMON} INJ</td>
                 </tr>
               ))}

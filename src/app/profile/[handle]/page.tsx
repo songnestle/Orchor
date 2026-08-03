@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAllSkills } from "@/lib/useAllSkills";
+import { useSkillStats } from "@/lib/hooks/useSkillStats";
 import { useI18n } from "@/lib/i18n";
 import { CertificateCard } from "@/components/CertificateCard";
 
 export default function ProfilePage() {
   const allSkills = useAllSkills();
+  const { stats } = useSkillStats();
   const { t } = useI18n();
   const [tab, setTab] = useState<"created" | "collected" | "stats">("created");
 
@@ -139,7 +141,9 @@ export default function ProfilePage() {
             <div className="glass-strong rounded-xl p-6">
               <div className="text-4xl mb-3">⚡</div>
               <div className="text-2xl font-bold text-white mb-2">
-                {createdSkills.reduce((sum, s) => sum + s.usageCount, 0).toLocaleString()}
+                {stats === undefined
+                  ? "—"
+                  : createdSkills.reduce((sum, sk) => sum + (stats[sk.id]?.calls ?? 0), 0).toLocaleString()}
               </div>
               <div className="text-sm text-gray-400">{t("creator.totalRuns")}</div>
             </div>

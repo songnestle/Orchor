@@ -107,6 +107,8 @@ const dict = {
   "err.MISSING_FIELDS":    { en: "Missing required fields", zh: "缺少必填字段" },
   "err.EXECUTION_FAILED":  { en: "Execution failed", zh: "执行失败" },
 
+  "err.INSUFFICIENT_CREDITS": { en: "Not enough credits — need {need}, you have {have}", zh: "余额不足 —— 需要 {need}，当前 {have}" },
+
   // 登录
   "auth.signIn":     { en: "Sign in",  zh: "签名登录" },
   "auth.signingIn":  { en: "Signing…", zh: "签名中…" },

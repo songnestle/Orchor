@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { CertificateCard } from "./CertificateCard";
 import { useBalances, useOnchainSkills, useOrchorWrites } from "@/lib/useOrchor";
+import { useSkillStats } from "@/lib/hooks/useSkillStats";
 import { ORCHOR_CORE_ADDRESS, activeChain } from "@/lib/chain";
 import { useI18n } from "@/lib/i18n";
 import type { SkillModule } from "@/lib/skills";
@@ -29,6 +30,7 @@ export function SkillGrid({ skills, onSelect, emptyText }: Props) {
   const { balances } = useBalances();
   const { skills: onchain } = useOnchainSkills();
   const { unlock } = useOrchorWrites();
+  const { stats } = useSkillStats();
 
   const explorer = activeChain.blockExplorers?.default.url;
 
@@ -62,10 +64,9 @@ export function SkillGrid({ skills, onSelect, emptyText }: Props) {
             unlockPriceWei={chain?.unlockPriceWei}
             supplyLabel={supplyLabel}
             balance={balances.get(skill.id) ?? 0}
-            /* 链上调用次数需要事件索引，尚未接入 —— 传 undefined 让卡面显示「暂无记录」，
-               而不是编一个好看的数字。 */
-            onchainCalls={undefined}
-            creatorEarned={undefined}
+            onchainCalls={stats?.[skill.id]?.calls}
+            creatorEarned={stats?.[skill.id]?.creatorEarnedInj}
+            series={stats?.[skill.id]?.series ?? (stats ? [] : undefined)}
             onClick={() => onSelect?.(skill)}
             onUnlock={() => {
               if (!chain) return;

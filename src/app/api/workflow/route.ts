@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireUser, UnauthorizedError } from "@/lib/auth/session";
 
 interface SkillRef {
   name: string;
@@ -13,6 +14,16 @@ interface WorkflowReq {
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
+  // 这条路由消耗真实的模型配额 —— 匿名可调等于把 API 账单开放给全网。
+  try {
+    requireUser(req);
+  } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return NextResponse.json({ error: e.message }, { status: 401 });
+    }
+    throw e;
+  }
+
   let body: WorkflowReq;
   try {
     body = (await req.json()) as WorkflowReq;

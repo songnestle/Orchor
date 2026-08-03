@@ -1,39 +1,17 @@
 import { NextResponse } from "next/server";
 
 /**
- * POST /api/skills/collect
- * Collect (own) a skill card by spending Credits.
- * Credits are funded via multi-chain deposits (TRON / Base / Ethereum).
+ * POST /api/skills/collect — 已下线。
  *
- * NOTE: Currently a mock. Real implementation requires DB connection
- * to deduct Credits and record ownership in the ledger.
+ * 这里曾是一个 mock:不查余额、不记账,对任何请求都返回「收藏成功」。
+ * 假成功比报错更糟 —— 用户以为自己拥有了一张卡,而链上和账本里什么都没有。
+ *
+ * 收藏(买断)现在只有一条路径:链上 unlockSkill。
+ * 前端入口是 CertificateCard 的解锁按钮,详见 useOrchorWrites().unlock。
  */
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const { skillId, credits } = body;
-
-    if (skillId === undefined || !credits) {
-      return NextResponse.json(
-        { error: "Missing skillId or credits" },
-        { status: 400 }
-      );
-    }
-
-    // TODO: When DATABASE_URL is configured:
-    // 1. Verify user has enough Credits
-    // 2. Deduct `credits` from user balance
-    // 3. Record ownership in `ownership` table
-    // 4. Split revenue: 70% creator / 20% platform / 10% treasury
-
-    return NextResponse.json({
-      success: true,
-      skillId,
-      creditsSpent: credits,
-      output: `Card #${skillId} collected for ${credits} Credits.`,
-    });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "Collect failed";
-    return NextResponse.json({ error: msg }, { status: 500 });
-  }
+export async function POST() {
+  return NextResponse.json(
+    { error: "GONE_USE_ONCHAIN_UNLOCK" },
+    { status: 410 }
+  );
 }
