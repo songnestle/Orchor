@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { PremiumSkillCard } from "@/components/premium/PremiumSkillCard";
+import { SkillGrid } from "@/components/SkillGrid";
 import { useAllSkills } from "@/lib/useAllSkills";
 import { useI18n } from "@/lib/i18n";
 import type { SkillModule } from "@/lib/skills";
@@ -25,21 +24,7 @@ export default function ExplorePage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {allSkills.map((skill, index) => (
-            <motion.div
-              key={skill.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <PremiumSkillCard
-                skill={skill}
-                onClick={() => setSelected(skill)}
-              />
-            </motion.div>
-          ))}
-        </div>
+        <SkillGrid skills={allSkills} onSelect={setSelected} />
       </div>
 
       {/* Right Sidebar - Trending */}

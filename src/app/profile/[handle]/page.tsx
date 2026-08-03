@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAllSkills } from "@/lib/useAllSkills";
 import { useI18n } from "@/lib/i18n";
-import { PremiumSkillCard } from "@/components/premium/PremiumSkillCard";
+import { CertificateCard } from "@/components/CertificateCard";
 
 export default function ProfilePage() {
   const allSkills = useAllSkills();
@@ -113,9 +113,9 @@ export default function ProfilePage() {
                 key={skill.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ duration: 0.2 }}
               >
-                <PremiumSkillCard skill={skill} onClick={() => {}} />
+                <CertificateCard skill={skill} onClick={() => {}} />
               </motion.div>
             ))}
           </div>

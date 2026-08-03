@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAllSkills } from "@/lib/useAllSkills";
 import { useI18n } from "@/lib/i18n";
-import { PremiumSkillCard } from "@/components/premium/PremiumSkillCard";
+import { CertificateCard } from "@/components/CertificateCard";
 import type { SkillModule } from "@/lib/skills";
 
 type BattlePhase = "select" | "battle" | "result";
@@ -20,7 +20,9 @@ export default function BattleArenaPage() {
   const startBattle = () => {
     if (!playerCard) return;
     // Random opponent
-    const opponent = allSkills[Math.floor(Math.random() * allSkills.length)];
+    // 曾用 Math.random() 选对手 —— 服务端和客户端选到不同的卡，触发 hydration 报错。
+    // 改为按当前卡 id 派生，结果稳定且仍然每张卡对手不同。
+    const opponent = allSkills[(playerCard.id + 7) % allSkills.length];
     setOpponentCard(opponent);
     setPhase("battle");
 
@@ -57,7 +59,7 @@ export default function BattleArenaPage() {
               <div className="mb-8">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-64">
-                    <PremiumSkillCard skill={playerCard} onClick={() => {}} />
+                    <CertificateCard skill={playerCard} onClick={() => {}} />
                   </div>
                   <div>
                     <div className="text-lg font-bold text-white mb-2">Selected: {playerCard.title}</div>
@@ -80,7 +82,7 @@ export default function BattleArenaPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {allSkills.slice(0, 12).map((skill) => (
                   <div key={skill.id} onClick={() => setPlayerCard(skill)} className="cursor-pointer">
-                    <PremiumSkillCard skill={skill} onClick={() => {}} />
+                    <CertificateCard skill={skill} onClick={() => {}} />
                   </div>
                 ))}
               </div>
@@ -99,7 +101,7 @@ export default function BattleArenaPage() {
               animate={{ x: [0, -20, 0] }}
               transition={{ repeat: Infinity, duration: 0.6 }}
             >
-              <PremiumSkillCard skill={playerCard} onClick={() => {}} />
+              <CertificateCard skill={playerCard} onClick={() => {}} />
               <div className="text-center mt-4 text-lg font-bold text-white">{t("battle.you")}</div>
             </motion.div>
 
@@ -109,7 +111,7 @@ export default function BattleArenaPage() {
               animate={{ x: [0, 20, 0] }}
               transition={{ repeat: Infinity, duration: 0.6 }}
             >
-              <PremiumSkillCard skill={opponentCard} onClick={() => {}} />
+              <CertificateCard skill={opponentCard} onClick={() => {}} />
               <div className="text-center mt-4 text-lg font-bold text-white">{t("battle.opponent")}</div>
             </motion.div>
           </motion.div>

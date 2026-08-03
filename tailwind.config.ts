@@ -5,36 +5,33 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Retro pixel palette — "aged game cartridge" warm tones.
-        // Semantic token names kept so existing components re-theme for free.
-        bg: "#161310",       // deep warm charcoal
-        bg2: "#201c17",      // interior
-        panel: "#2b251d",    // raised panel
-        panel2: "#332c22",
-        border: "#443c30",
-        borderSoft: "#332c22",
-        accent: "#d6a44c",   // aged brass (was violet)
-        accent2: "#7a9450",  // sage moss (was cyan)
-        accent3: "#bf5b4b",  // faded terracotta (was pink)
-        muted: "#9d9078",
-        mutedHi: "#c5b79a",
+        // 黑金凭证：整站只有三个色族
+        bg: "#0a0906",
+        bg2: "#0f0e0a",
+        panel: "#111009",
+        panel2: "#16150e",
+        border: "#232017",
+        borderSoft: "#1c1a14",
+        accent: "#c6a96c",     // 香槟金 —— 稀缺资源，别铺开用
+        accent2: "#8fae7a",    // 上行
+        accent3: "#a8705f",    // 下行
+        muted: "#6a6353",
+        mutedHi: "#8a8271",
+        ink: "#ede7d8",
       },
       fontFamily: {
-        sans: ["var(--nf-body)", "'DM Sans'", "Inter", "ui-sans-serif", "system-ui", "-apple-system"],
-        display: ["var(--nf-display)", "'Space Grotesk'", "Inter", "ui-sans-serif", "system-ui"],
-        pixel: ["var(--nf-pixel)", "'Press Start 2P'", "monospace"],
-        retro: ["var(--nf-retro)", "'VT323'", "monospace"],
+        sans: ["var(--nf-body)", "'DM Sans'", "ui-sans-serif", "system-ui"],
         mono: ["var(--nf-mono)", "'JetBrains Mono'", "ui-monospace", "monospace"],
+        serif: ["Georgia", "'Songti SC'", "'Noto Serif SC'", "serif"],
+        // 旧别名保留，避免遗留 class 崩掉
+        display: ["Georgia", "'Songti SC'", "serif"],
+        pixel: ["Georgia", "'Songti SC'", "serif"],
+        retro: ["Georgia", "'Songti SC'", "serif"],
       },
       boxShadow: {
-        // hard, offset pixel shadows (no blur) — the "sticker lift" look
-        glow: "4px 4px 0 0 rgba(0,0,0,0.45)",
-        glowCyan: "4px 4px 0 0 rgba(0,0,0,0.45)",
-        soft: "0 0 0 3px rgba(0,0,0,0.35), 4px 4px 0 0 rgba(0,0,0,0.35)",
-        pixel: "4px 4px 0 0 rgba(0,0,0,0.5)",
-        pixelLg: "6px 6px 0 0 rgba(0,0,0,0.5)",
-        cardDeep:
-          "0 0 0 3px rgba(0,0,0,0.5), 8px 8px 0 0 rgba(0,0,0,0.45)",
+        // 一律无阴影 —— 发丝线代替投影
+        glow: "none", glowCyan: "none", soft: "none",
+        pixel: "none", pixelLg: "none", cardDeep: "none",
       },
       keyframes: {
         pulseDot: {

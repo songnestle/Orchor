@@ -91,56 +91,78 @@ export const ORCHOR_CORE_ADDRESS =
   ("0x0000000000000000000000000000000000000000" as `0x${string}`);
 
 export const ORCHOR_ABI = [
+  /* ── ERC-1155 标准读 ── */
   {
     type: "function",
-    name: "MON_TO_ENERGY",
+    name: "balanceOf",
     stateMutability: "view",
-    inputs: [],
+    inputs: [
+      { name: "account", type: "address" },
+      { name: "id", type: "uint256" },
+    ],
     outputs: [{ name: "", type: "uint256" }],
   },
+  {
+    type: "function",
+    name: "balanceOfBatch",
+    stateMutability: "view",
+    inputs: [
+      { name: "accounts", type: "address[]" },
+      { name: "ids", type: "uint256[]" },
+    ],
+    outputs: [{ name: "", type: "uint256[]" }],
+  },
+  {
+    type: "function",
+    name: "uri",
+    stateMutability: "view",
+    inputs: [{ name: "id", type: "uint256" }],
+    outputs: [{ name: "", type: "string" }],
+  },
+  {
+    type: "function",
+    name: "safeTransferFrom",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "from", type: "address" },
+      { name: "to", type: "address" },
+      { name: "id", type: "uint256" },
+      { name: "amount", type: "uint256" },
+      { name: "data", type: "bytes" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "setApprovalForAll",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "operator", type: "address" },
+      { name: "approved", type: "bool" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "royaltyInfo",
+    stateMutability: "view",
+    inputs: [
+      { name: "tokenId", type: "uint256" },
+      { name: "salePrice", type: "uint256" },
+    ],
+    outputs: [
+      { name: "receiver", type: "address" },
+      { name: "royaltyAmount", type: "uint256" },
+    ],
+  },
+
+  /* ── Orchor 业务读 ── */
   {
     type: "function",
     name: "nextSkillId",
     stateMutability: "view",
     inputs: [],
     outputs: [{ name: "", type: "uint256" }],
-  },
-  {
-    type: "function",
-    name: "energyOf",
-    stateMutability: "view",
-    inputs: [{ name: "", type: "address" }],
-    outputs: [{ name: "", type: "uint256" }],
-  },
-  {
-    type: "function",
-    name: "owned",
-    stateMutability: "view",
-    inputs: [
-      { name: "", type: "address" },
-      { name: "", type: "uint256" },
-    ],
-    outputs: [{ name: "", type: "bool" }],
-  },
-  {
-    type: "function",
-    name: "subscriptionExpiry",
-    stateMutability: "view",
-    inputs: [
-      { name: "", type: "address" },
-      { name: "", type: "uint256" },
-    ],
-    outputs: [{ name: "", type: "uint64" }],
-  },
-  {
-    type: "function",
-    name: "hasAccess",
-    stateMutability: "view",
-    inputs: [
-      { name: "user", type: "address" },
-      { name: "skillId", type: "uint256" },
-    ],
-    outputs: [{ name: "", type: "bool" }],
   },
   {
     type: "function",
@@ -167,16 +189,59 @@ export const ORCHOR_ABI = [
   },
   {
     type: "function",
+    name: "hasAccess",
+    stateMutability: "view",
+    inputs: [
+      { name: "user", type: "address" },
+      { name: "skillId", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool" }],
+  },
+  {
+    type: "function",
+    name: "energyOf",
+    stateMutability: "view",
+    inputs: [{ name: "", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "subscriptionExpiry",
+    stateMutability: "view",
+    inputs: [
+      { name: "", type: "address" },
+      { name: "", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "uint64" }],
+  },
+  {
+    type: "function",
+    name: "pending",
+    stateMutability: "view",
+    inputs: [{ name: "", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  { type: "function", name: "CREATOR_BPS", stateMutability: "view", inputs: [], outputs: [{ name: "", type: "uint16" }] },
+  { type: "function", name: "PLATFORM_BPS", stateMutability: "view", inputs: [], outputs: [{ name: "", type: "uint16" }] },
+  { type: "function", name: "ONCHAIN_BPS", stateMutability: "view", inputs: [], outputs: [{ name: "", type: "uint16" }] },
+
+  /* ── 写 ── */
+  {
+    type: "function",
     name: "topUpEnergy",
     stateMutability: "payable",
     inputs: [],
     outputs: [],
   },
   {
+    // 注意：多了 amount 参数。旧版是 unlockSkill(uint256)。
     type: "function",
     name: "unlockSkill",
     stateMutability: "payable",
-    inputs: [{ name: "skillId", type: "uint256" }],
+    inputs: [
+      { name: "skillId", type: "uint256" },
+      { name: "amount", type: "uint256" },
+    ],
     outputs: [],
   },
   {
@@ -211,29 +276,14 @@ export const ORCHOR_ABI = [
     outputs: [{ name: "skillId", type: "uint256" }],
   },
   {
-    type: "event",
-    name: "SkillRegistered",
-    inputs: [
-      { name: "skillId", type: "uint256", indexed: true },
-      { name: "name", type: "string", indexed: false },
-      { name: "creator", type: "address", indexed: true },
-      { name: "rarity", type: "uint8", indexed: false },
-      { name: "energyCost", type: "uint64", indexed: false },
-      { name: "unlockPriceWei", type: "uint128", indexed: false },
-      { name: "subscriptionPriceWei", type: "uint128", indexed: false },
-      { name: "mintCap", type: "uint32", indexed: false },
-    ],
+    type: "function",
+    name: "withdraw",
+    stateMutability: "nonpayable",
+    inputs: [],
+    outputs: [],
   },
-  {
-    type: "event",
-    name: "SkillUnlocked",
-    inputs: [
-      { name: "user", type: "address", indexed: true },
-      { name: "skillId", type: "uint256", indexed: true },
-      { name: "pricePaid", type: "uint256", indexed: false },
-      { name: "mintIndex", type: "uint256", indexed: false },
-    ],
-  },
+
+  /* ── 事件（用于索引调用次数与成交历史） ── */
   {
     type: "event",
     name: "SkillInvoked",
@@ -246,11 +296,34 @@ export const ORCHOR_ABI = [
   },
   {
     type: "event",
-    name: "EnergyToppedUp",
+    name: "SkillUnlocked",
     inputs: [
       { name: "user", type: "address", indexed: true },
-      { name: "monPaid", type: "uint256", indexed: false },
-      { name: "energyAdded", type: "uint256", indexed: false },
+      { name: "skillId", type: "uint256", indexed: true },
+      { name: "amount", type: "uint256", indexed: false },
+      { name: "pricePaid", type: "uint256", indexed: false },
+    ],
+  },
+  {
+    type: "event",
+    name: "RevenueSplit",
+    inputs: [
+      { name: "skillId", type: "uint256", indexed: true },
+      { name: "creator", type: "address", indexed: true },
+      { name: "creatorAmount", type: "uint256", indexed: false },
+      { name: "platformAmount", type: "uint256", indexed: false },
+      { name: "onchainLogAmount", type: "uint256", indexed: false },
+    ],
+  },
+  {
+    type: "event",
+    name: "TransferSingle",
+    inputs: [
+      { name: "operator", type: "address", indexed: true },
+      { name: "from", type: "address", indexed: true },
+      { name: "to", type: "address", indexed: true },
+      { name: "id", type: "uint256", indexed: false },
+      { name: "value", type: "uint256", indexed: false },
     ],
   },
 ] as const;

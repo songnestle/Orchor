@@ -7,7 +7,7 @@ import type { SkillModule } from "@/lib/skills";
 import { RARITY } from "@/lib/rarity";
 import { useDeck } from "@/lib/deckStore";
 import { useOrchorState } from "@/lib/useOrchorState";
-import { useOrchorWrites } from "@/lib/useOrchor";
+import { useOrchorWrites, useOnchainSkills } from "@/lib/useOrchor";
 import { buildOrPackage } from "@/lib/orPackage";
 import { explorerTxUrl } from "@/lib/chain";
 import { EnergyBolt, InjectiveIcon } from "./TopNav";
@@ -26,6 +26,7 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
   const { isConnected } = useAccount();
   const { owned: ownedSet, subscribed: subSet, energy } = useOrchorState();
   const { unlock, subscribe, invoke, isConfirming, isConfirmed } = useOrchorWrites();
+  const { skills: onchainSkills } = useOnchainSkills();
   const bumpRefetch = useDeck((s) => s.bumpRefetch);
   const noteInvoke = useDeck((s) => s.noteInvoke);
 
@@ -79,9 +80,17 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
     try {
       let h: `0x${string}`;
       if (mode === "subscribe") {
-        h = await subscribe(skill.id, monPrice);
+        {
+          const chain = onchainSkills.get(skill.id);
+          if (!chain) throw new Error("读不到链上价格，请稍后重试");
+          h = await subscribe(skill.id, chain.subscriptionPriceWei);
+        }
       } else if (mode === "unlock") {
-        h = await unlock(skill.id, monPrice);
+        {
+          const chain = onchainSkills.get(skill.id);
+          if (!chain) throw new Error("读不到链上价格，请稍后重试");
+          h = await unlock(skill.id, chain.unlockPriceWei, 1);
+        }
       } else {
         h = await invoke(skill.id, skill.inputExample);
       }

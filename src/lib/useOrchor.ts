@@ -13,25 +13,33 @@ import {
 import { keccak256, parseEther, toHex } from "viem";
 import { ORCHOR_ABI, ORCHOR_CORE_ADDRESS, activeChain } from "./chain";
 
+/**
+ * useOrchor1155 — 替换 src/lib/useOrchor.ts
+ *
+ * 与旧版的根本差异：持有状态不再读 owned mapping，而是读 ERC-1155 余额。
+ * 这不是等价改写 —— 旧的 owned mapping 已在合约里删除，
+ * 因为权限只能有一个真相来源，否则会出现「卖了卡还能调用」。
+ *
+ * 附带好处：balanceOf 是标准接口，钱包和第三方市场天然能读，
+ * 不需要我们提供任何 API。
+ */
+
 const orchor = {
   abi: ORCHOR_ABI,
   address: ORCHOR_CORE_ADDRESS,
   chainId: activeChain.id,
 } as const;
 
-/** Returns the live set of all skillIds onchain: [0, nextSkillId). */
+/** 链上全部 skillId：[0, nextSkillId) */
 function useAllSkillIds(): number[] {
-  const { data } = useReadContract({
-    ...orchor,
-    functionName: "nextSkillId",
-  });
+  const { data } = useReadContract({ ...orchor, functionName: "nextSkillId" });
   return useMemo(() => {
     const n = data ? Number(data) : 0;
     return Array.from({ length: n }, (_, i) => i);
   }, [data]);
 }
 
-/** Live Energy balance for the connected user. */
+/** Energy 余额。仍是合约内账本，不是代币。 */
 export function useEnergy() {
   const { address } = useAccount();
   const { data, refetch, isLoading } = useReadContract({
@@ -40,36 +48,45 @@ export function useEnergy() {
     args: address ? [address] : undefined,
     query: { enabled: Boolean(address) },
   });
-  return {
-    energy: data ? Number(data) : 0,
-    refetch,
-    isLoading,
-  };
+  return { energy: data ? Number(data) : 0, refetch, isLoading };
 }
 
-/** Returns set of skillIds owned by the connected user (via batched reads). */
-export function useOwnedSet() {
+/**
+ * 持卡量。一次 balanceOfBatch 拿全部，比逐个 balanceOf 省一个数量级的 RPC。
+ * 返回 Map<skillId, 份数> —— 份数而不是 bool，因为可以持有多份用于做市。
+ */
+export function useBalances() {
   const { address } = useAccount();
   const ids = useAllSkillIds();
-  const { data, refetch, isLoading } = useReadContracts({
-    contracts: address
-      ? ids.map((id) => ({
-          ...orchor,
-          functionName: "owned" as const,
-          args: [address, BigInt(id)] as const,
-        }))
-      : [],
+
+  const { data, refetch, isLoading } = useReadContract({
+    ...orchor,
+    functionName: "balanceOfBatch",
+    args:
+      address && ids.length
+        ? [ids.map(() => address), ids.map((i) => BigInt(i))]
+        : undefined,
     query: { enabled: Boolean(address) && ids.length > 0 },
   });
 
-  const owned = new Set<number>();
-  data?.forEach((res, i) => {
-    if (res.status === "success" && res.result === true) owned.add(ids[i]);
-  });
-  return { owned, refetch, isLoading };
+  const balances = useMemo(() => {
+    const m = new Map<number, number>();
+    (data as bigint[] | undefined)?.forEach((b, i) => {
+      if (b > 0n) m.set(ids[i], Number(b));
+    });
+    return m;
+  }, [data, ids]);
+
+  return { balances, refetch, isLoading };
 }
 
-/** Returns set of skillIds the user has an active subscription to. */
+/** 兼容旧代码的形态。新代码建议直接用 useBalances 拿份数。 */
+export function useOwnedSet() {
+  const { balances, refetch, isLoading } = useBalances();
+  return { owned: new Set(balances.keys()), refetch, isLoading };
+}
+
+/** 有效订阅集合。订阅是租约，不可转让，仍走 mapping。 */
 export function useSubscribedSet() {
   const { address } = useAccount();
   const ids = useAllSkillIds();
@@ -84,8 +101,8 @@ export function useSubscribedSet() {
     query: { enabled: Boolean(address) && ids.length > 0 },
   });
 
-  const now = BigInt(Math.floor(Date.now() / 1000));
   const subscribed = new Set<number>();
+  const now = BigInt(Math.floor(Date.now() / 1000));
   data?.forEach((res, i) => {
     if (res.status === "success" && (res.result as bigint) >= now) {
       subscribed.add(ids[i]);
@@ -94,11 +111,25 @@ export function useSubscribedSet() {
   return { subscribed, refetch, isLoading };
 }
 
-/** Mythic mint progress. Returns { current, cap } per skillId.
- *  Reads getSkill for every onchain skill and filters for cap > 0. */
-export function useMintProgress() {
+/**
+ * 全部技能的链上元数据：铸造进度、价格、稀有度、是否停用。
+ * 卡片上显示的每一个数字都应该来自这里，不要用 skills.ts 里的静态值。
+ */
+export interface OnchainSkill {
+  name: string;
+  creator: `0x${string}`;
+  rarity: number;
+  energyCost: number;
+  unlockPriceWei: bigint;
+  subscriptionPriceWei: bigint;
+  mintCap: number;
+  minted: number;
+  active: boolean;
+}
+
+export function useOnchainSkills() {
   const ids = useAllSkillIds();
-  const { data } = useReadContracts({
+  const { data, refetch, isLoading } = useReadContracts({
     contracts: ids.map((id) => ({
       ...orchor,
       functionName: "getSkill" as const,
@@ -107,31 +138,64 @@ export function useMintProgress() {
     query: { enabled: ids.length > 0 },
   });
 
-  const out: Record<number, { current: number; cap: number }> = {};
-  data?.forEach((res, i) => {
-    if (res.status === "success") {
-      const s = res.result as {
-        mintCap: number | bigint;
-        minted: number | bigint;
-      };
-      const cap = Number(s.mintCap);
-      if (cap > 0) {
-        out[ids[i]] = { current: Number(s.minted), cap };
-      }
-    }
-  });
-  return out;
+  const map = useMemo(() => {
+    const out = new Map<number, OnchainSkill>();
+    data?.forEach((res, i) => {
+      if (res.status !== "success") return;
+      const s = res.result as any;
+      out.set(ids[i], {
+        name: s.name,
+        creator: s.creator,
+        rarity: Number(s.rarity),
+        energyCost: Number(s.energyCost),
+        unlockPriceWei: BigInt(s.unlockPriceWei),
+        subscriptionPriceWei: BigInt(s.subscriptionPriceWei),
+        mintCap: Number(s.mintCap),
+        minted: Number(s.minted),
+        active: Boolean(s.active),
+      });
+    });
+    return out;
+  }, [data, ids]);
+
+  return { skills: map, refetch, isLoading };
 }
 
-/** Write-side helpers. Returns sendable functions and the latest tx state. */
+/** 铸造进度。只对限量卡（Mythic）返回值。 */
+export function useMintProgress() {
+  const { skills } = useOnchainSkills();
+  return useMemo(() => {
+    const out: Record<number, { current: number; cap: number }> = {};
+    skills.forEach((s, id) => {
+      if (s.mintCap > 0) out[id] = { current: s.minted, cap: s.mintCap };
+    });
+    return out;
+  }, [skills]);
+}
+
+/**
+ * 链上累计调用次数，来自 SkillInvoked 事件。
+ *
+ * 刻意不返回默认值 0 —— 读取失败和「真的是 0」必须能被区分开，
+ * 否则卡面会把「还没读到」渲染成「无人使用」。undefined 时卡上显示 —。
+ */
+export function useInvocationCounts() {
+  // 链上累计调用来自 SkillInvoked 事件。前端直扫全链历史在 20 张卡时勉强可跑，
+  // 再多就不行 —— 正确做法是后端索引或 subgraph。
+  // 这里刻意返回 undefined 而不是 0：读不到和真的是 0 必须能被区分开，
+  // 否则卡面会把「还没读到」渲染成「无人使用」。
+  return { counts: undefined as Record<number, number> | undefined, isLoading: false };
+}
+
+/** 写操作。 */
 export function useOrchorWrites() {
   const { writeContractAsync, data: hash, isPending } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({ hash });
   const chainId = useChainId();
+  const { address } = useAccount();
   const { switchChainAsync } = useSwitchChain();
 
-  /** Ensure the wallet is on the active chain (Injective Testnet) before any write. */
   const ensureChain = useCallback(async () => {
     if (chainId === activeChain.id) return;
     try {
@@ -140,45 +204,50 @@ export function useOrchorWrites() {
       const msg = e instanceof Error ? e.message : String(e);
       throw new Error(
         msg.toLowerCase().includes("user rejected")
-          ? `Please switch to ${activeChain.name} to continue`
-          : `Wallet is not on ${activeChain.name} — switch network and try again`
+          ? `请切换到 ${activeChain.name} 后继续`
+          : `钱包不在 ${activeChain.name} —— 切换网络后重试`
       );
     }
   }, [chainId, switchChainAsync]);
 
   const topUp = useCallback(
-    async (mon: number) => {
+    async (inj: number) => {
       await ensureChain();
       return writeContractAsync({
         ...orchor,
         functionName: "topUpEnergy",
-        value: parseEther(mon.toString()),
+        value: parseEther(inj.toString()),
       });
     },
     [writeContractAsync, ensureChain]
   );
 
+  /**
+   * 买断。amount 是份数 —— 允许一次买多份，这是二级市场做市的前提。
+   * 价格用链上的 unlockPriceWei，不要用 skills.ts 里的静态价格乘 parseEther：
+   * 前端静态值一旦和链上不同步，交易会因 BAD_PRICE 直接 revert。
+   */
   const unlock = useCallback(
-    async (skillId: number, unlockMON: number) => {
+    async (skillId: number, unlockPriceWei: bigint, amount = 1) => {
       await ensureChain();
       return writeContractAsync({
         ...orchor,
         functionName: "unlockSkill",
-        args: [BigInt(skillId)],
-        value: parseEther(unlockMON.toString()),
+        args: [BigInt(skillId), BigInt(amount)],
+        value: unlockPriceWei * BigInt(amount),
       });
     },
     [writeContractAsync, ensureChain]
   );
 
   const subscribe = useCallback(
-    async (skillId: number, subMON: number) => {
+    async (skillId: number, subPriceWei: bigint) => {
       await ensureChain();
       return writeContractAsync({
         ...orchor,
         functionName: "subscribeSkill",
         args: [BigInt(skillId)],
-        value: parseEther(subMON.toString()),
+        value: subPriceWei,
       });
     },
     [writeContractAsync, ensureChain]
@@ -187,26 +256,48 @@ export function useOrchorWrites() {
   const invoke = useCallback(
     async (skillId: number, input: string) => {
       await ensureChain();
-      const hash = keccak256(toHex(input || `orchor:${skillId}:${Date.now()}`));
+      const h = keccak256(toHex(input || `orchor:${skillId}:${Date.now()}`));
       return writeContractAsync({
         ...orchor,
         functionName: "invokeSkill",
-        args: [BigInt(skillId), hash],
+        args: [BigInt(skillId), h],
       });
     },
     [writeContractAsync, ensureChain]
   );
 
+  /** 转让技能卡。这是 1155 改造带来的新能力，旧版没有。 */
+  const transfer = useCallback(
+    async (to: `0x${string}`, skillId: number, amount = 1) => {
+      if (!address) throw new Error("请先连接钱包");
+      await ensureChain();
+      return writeContractAsync({
+        ...orchor,
+        functionName: "safeTransferFrom",
+        args: [address, to, BigInt(skillId), BigInt(amount), "0x"],
+      });
+    },
+    [writeContractAsync, ensureChain, address]
+  );
+
   const publishSkill = useCallback(
     async (params: {
       name: string;
-      rarity: number; // 0..4 (Common..Mythic)
+      rarity: number; // 0..4
       energyCost: number;
-      unlockPriceMON: number;
-      subscriptionPriceMON: number;
-      mintCap: number; // 0 for non-Mythic
+      unlockPriceINJ: number;
+      subscriptionPriceINJ: number;
+      mintCap: number; // 非 Mythic 必须为 0
     }) => {
       await ensureChain();
+      // 合约会拒绝含 " \ < > 和控制字符的名字，长度上限 48。
+      // 在这里先校验，避免用户付了 gas 才失败。
+      if (params.name.length === 0 || params.name.length > 48) {
+        throw new Error("技能名长度需在 1–48 字符之间");
+      }
+      if (/["\\<>]/.test(params.name) || /[\x00-\x1f]/.test(params.name)) {
+        throw new Error('技能名不能包含 " \\ < > 或控制字符');
+      }
       return writeContractAsync({
         ...orchor,
         functionName: "registerSkill",
@@ -214,8 +305,8 @@ export function useOrchorWrites() {
           params.name,
           params.rarity,
           BigInt(params.energyCost),
-          parseEther(params.unlockPriceMON.toString()),
-          parseEther(params.subscriptionPriceMON.toString()),
+          parseEther(params.unlockPriceINJ.toString()),
+          parseEther(params.subscriptionPriceINJ.toString()),
           params.mintCap,
         ],
       });
@@ -228,6 +319,7 @@ export function useOrchorWrites() {
     unlock,
     subscribe,
     invoke,
+    transfer,
     publishSkill,
     hash,
     isPending,
@@ -236,14 +328,19 @@ export function useOrchorWrites() {
   };
 }
 
-/** Live next skillId — used by the publish flow to know what id a new skill will get. */
 export function useNextSkillId() {
+  const { data, refetch } = useReadContract({ ...orchor, functionName: "nextSkillId" });
+  return { nextSkillId: data ? Number(data) : 0, refetch };
+}
+
+/** 待领取的分账（创作者地址是合约、推送失败时会进这里）。 */
+export function usePending() {
+  const { address } = useAccount();
   const { data, refetch } = useReadContract({
     ...orchor,
-    functionName: "nextSkillId",
+    functionName: "pending",
+    args: address ? [address] : undefined,
+    query: { enabled: Boolean(address) },
   });
-  return {
-    nextSkillId: data ? Number(data) : 0,
-    refetch,
-  };
+  return { pendingWei: (data as bigint | undefined) ?? 0n, refetch };
 }

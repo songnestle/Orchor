@@ -1,75 +1,151 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { PremiumSkillCard } from "@/components/premium/PremiumSkillCard";
+import { useMemo, useState } from "react";
+import { SkillGrid } from "@/components/SkillGrid";
+import { CardDetailModal } from "@/components/premium/CardDetailModal";
+import { TransferCardModal } from "@/components/TransferCardModal";
 import { useAllSkills } from "@/lib/useAllSkills";
-import { useOrchorState } from "@/lib/useOrchorState";
-import { useI18n } from "@/lib/i18n";
+import { useBalances, useOnchainSkills, useSubscribedSet } from "@/lib/useOrchor";
+import { formatEther } from "viem";
+import type { SkillModule } from "@/lib/skills";
 
+/**
+ * 我的卡组。
+ *
+ * 持有状态来自 ERC-1155 余额，不再是 owned mapping。
+ * 新增转让入口 —— 这是 1155 改造对用户最直观的差异：卡第一次真正属于他们。
+ */
 export default function DeckPage() {
   const allSkills = useAllSkills();
-  const { owned } = useOrchorState();
-  const { t } = useI18n();
+  const { balances } = useBalances();
+  const { subscribed } = useSubscribedSet();
+  const { skills: onchain } = useOnchainSkills();
+  const [selected, setSelected] = useState<SkillModule | null>(null);
+  const [transferring, setTransferring] = useState<SkillModule | null>(null);
 
-  // Filter owned skills
-  const deck = allSkills.filter(skill => owned.has(skill.id));
+  const deck = useMemo(
+    () => allSkills.filter((s) => (balances.get(s.id) ?? 0) > 0),
+    [allSkills, balances]
+  );
+  const leased = useMemo(
+    () => allSkills.filter((s) => subscribed.has(s.id) && !(balances.get(s.id) ?? 0)),
+    [allSkills, subscribed, balances]
+  );
+
+  /** 按链上解锁价计的账面价值。读不到就不显示，不用静态价凑数。 */
+  const bookValue = useMemo(() => {
+    if (!onchain.size) return null;
+    let wei = 0n;
+    for (const s of deck) {
+      const c = onchain.get(s.id);
+      if (!c) return null;
+      wei += c.unlockPriceWei * BigInt(balances.get(s.id) ?? 0);
+    }
+    return formatEther(wei);
+  }, [deck, onchain, balances]);
+
+  const totalCards = deck.reduce((n, s) => n + (balances.get(s.id) ?? 0), 0);
 
   return (
-    <div className="min-h-screen bg-transparent">
-      {/* Header */}
-      <div className="border-b border-white/5 py-6">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold gradient-text font-display">
-                {t("deck.title")}
-              </h1>
-              <p className="text-gray-400 text-sm mt-1">
-                {deck.length} {t("deck.collected")}
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="glass px-4 py-2 rounded-xl">
-                <div className="text-xs text-gray-400">{t("deck.totalValue")}</div>
-                <div className="text-lg font-bold text-white">
-                  {(deck.reduce((sum, s) => sum + s.priceMON, 0)).toFixed(2)} INJ
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <main className="mx-auto max-w-[1440px] px-6 lg:px-10">
+      <header className="pt-14 pb-7">
+        <h1
+          className="m-0 text-[30px] sm:text-[36px] leading-[1.2]"
+          style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)", letterSpacing: ".5px" }}
+        >
+          我的卡组
+        </h1>
+        <dl
+          className="flex flex-wrap gap-x-10 gap-y-5 mt-7 pt-5"
+          style={{ borderTop: "0.5px solid var(--o-line)" }}
+        >
+          <Stat label="持有卡种" value={String(deck.length)} />
+          <Stat label="凭证总数" value={String(totalCards)} />
+          <Stat label="账面价值" value={bookValue === null ? "—" : bookValue} unit="INJ" />
+          <Stat label="租约中" value={String(leased.length)} />
+        </dl>
+      </header>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {deck.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-6xl mb-4 text-[#75654a]">◇</div>
-            <h2 className="text-2xl font-bold text-white mb-2">{t("deck.empty")}</h2>
-            <p className="text-gray-400 mb-6">{t("deck.emptyHint")}</p>
-            <a
-              href="/"
-              className="inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-[#b07f2f] to-[#9c463a] text-white font-bold hover:shadow-lg hover:shadow-[#d6a44c]/50 transition-all"
-            >
-              {t("deck.browse")}
-            </a>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {deck.map((skill, index) => (
-              <motion.div
-                key={skill.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
+      {deck.length === 0 && leased.length === 0 ? (
+        <section className="py-24 text-center">
+          <p className="m-0 text-[15px]" style={{ color: "var(--o-ink-2)" }}>
+            卡组还是空的。
+          </p>
+          <p className="mt-2 mb-7 text-[13px]" style={{ color: "var(--o-ink-3)" }}>
+            解锁一张技能卡,它会以 ERC-1155 凭证的形式进入你的钱包。
+          </p>
+          <a href="/" className="btn-neon inline-block px-7 py-3 no-underline">
+            去 市 场
+          </a>
+        </section>
+      ) : (
+        <>
+          <section className="py-8">
+            <SkillGrid skills={deck} onSelect={setSelected} />
+          </section>
+
+          {deck.length > 0 && (
+            <section className="pb-10">
+              <p className="text-[12px] mb-3" style={{ color: "var(--o-ink-4)" }}>
+                转让凭证
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {deck.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setTransferring(s)}
+                    className="btn-ghost px-4 py-2"
+                  >
+                    {s.title} × {balances.get(s.id) ?? 0}
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {leased.length > 0 && (
+            <section className="pb-14">
+              <div
+                className="flex items-baseline justify-between pb-4 mb-6"
+                style={{ borderBottom: "0.5px solid var(--o-line)" }}
               >
-                <PremiumSkillCard skill={skill} onClick={() => {}} />
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </div>
+                <h2
+                  className="m-0 text-[18px]"
+                  style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)" }}
+                >
+                  租约中
+                </h2>
+                <span className="text-[12px]" style={{ color: "var(--o-ink-3)" }}>
+                  订阅是租约,不可转让
+                </span>
+              </div>
+              <SkillGrid skills={leased} onSelect={setSelected} />
+            </section>
+          )}
+        </>
+      )}
+
+      <CardDetailModal skill={selected} isOpen={!!selected} onClose={() => setSelected(null)} />
+      <TransferCardModal
+        skill={transferring}
+        max={transferring ? balances.get(transferring.id) ?? 0 : 0}
+        isOpen={!!transferring}
+        onClose={() => setTransferring(null)}
+      />
+    </main>
+  );
+}
+
+function Stat({ label, value, unit }: { label: string; value: string; unit?: string }) {
+  return (
+    <div>
+      <dt className="m-0 text-[11px] tracking-[1.5px]" style={{ color: "var(--o-ink-4)" }}>
+        {label}
+      </dt>
+      <dd className="num m-0 mt-1.5 text-[20px]" style={{ color: "var(--o-ink)" }}>
+        {value}
+        {unit ? <span className="text-[12px] ml-1.5" style={{ color: "var(--o-ink-3)" }}>{unit}</span> : null}
+      </dd>
     </div>
   );
 }

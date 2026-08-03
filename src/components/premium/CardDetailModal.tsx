@@ -5,9 +5,8 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import type { SkillModule } from "@/lib/skills";
 import { RarityBadge } from "./RarityBadge";
-import { AttributeBar } from "./AttributeBar";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
-import { useOrchorWrites } from "@/lib/useOrchor";
+import { useOrchorWrites, useOnchainSkills } from "@/lib/useOrchor";
 import { useDeck } from "@/lib/deckStore";
 import { useI18n } from "@/lib/i18n";
 
@@ -37,6 +36,7 @@ export function CardDetailModal({
   const { t } = useI18n();
   const { credits } = useCreditBalance();
   const { unlock, isConfirmed } = useOrchorWrites();
+  const { skills: onchainSkills } = useOnchainSkills();
   const bumpRefetch = useDeck((s) => s.bumpRefetch);
 
   // Collect = real on-chain unlockSkill. When the tx confirms, refresh the
@@ -65,7 +65,11 @@ export function CardDetailModal({
       // recorded in the contract's `owned` mapping (what the Deck reads).
       setStep("confirm");
       try {
-        await unlock(skill.id, skill.priceMON);
+        // 价格必须取链上值：前端静态价一旦和链上不同步，
+        // 合约的 require(msg.value == unlockPriceWei * amount) 会直接 revert。
+        const chain = onchainSkills.get(skill.id);
+        if (!chain) throw new Error("读不到链上价格，请稍后重试");
+        await unlock(skill.id, chain.unlockPriceWei, 1);
         setOutput(
           `Card #${skill.id} unlock submitted on-chain — it will appear in your Deck once confirmed.`
         );
@@ -196,9 +200,6 @@ export function CardDetailModal({
 
                         {/* Attributes */}
                         <div className="space-y-2">
-                          <AttributeBar label="Speed" value={8} />
-                          <AttributeBar label="Power" value={9} />
-                          <AttributeBar label="Cost" value={6} />
                         </div>
                       </div>
                     </div>

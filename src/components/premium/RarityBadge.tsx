@@ -1,105 +1,43 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { Rarity } from "@/lib/rarity";
 
-interface RarityBadgeProps {
+/**
+ * 稀有度是金属，不是色块。
+ * 五个金属名只靠字色区分 —— 填充徽章在网格里会形成噪点，
+ * 两个字的小字反而更贵气。唯一的例外是黑金卡的边框。
+ */
+
+const METAL: Record<Rarity, { label: string; color: string }> = {
+  Common:    { label: "青铜", color: "#a07d54" },
+  Rare:      { label: "白银", color: "#b9bfc5" },
+  Epic:      { label: "黄金", color: "#d7b76e" },
+  Legendary: { label: "铂金", color: "#d9dde1" },
+  Mythic:    { label: "黑金", color: "#e8d5a0" },
+};
+
+const SIZE = {
+  sm: "text-[11px] tracking-[2px]",
+  md: "text-[12px] tracking-[2.5px]",
+  lg: "text-[14px] tracking-[3px]",
+} as const;
+
+interface Props {
   rarity: Rarity;
-  size?: "sm" | "md" | "lg";
+  size?: keyof typeof SIZE;
+  /** 保留旧签名，不再有动画 —— 安静的界面比会动的界面高级。 */
   animated?: boolean;
 }
 
-const rarityConfig: Record<Rarity, {
-  gradient: string;
-  glow: string;
-  shimmer: boolean;
-}> = {
-  Common: {
-    gradient: "from-[#8a7d63] to-[#6f6450]",
-    glow: "rgba(138,125,99,0.5)",
-    shimmer: false,
-  },
-  Rare: {
-    gradient: "from-[#5a869c] to-[#476b7d]",
-    glow: "rgba(90,134,156,0.6)",
-    shimmer: true,
-  },
-  Epic: {
-    gradient: "from-[#8a6a9c] to-[#6f547d]",
-    glow: "rgba(138,106,156,0.6)",
-    shimmer: true,
-  },
-  Legendary: {
-    gradient: "from-[#edc26a] to-[#d6a44c]",
-    glow: "rgba(214,164,76,0.7)",
-    shimmer: true,
-  },
-  Mythic: {
-    gradient: "from-[#d6a44c] via-[#bf5b4b] to-[#8a6a9c]",
-    glow: "rgba(191,91,75,0.7)",
-    shimmer: true,
-  },
-};
-
-const sizeClasses = {
-  sm: "px-2 py-1 text-[7px]",
-  md: "px-2.5 py-1 text-[8px]",
-  lg: "px-3 py-1.5 text-[10px]",
-};
-
-export function RarityBadge({ rarity, size = "md", animated = true }: RarityBadgeProps) {
-  const config = rarityConfig[rarity];
-
+export function RarityBadge({ rarity, size = "md" }: Props) {
+  const metal = METAL[rarity];
   return (
-    <motion.div
-      className={`
-        relative inline-flex items-center justify-center
-        rounded-[3px] font-pixel tracking-wide text-[#161310]
-        bg-gradient-to-r ${config.gradient}
-        ${sizeClasses[size]}
-      `}
-      initial={animated ? { scale: 0, opacity: 0 } : undefined}
-      animate={animated ? { scale: 1, opacity: 1 } : undefined}
-      whileHover={animated ? { scale: 1.05 } : undefined}
-      style={{
-        border: "2px solid #161310",
-        boxShadow: `2px 2px 0 rgba(0,0,0,0.4)`,
-      }}
-    >
-      {/* Shimmer effect for rare+ cards */}
-      {config.shimmer && (
-        <motion.div
-          className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
-          animate={{
-            x: ["-200%", "200%"],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            repeatDelay: 3,
-          }}
-        />
-      )}
-
-      {/* Mythic particle effect */}
-      {rarity === "Mythic" && (
-        <motion.div
-          className="absolute -inset-1"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 0.8, 0.5],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-          }}
-          style={{
-            background: "radial-gradient(circle, rgba(191,91,75,0.3) 0%, transparent 70%)",
-          }}
-        />
-      )}
-
-      <span className="relative z-10">{rarity}</span>
-    </motion.div>
+    <span className={SIZE[size]} style={{ color: metal.color }}>
+      {metal.label}
+    </span>
   );
+}
+
+export function rarityMetal(rarity: Rarity) {
+  return METAL[rarity];
 }

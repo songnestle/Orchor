@@ -1,40 +1,15 @@
 import "./globals.css";
-import "../styles/premium.css";
 import type { Metadata } from "next";
-import {
-  Press_Start_2P,
-  VT323,
-  DM_Sans,
-  Space_Grotesk,
-  JetBrains_Mono,
-} from "next/font/google";
+import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import { AppChrome } from "@/components/AppChrome";
 
 // Self-hosted at build time via next/font — no runtime dependency on
 // fonts.googleapis.com (unreachable from mainland-China venues).
-const pixel = Press_Start_2P({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--nf-pixel",
-  display: "swap",
-});
-const retro = VT323({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--nf-retro",
-  display: "swap",
-});
 const bodyFont = DM_Sans({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--nf-body",
-  display: "swap",
-});
-const displayFont = Space_Grotesk({
-  weight: ["500", "600", "700"],
-  subsets: ["latin"],
-  variable: "--nf-display",
   display: "swap",
 });
 const mono = JetBrains_Mono({
@@ -57,8 +32,8 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
-      className={`dark ${pixel.variable} ${retro.variable} ${bodyFont.variable} ${displayFont.variable} ${mono.variable}`}
+      lang="zh-CN"
+      className={`dark ${bodyFont.variable} ${mono.variable}`}
     >
       <body className="min-h-screen antialiased">
         <Providers>
