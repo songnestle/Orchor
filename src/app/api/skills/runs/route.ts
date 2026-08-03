@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
-      runs: runs.map(r => ({
+      runs: runs.map((r: any) => ({
         id: r.id,
         skillId: r.skillId,
         creditsCost: r.creditsCost.toString(),

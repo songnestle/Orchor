@@ -187,8 +187,7 @@ const dict = {
   "explore.posts": { en: "posts", zh: "条帖子" },
   "common.runs": { en: "runs", zh: "次运行" },
 
-  // Marketplace
-  "market.title": { en: "Marketplace", zh: "市场" },
+  // Marketplace（market.title 在顶部新增块中定义）
   "market.buyNow": { en: "Buy Now", zh: "立即购买" },
   "market.placeBid": { en: "Place Bid", zh: "出价" },
   "market.seller": { en: "Seller", zh: "卖家" },
@@ -347,7 +346,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   function t(key: TranslationKey, vars?: Record<string, string | number>): string {
     const entry = dict[key];
-    let out = entry ? entry[lang] : key;
+    let out: string = entry ? entry[lang] : key;
     // 简单占位符插值：{n} / {a} / {b}。
     // 中英文语序不同，把变量放进句子里而不是拼接字符串，才能真正双语。
     if (vars) {
@@ -373,7 +372,7 @@ export function useI18n() {
       lang: "en" as Lang,
       setLang: () => {},
       t: (key: TranslationKey, vars?: Record<string, string | number>) => {
-        let out = dict[key] ? dict[key].en : (key as string);
+        let out: string = dict[key] ? dict[key].en : (key as string);
         if (vars) for (const [k, v] of Object.entries(vars)) out = out.split(`{${k}}`).join(String(v));
         return out;
       },

@@ -34,7 +34,7 @@ export class LedgerService {
       throw new Error('Credit amount must be positive');
     }
 
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: any) => {
       // Get or create user with lock
       let user = await tx.user.findUnique({
         where: { id: params.userId },
@@ -108,7 +108,7 @@ export class LedgerService {
       throw new Error('Debit amount must be positive');
     }
 
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: any) => {
       const user = await tx.user.findUnique({
         where: { id: params.userId },
       });
@@ -178,7 +178,7 @@ export class LedgerService {
       skip: offset,
     });
 
-    return entries.map(entry => ({
+    return entries.map((entry: any) => ({
       id: entry.id,
       userId: entry.userId,
       entryType: entry.entryType as LedgerEntry['entryType'],

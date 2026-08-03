@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     });
 
     const totalWithdrawable = revenues.reduce(
-      (sum, r) => sum + BigInt(r.withdrawableCredits),
+      (sum: bigint, r: any) => sum + BigInt(r.withdrawableCredits),
       0n
     );
 
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Deduct from withdrawable balance
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       let remaining = creditsAmount;
 
       for (const revenue of revenues) {

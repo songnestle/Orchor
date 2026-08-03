@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
-      deposits: deposits.map(d => ({
+      deposits: deposits.map((d: any) => ({
         id: d.id,
         chain: d.chain,
         asset: d.asset,

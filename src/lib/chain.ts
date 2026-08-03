@@ -286,6 +286,20 @@ export const ORCHOR_ABI = [
   /* ── 事件（用于索引调用次数与成交历史） ── */
   {
     type: "event",
+    name: "SkillRegistered",
+    inputs: [
+      { name: "skillId", type: "uint256", indexed: true },
+      { name: "name", type: "string", indexed: false },
+      { name: "creator", type: "address", indexed: true },
+      { name: "rarity", type: "uint8", indexed: false },
+      { name: "energyCost", type: "uint64", indexed: false },
+      { name: "unlockPriceWei", type: "uint128", indexed: false },
+      { name: "subscriptionPriceWei", type: "uint128", indexed: false },
+      { name: "mintCap", type: "uint32", indexed: false },
+    ],
+  },
+  {
+    type: "event",
     name: "SkillInvoked",
     inputs: [
       { name: "user", type: "address", indexed: true },

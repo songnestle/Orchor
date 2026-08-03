@@ -245,55 +245,77 @@ contract OrchorCore1155 is ERC1155, ERC2981, ReentrancyGuard {
         Skill memory s = skills[skillId];
         require(s.creator != address(0), "NO_SKILL");
 
-        string memory json = string(abi.encodePacked(
+        bytes memory json = abi.encodePacked(
             '{"name":"', s.name, ' #', skillId.toString(),
-            '","description":"Orchor Skill Card. An executable AI capability, registered and settled on Injective. Holding this card grants permanent access to invoke the skill.',
+            '","description":"Orchor Skill Card. An executable AI capability, registered and settled on Injective. Holding this card grants permanent access to invoke the skill.'
+        );
+        json = abi.encodePacked(
+            json,
             '","image":"data:image/svg+xml;base64,', Base64.encode(bytes(_svg(skillId, s))),
-            '","attributes":[',
-              '{"trait_type":"Rarity","value":"', _rarityName(s.rarity), '"},',
-              '{"trait_type":"Energy Cost","value":', uint256(s.energyCost).toString(), '},',
-              '{"trait_type":"Minted","value":', uint256(s.minted).toString(), '},',
-              '{"trait_type":"Supply Cap","value":', s.mintCap == 0 ? '"Unlimited"' : uint256(s.mintCap).toString(), '},',
-              '{"trait_type":"Creator","value":"', Strings.toHexString(uint160(s.creator), 20), '"}',
+            '","attributes":['
+        );
+        json = abi.encodePacked(
+            json,
+            '{"trait_type":"Rarity","value":"', _rarityName(s.rarity), '"},',
+            '{"trait_type":"Energy Cost","value":', uint256(s.energyCost).toString(), '},',
+            '{"trait_type":"Minted","value":', uint256(s.minted).toString(), '},'
+        );
+        json = abi.encodePacked(
+            json,
+            '{"trait_type":"Supply Cap","value":', s.mintCap == 0 ? '"Unlimited"' : uint256(s.mintCap).toString(), '},',
+            '{"trait_type":"Creator","value":"', Strings.toHexString(uint160(address(s.creator)), 20), '"}',
             ']}'
-        ));
+        );
 
-        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(bytes(json))));
+        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(json)));
     }
 
     function _svg(uint256 skillId, Skill memory s) internal pure returns (string memory) {
+        // 分段累积拼接:一次 encodePacked 塞二十个参数会 Stack too deep,
+        // 逐段 buf = encodePacked(buf, ...) 让栈保持浅层,也不需要 via-ir。
         string memory supply = s.mintCap == 0
             ? string(abi.encodePacked(uint256(s.minted).toString(), " / \xE2\x88\x9E"))
             : string(abi.encodePacked(uint256(s.minted).toString(), " / ", uint256(s.mintCap).toString()));
 
-        return string(abi.encodePacked(
+        bytes memory buf = abi.encodePacked(
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 480">',
             '<rect width="340" height="480" fill="#16140f"/>',
             '<rect x="6" y="6" width="328" height="468" fill="none" stroke="#c6a96c" stroke-opacity="0.7"/>',
-            // 四角雕版标记
             '<g stroke="#c6a96c" stroke-width="1.5" fill="none">',
-              '<path d="M14 32V14h18M326 32V14h-18M14 448v18h18M326 448v18h-18"/>',
-            '</g>',
+            '<path d="M14 32V14h18M326 32V14h-18M14 448v18h18M326 448v18h-18"/>',
+            '</g>'
+        );
+        buf = abi.encodePacked(
+            buf,
             '<text x="26" y="46" fill="#9d8c62" font-family="Georgia,serif" font-size="13" letter-spacing="2">SKILL N',
-              "\xC2\xBA", ' ', _pad2(skillId), '</text>',
-            _rarityBadge(s.rarity),
-            // 画框
+            "\xC2\xBA", ' ', _pad2(skillId), '</text>',
+            _rarityBadge(s.rarity)
+        );
+        buf = abi.encodePacked(
+            buf,
             '<rect x="26" y="62" width="288" height="150" fill="#0d0c09" stroke="#c6a96c" stroke-opacity="0.4"/>',
-            _guilloche(skillId),
-            // 卡名
+            _guilloche(skillId)
+        );
+        buf = abi.encodePacked(
+            buf,
             '<text x="170" y="252" text-anchor="middle" fill="#e8d5a0" font-family="Georgia,serif" font-size="20">',
-              s.name, '</text>',
-            // 菱形分隔
+            s.name, '</text>',
             '<g stroke="#5c5138"><line x1="40" y1="278" x2="155" y2="278"/><line x1="185" y1="278" x2="300" y2="278"/></g>',
-            '<rect x="167" y="275" width="6" height="6" fill="#c6a96c" transform="rotate(45 170 278)"/>',
-            // 三个读数
-            _stat(40,  312, "UNLOCK",  string(abi.encodePacked(_ether(s.unlockPriceWei), " INJ"))),
-            _stat(140, 312, "MINTED",  supply),
-            _stat(240, 312, "ENERGY",  string(abi.encodePacked(uint256(s.energyCost).toString(), " PER RUN"))),
+            '<rect x="167" y="275" width="6" height="6" fill="#c6a96c" transform="rotate(45 170 278)"/>'
+        );
+        buf = abi.encodePacked(
+            buf,
+            _stat(40, 312, "UNLOCK", string(abi.encodePacked(_ether(s.unlockPriceWei), " INJ"))),
+            _stat(140, 312, "MINTED", supply)
+        );
+        buf = abi.encodePacked(
+            buf,
+            _stat(240, 312, "ENERGY", string(abi.encodePacked(uint256(s.energyCost).toString(), " PER RUN"))),
             '<text x="170" y="424" text-anchor="middle" fill="#7a6f57" font-family="Georgia,serif" font-size="11" letter-spacing="3">ORCHOR</text>',
             '<text x="170" y="444" text-anchor="middle" fill="#5c5138" font-family="Georgia,serif" font-size="10" letter-spacing="1">SETTLED ON INJECTIVE</text>',
             '</svg>'
-        ));
+        );
+        return string(buf);
     }
 
     /// 由 skillId 决定的扭索纹 —— 钞券防伪底纹的数学形态。每张卡图案唯一，无需美术。

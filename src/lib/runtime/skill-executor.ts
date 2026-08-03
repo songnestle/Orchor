@@ -144,7 +144,7 @@ class BaiRuntimeClient {
         throw new Error('responses api: empty output');
       } catch (e) {
         lastErr = e;
-        if (attempt < 3) await new Promise((r) => setTimeout(r, 2500 * attempt));
+        if (attempt < 3) await new Promise((r: any) => setTimeout(r, 2500 * attempt));
       }
     }
     throw lastErr;
@@ -170,7 +170,7 @@ class RevenueManager {
     const runtimeBuffer = params.totalCredits - creatorRevenue - platformFee;
 
     // Update creator revenue record
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       const existing = await tx.creatorRevenue.findUnique({
         where: {
           creatorAddress_skillId: {

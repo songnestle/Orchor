@@ -369,6 +369,9 @@ function WithdrawModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  // 提现请求从这个弹窗发出,authedFetch 必须在本组件作用域内拿 ——
+  // 外层 CreatorDashboard 的 hook 进不了这里。
+  const { authedFetch } = useSession();
   const [selectedChain, setSelectedChain] = useState("tron");
   const [amount, setAmount] = useState("");
   const [destination, setDestination] = useState("");

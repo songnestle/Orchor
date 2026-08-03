@@ -19,6 +19,10 @@ const config: HardhatUserConfig = {
     version: "0.8.24",
     settings: {
       optimizer: { enabled: true, runs: 200 },
+      // 全链上 SVG 的 tokenURI 在旧代码生成器下 Stack too deep,
+      // viaIR 是官方给这类合约的标准答案。编译会慢一点,值得。
+      // 已验证:viaIR 下字节码 19,802 字节,低于 24,576 上限。
+      viaIR: true,
     },
   },
   networks: {

@@ -333,8 +333,8 @@ export function PublishSkillModal({ open, onClose }: Props) {
         name: form.title,
         rarity: RARITY_INDEX[form.rarity],
         energyCost: form.energyCost,
-        unlockPriceMON: form.priceMON,
-        subscriptionPriceMON: form.subscriptionMON,
+        unlockPriceINJ: form.priceMON,
+        subscriptionPriceINJ: form.subscriptionMON,
         mintCap: form.rarity === "Mythic" ? form.mintCap : 0,
       });
       setTxHash(h);

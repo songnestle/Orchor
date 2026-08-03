@@ -26,12 +26,12 @@ export async function GET(req: NextRequest) {
 
     // Calculate totals
     const totalSkills = revenues.length;
-    const totalRuns = revenues.reduce((sum, r) => sum + r.totalRuns, 0);
-    const grossRevenue = revenues.reduce((sum, r) => sum + BigInt(r.totalRevenue), 0n);
-    const withdrawableBalance = revenues.reduce((sum, r) => sum + BigInt(r.withdrawableCredits), 0n);
+    const totalRuns = revenues.reduce((sum: bigint, r: any) => sum + r.totalRuns, 0);
+    const grossRevenue = revenues.reduce((sum: bigint, r: any) => sum + BigInt(r.totalRevenue), 0n);
+    const withdrawableBalance = revenues.reduce((sum: bigint, r: any) => sum + BigInt(r.withdrawableCredits), 0n);
 
     // Get recent skill runs for this creator's skills
-    const skillIds = revenues.map(r => r.skillId);
+    const skillIds = revenues.map((r: any) => r.skillId);
     const recentRuns = await prisma.skillRun.findMany({
       where: {
         skillId: { in: skillIds },
@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
         withdrawableBalanceFormatted: Number(withdrawableBalance).toLocaleString(),
         usdValue: (Number(withdrawableBalance) * 0.01).toFixed(2),
       },
-      revenueBySkill: revenues.map(r => ({
+      revenueBySkill: revenues.map((r: any) => ({
         skillId: r.skillId,
         runs: r.totalRuns,
         revenue: r.totalRevenue.toString(),
@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
         withdrawable: r.withdrawableCredits.toString(),
         lastWithdrawal: r.lastWithdrawalAt,
       })),
-      recentTransactions: recentRuns.map(run => ({
+      recentTransactions: recentRuns.map((run: any) => ({
         id: run.id,
         skillId: run.skillId,
         userId: run.userId,
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
         creatorEarned: run.creatorRevenue?.toString() || '0',
         completedAt: run.completedAt,
       })),
-      withdrawalHistory: withdrawals.map(w => ({
+      withdrawalHistory: withdrawals.map((w: any) => ({
         id: w.id,
         chain: w.chain,
         asset: w.asset,
