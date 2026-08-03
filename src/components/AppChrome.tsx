@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { TopNav } from "@/components/TopNav";
-import { BackgroundFX } from "@/components/BackgroundFX";
 import { MyDeckDrawer } from "@/components/MyDeckDrawer";
 import { TopUpEnergyModal } from "@/components/TopUpEnergyModal";
 import { TopUpCreditsModal } from "@/components/TopUpCreditsModal";
@@ -29,7 +28,6 @@ export function AppChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <BackgroundFX />
 
       <TopNav
         onOpenDeck={() => setDeckOpen(true)}

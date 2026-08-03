@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/lib/i18n";
 import type { Rarity } from "@/lib/rarity";
 
 /**
@@ -8,12 +9,13 @@ import type { Rarity } from "@/lib/rarity";
  * 两个字的小字反而更贵气。唯一的例外是黑金卡的边框。
  */
 
-const METAL: Record<Rarity, { label: string; color: string }> = {
-  Common:    { label: "青铜", color: "#a07d54" },
-  Rare:      { label: "白银", color: "#b9bfc5" },
-  Epic:      { label: "黄金", color: "#d7b76e" },
-  Legendary: { label: "铂金", color: "#d9dde1" },
-  Mythic:    { label: "黑金", color: "#e8d5a0" },
+/** 只管颜色；文案在 i18n 的 metal.* 里。 */
+const METAL_COLOR: Record<Rarity, string> = {
+  Common: "#a07d54",
+  Rare: "#b9bfc5",
+  Epic: "#d7b76e",
+  Legendary: "#d9dde1",
+  Mythic: "#e8d5a0",
 };
 
 const SIZE = {
@@ -30,14 +32,14 @@ interface Props {
 }
 
 export function RarityBadge({ rarity, size = "md" }: Props) {
-  const metal = METAL[rarity];
+  const { t } = useI18n();
   return (
-    <span className={SIZE[size]} style={{ color: metal.color }}>
-      {metal.label}
+    <span className={SIZE[size]} style={{ color: METAL_COLOR[rarity] }}>
+      {t(`metal.${rarity}` as never)}
     </span>
   );
 }
 
-export function rarityMetal(rarity: Rarity) {
-  return METAL[rarity];
+export function rarityColor(rarity: Rarity) {
+  return METAL_COLOR[rarity];
 }

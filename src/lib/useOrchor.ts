@@ -204,8 +204,8 @@ export function useOrchorWrites() {
       const msg = e instanceof Error ? e.message : String(e);
       throw new Error(
         msg.toLowerCase().includes("user rejected")
-          ? `请切换到 ${activeChain.name} 后继续`
-          : `钱包不在 ${activeChain.name} —— 切换网络后重试`
+          ? "WRONG_NETWORK"
+          : "WRONG_NETWORK"
       );
     }
   }, [chainId, switchChainAsync]);
@@ -269,7 +269,7 @@ export function useOrchorWrites() {
   /** 转让技能卡。这是 1155 改造带来的新能力，旧版没有。 */
   const transfer = useCallback(
     async (to: `0x${string}`, skillId: number, amount = 1) => {
-      if (!address) throw new Error("请先连接钱包");
+      if (!address) throw new Error("WALLET_REQUIRED");
       await ensureChain();
       return writeContractAsync({
         ...orchor,
@@ -293,10 +293,10 @@ export function useOrchorWrites() {
       // 合约会拒绝含 " \ < > 和控制字符的名字，长度上限 48。
       // 在这里先校验，避免用户付了 gas 才失败。
       if (params.name.length === 0 || params.name.length > 48) {
-        throw new Error("技能名长度需在 1–48 字符之间");
+        throw new Error("NAME_LENGTH");
       }
       if (/["\\<>]/.test(params.name) || /[\x00-\x1f]/.test(params.name)) {
-        throw new Error('技能名不能包含 " \\ < > 或控制字符');
+        throw new Error("NAME_CHARS");
       }
       return writeContractAsync({
         ...orchor,

@@ -72,7 +72,7 @@ export function CardDetailModal({
         // 价格必须取链上值：前端静态价一旦和链上不同步，
         // 合约的 require(msg.value == unlockPriceWei * amount) 会直接 revert。
         const chain = onchainSkills.get(skill.id);
-        if (!chain) throw new Error("读不到链上价格，请稍后重试");
+        if (!chain) throw new Error("PRICE_UNAVAILABLE");
         await unlock(skill.id, chain.unlockPriceWei, 1);
         setOutput(
           `Card #${skill.id} unlock submitted on-chain — it will appear in your Deck once confirmed.`

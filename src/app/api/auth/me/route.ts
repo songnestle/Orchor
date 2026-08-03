@@ -8,10 +8,10 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     const address = getSessionAddress(req);
-    if (!address) return NextResponse.json({ error: "未登录" }, { status: 401 });
+    if (!address) return NextResponse.json({ error: "NOT_SIGNED_IN" }, { status: 401 });
     return NextResponse.json({ address });
   } catch {
     // AUTH_SECRET 未配置时也按未登录处理,不泄露配置状态
-    return NextResponse.json({ error: "未登录" }, { status: 401 });
+    return NextResponse.json({ error: "NOT_SIGNED_IN" }, { status: 401 });
   }
 }

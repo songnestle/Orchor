@@ -82,13 +82,13 @@ export function SkillDetailModal({ skill, onClose, onOpenTopUp }: Props) {
       if (mode === "subscribe") {
         {
           const chain = onchainSkills.get(skill.id);
-          if (!chain) throw new Error("读不到链上价格，请稍后重试");
+          if (!chain) throw new Error("PRICE_UNAVAILABLE");
           h = await subscribe(skill.id, chain.subscriptionPriceWei);
         }
       } else if (mode === "unlock") {
         {
           const chain = onchainSkills.get(skill.id);
-          if (!chain) throw new Error("读不到链上价格，请稍后重试");
+          if (!chain) throw new Error("PRICE_UNAVAILABLE");
           h = await unlock(skill.id, chain.unlockPriceWei, 1);
         }
       } else {

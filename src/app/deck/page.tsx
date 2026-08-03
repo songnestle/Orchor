@@ -7,6 +7,7 @@ import { TransferCardModal } from "@/components/TransferCardModal";
 import { useAllSkills } from "@/lib/useAllSkills";
 import { useBalances, useOnchainSkills, useSubscribedSet } from "@/lib/useOrchor";
 import { formatEther } from "viem";
+import { useI18n } from "@/lib/i18n";
 import type { SkillModule } from "@/lib/skills";
 
 /**
@@ -17,6 +18,7 @@ import type { SkillModule } from "@/lib/skills";
  */
 export default function DeckPage() {
   const allSkills = useAllSkills();
+  const { t } = useI18n();
   const { balances } = useBalances();
   const { subscribed } = useSubscribedSet();
   const { skills: onchain } = useOnchainSkills();
@@ -53,29 +55,29 @@ export default function DeckPage() {
           className="m-0 text-[30px] sm:text-[36px] leading-[1.2]"
           style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)", letterSpacing: ".5px" }}
         >
-          我的卡组
+          {t("deck.myDeck")}
         </h1>
         <dl
           className="flex flex-wrap gap-x-10 gap-y-5 mt-7 pt-5"
           style={{ borderTop: "0.5px solid var(--o-line)" }}
         >
-          <Stat label="持有卡种" value={String(deck.length)} />
-          <Stat label="凭证总数" value={String(totalCards)} />
-          <Stat label="账面价值" value={bookValue === null ? "—" : bookValue} unit="INJ" />
-          <Stat label="租约中" value={String(leased.length)} />
+          <Stat label={t("deck.kinds")} value={String(deck.length)} />
+          <Stat label={t("deck.totalCerts")} value={String(totalCards)} />
+          <Stat label={t("deck.bookValue")} value={bookValue === null ? "—" : bookValue} unit="INJ" />
+          <Stat label={t("deck.leased")} value={String(leased.length)} />
         </dl>
       </header>
 
       {deck.length === 0 && leased.length === 0 ? (
         <section className="py-24 text-center">
           <p className="m-0 text-[15px]" style={{ color: "var(--o-ink-2)" }}>
-            卡组还是空的。
+            {t("deck.emptyTitle")}
           </p>
           <p className="mt-2 mb-7 text-[13px]" style={{ color: "var(--o-ink-3)" }}>
-            解锁一张技能卡,它会以 ERC-1155 凭证的形式进入你的钱包。
+            {t("deck.emptyHint2")}
           </p>
           <a href="/" className="btn-neon inline-block px-7 py-3 no-underline">
-            去 市 场
+            {t("deck.toMarket")}
           </a>
         </section>
       ) : (
@@ -87,7 +89,7 @@ export default function DeckPage() {
           {deck.length > 0 && (
             <section className="pb-10">
               <p className="text-[12px] mb-3" style={{ color: "var(--o-ink-4)" }}>
-                转让凭证
+                {t("deck.transferSection")}
               </p>
               <div className="flex flex-wrap gap-2">
                 {deck.map((s) => (
@@ -113,10 +115,10 @@ export default function DeckPage() {
                   className="m-0 text-[18px]"
                   style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)" }}
                 >
-                  租约中
+                  {t("deck.leased")}
                 </h2>
                 <span className="text-[12px]" style={{ color: "var(--o-ink-3)" }}>
-                  订阅是租约,不可转让
+                  {t("deck.leaseNote")}
                 </span>
               </div>
               <SkillGrid skills={leased} onSelect={setSelected} />

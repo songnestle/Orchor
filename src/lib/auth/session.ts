@@ -96,7 +96,7 @@ export function getSessionAddress(req?: NextRequest): string | null {
  *   const user = requireUser(req);   // 永远用这个,不要读 body.userId
  */
 export class UnauthorizedError extends Error {
-  constructor(message = "请先连接钱包并登录") {
+  constructor(message = "UNAUTHORIZED") {
     super(message);
     this.name = "UnauthorizedError";
   }
@@ -136,14 +136,31 @@ export function consumeNonce(nonce: string): boolean {
   return Number.isFinite(exp) && Date.now() <= exp;
 }
 
-/** 用户要签名的消息。地址与 nonce 都在里面,防止跨站重放。 */
-export function loginMessage(address: string, nonce: string): string {
+/**
+ * 用户要签名的消息。地址与 nonce 都在里面,防止跨站重放。
+ *
+ * 双语：这是用户唯一会在钱包里逐字读的文本,夹生语言最伤信任。
+ * 语言由前端在请求 nonce 时带上,验签时必须用同一份文本重算。
+ */
+export type MsgLang = "en" | "zh";
+
+export function loginMessage(address: string, nonce: string, lang: MsgLang = "en"): string {
+  if (lang === "zh") {
+    return [
+      "Orchor 登录",
+      "",
+      `地址: ${address}`,
+      `Nonce: ${nonce}`,
+      "",
+      "签名不会发起任何交易，也不会花费任何费用。",
+    ].join("\n");
+  }
   return [
-    "Orchor 登录",
+    "Sign in to Orchor",
     "",
-    `地址: ${address}`,
+    `Address: ${address}`,
     `Nonce: ${nonce}`,
     "",
-    "签名不会发起任何交易,也不会花费任何费用。",
+    "This signature does not send a transaction and costs no gas.",
   ].join("\n");
 }

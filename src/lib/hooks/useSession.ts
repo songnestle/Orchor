@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAccount, useSignMessage } from "wagmi";
+import { useI18n } from "@/lib/i18n";
 
 /**
  * 钱包签名登录。
@@ -14,6 +15,7 @@ import { useAccount, useSignMessage } from "wagmi";
 export function useSession() {
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
+  const { lang } = useI18n();
   const [signedIn, setSignedIn] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,12 +42,12 @@ export function useSession() {
   }, [address, signedIn]);
 
   const signIn = useCallback(async () => {
-    if (!address) throw new Error("请先连接钱包");
+    if (!address) throw new Error("WALLET_REQUIRED");
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`/api/auth/nonce?address=${address}`);
-      if (!res.ok) throw new Error("获取登录消息失败");
+      const res = await fetch(`/api/auth/nonce?address=${address}&lang=${lang}`);
+      if (!res.ok) throw new Error("NONCE_FAILED");
       const { nonce, message } = await res.json();
 
       const signature = await signMessageAsync({ message });
@@ -53,23 +55,25 @@ export function useSession() {
       const verify = await fetch("/api/auth/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address, nonce, signature }),
+        body: JSON.stringify({ address, nonce, signature, lang }),
       });
       if (!verify.ok) {
         const d = await verify.json().catch(() => ({}));
-        throw new Error(d.error ?? "登录失败");
+        throw new Error(d.error ?? "SIGNIN_FAILED");
       }
       const d = await verify.json();
       setSignedIn(d.address);
       return d.address as string;
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "登录失败";
-      setError(msg.toLowerCase().includes("user rejected") ? "已取消签名" : msg);
+      // 错误用稳定的代号传出，由调用方用 t() 翻译 ——
+      // 在 hook 里硬编码语言会让另一半用户看到夹生界面。
+      const raw = e instanceof Error ? e.message : "SIGNIN_FAILED";
+      setError(raw.toLowerCase().includes("user rejected") ? "USER_REJECTED" : raw);
       throw e;
     } finally {
       setBusy(false);
     }
-  }, [address, signMessageAsync]);
+  }, [address, signMessageAsync, lang]);
 
   const signOut = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST" });

@@ -6,6 +6,7 @@ import { CardDetailModal } from "@/components/premium/CardDetailModal";
 import { useAllSkills } from "@/lib/useAllSkills";
 import { useOnchainSkills, useNextSkillId } from "@/lib/useOrchor";
 import { ORCHOR_CORE_ADDRESS, activeChain } from "@/lib/chain";
+import { useI18n } from "@/lib/i18n";
 import type { SkillModule, SkillCategory } from "@/lib/skills";
 
 /**
@@ -19,20 +20,15 @@ import type { SkillModule, SkillCategory } from "@/lib/skills";
  * · hero 不再占满一屏 —— 卡片是主角，标题让位。
  */
 
-const FILTERS: Array<{ key: "all" | SkillCategory; label: string }> = [
-  { key: "all", label: "全部" },
-  { key: "Web3 Dev", label: "Web3" },
-  { key: "Research", label: "研究" },
-  { key: "Automation", label: "自动化" },
-  { key: "Product", label: "产品" },
-  { key: "Marketing", label: "增长" },
-  { key: "Data", label: "数据" },
+const FILTERS: Array<"all" | SkillCategory> = [
+  "all", "Web3 Dev", "Research", "Automation", "Product", "Marketing", "Data",
 ];
 
 export default function Home() {
   const allSkills = useAllSkills();
   const { skills: onchain } = useOnchainSkills();
   const { nextSkillId } = useNextSkillId();
+  const { t } = useI18n();
   const [filter, setFilter] = useState<"all" | SkillCategory>("all");
   const [selected, setSelected] = useState<SkillModule | null>(null);
 
@@ -57,22 +53,22 @@ export default function Home() {
           className="m-0 text-[30px] sm:text-[36px] leading-[1.2]"
           style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)", letterSpacing: ".5px" }}
         >
-          技能卡市场
+          {t("market.title")}
         </h1>
         <p className="mt-3 mb-0 text-[13px] leading-[1.75] max-w-[440px]" style={{ color: "var(--o-ink-3)" }}>
-          每一张卡是一份链上凭证。持有即永久调用权,可转让,可挂单。
+          {t("market.lede")}
         </p>
 
         <dl
           className="flex flex-wrap gap-x-10 gap-y-5 mt-7 pt-5"
           style={{ borderTop: "0.5px solid var(--o-line)" }}
         >
-          <Stat label="链上注册" value={nextSkillId ? String(nextSkillId) : "—"} />
-          <Stat label="已铸凭证" value={totalMinted === null ? "—" : String(totalMinted)} />
-          <Stat label="结算网络" value={activeChain.name} small />
+          <Stat label={t("market.registered")} value={nextSkillId ? String(nextSkillId) : "—"} />
+          <Stat label={t("market.mintedTotal")} value={totalMinted === null ? "—" : String(totalMinted)} />
+          <Stat label={t("market.network")} value={activeChain.name} small />
           <Stat
-            label="合约"
-            value="已验证 ↗"
+            label={t("market.contract")}
+            value={`${t("market.verified")} ↗`}
             accent="var(--o-up)"
             href={explorer ? `${explorer}/address/${ORCHOR_CORE_ADDRESS}` : undefined}
             small
@@ -85,28 +81,28 @@ export default function Home() {
         style={{ borderBottom: "0.5px solid var(--o-line)" }}
       >
         {FILTERS.map((f) => {
-          const on = filter === f.key;
+          const on = filter === f;
           return (
             <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
+              key={f}
+              onClick={() => setFilter(f)}
               className="text-[12px] whitespace-nowrap pb-[15px] -mb-4 transition-colors duration-150"
               style={{
                 color: on ? "var(--o-ink)" : "var(--o-ink-3)",
                 borderBottom: on ? "1px solid var(--o-gold)" : "1px solid transparent",
               }}
             >
-              {f.label}
+              {t(`cat.${f}` as never)}
             </button>
           );
         })}
         <span className="ml-auto text-[12px] whitespace-nowrap" style={{ color: "var(--o-ink-3)" }}>
-          {shown.length} 张
+          {t("market.countCards", { n: shown.length })}
         </span>
       </nav>
 
       <section className="py-8">
-        <SkillGrid skills={shown} onSelect={setSelected} emptyText="这个分类下还没有卡片。" />
+        <SkillGrid skills={shown} onSelect={setSelected} emptyText={t("market.emptyCategory")} />
       </section>
 
       <CardDetailModal skill={selected} isOpen={!!selected} onClose={() => setSelected(null)} />

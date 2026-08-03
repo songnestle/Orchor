@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { CertificateCard } from "./CertificateCard";
 import { useBalances, useOnchainSkills, useOrchorWrites } from "@/lib/useOrchor";
 import { ORCHOR_CORE_ADDRESS, activeChain } from "@/lib/chain";
+import { useI18n } from "@/lib/i18n";
 import type { SkillModule } from "@/lib/skills";
 
 /**
@@ -23,7 +24,8 @@ interface Props {
   emptyText?: string;
 }
 
-export function SkillGrid({ skills, onSelect, emptyText = "这里还没有卡片。" }: Props) {
+export function SkillGrid({ skills, onSelect, emptyText }: Props) {
+  const { t } = useI18n();
   const { balances } = useBalances();
   const { skills: onchain } = useOnchainSkills();
   const { unlock } = useOrchorWrites();
@@ -35,7 +37,7 @@ export function SkillGrid({ skills, onSelect, emptyText = "这里还没有卡片
   if (!items.length) {
     return (
       <p className="text-[13px] py-16 text-center" style={{ color: "var(--o-ink-3)" }}>
-        {emptyText}
+        {emptyText ?? t("market.empty")}
       </p>
     );
   }
@@ -44,12 +46,13 @@ export function SkillGrid({ skills, onSelect, emptyText = "这里还没有卡片
     <div className="grid gap-[18px] grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {items.map((skill) => {
         const chain = onchain.get(skill.id);
+        // 中英文语序不同，供给说明用带占位符的 key 而不是拼字符串。
         const supplyLabel = chain
           ? chain.mintCap > 0
-            ? `${chain.minted} / ${chain.mintCap}`
+            ? t("cert.minted", { a: chain.minted, b: chain.mintCap })
             : chain.minted > 0
-              ? `${chain.minted} 份流通`
-              : "尚未铸造"
+              ? t("cert.circulating", { n: chain.minted })
+              : t("cert.notMinted")
           : undefined;
 
         return (

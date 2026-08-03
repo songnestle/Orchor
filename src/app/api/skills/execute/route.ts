@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     if (skillId === undefined || !input) {
       return NextResponse.json(
-        { error: 'skillId 与 input 为必填' },
+        { error: 'MISSING_FIELDS' },
         { status: 400 }
       );
     }
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     const allowed = await hasOnchainAccess(userId, Number(skillId));
     if (!allowed) {
       return NextResponse.json(
-        { error: '链上未持有该技能卡,也没有有效订阅', needsUnlock: true },
+        { error: 'NO_ACCESS', needsUnlock: true },
         { status: 403 }
       );
     }
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 401 });
     }
     console.error('[API] Error executing skill:', error);
-    const message = error instanceof Error ? error.message : '执行失败';
+    const message = error instanceof Error ? error.message : 'EXECUTION_FAILED';
     if (message.toLowerCase().includes('insufficient credits')) {
       return NextResponse.json({ error: message, needsTopUp: true }, { status: 402 });
     }

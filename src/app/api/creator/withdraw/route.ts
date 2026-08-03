@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     if (!chain || !asset || !credits || !destinationAddress) {
       return NextResponse.json(
-        { error: 'chain、asset、credits、destinationAddress 为必填' },
+        { error: 'MISSING_FIELDS' },
         { status: 400 }
       );
     }

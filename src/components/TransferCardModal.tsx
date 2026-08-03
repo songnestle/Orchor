@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { isAddress } from "viem";
 import { useOrchorWrites } from "@/lib/useOrchor";
+import { useI18n } from "@/lib/i18n";
 import type { SkillModule } from "@/lib/skills";
 
 /**
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
+  const { t } = useI18n();
   const { transfer, isPending, isConfirming, isConfirmed } = useOrchorWrites();
   const [to, setTo] = useState("");
   const [amount, setAmount] = useState(1);
@@ -46,7 +48,7 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
     try {
       await transfer(to as `0x${string}`, skill!.id, amount);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "转让失败");
+      setError(e instanceof Error ? e.message : t("xfer.failed"));
     }
   }
 
@@ -62,7 +64,7 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <p className="m-0 text-[11px] tracking-[2.5px]" style={{ color: "var(--o-ink-4)" }}>
-          转让凭证
+          {t("xfer.title")}
         </p>
         <h2
           className="mt-2 mb-0 text-[21px] leading-tight"
@@ -71,11 +73,11 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
           {skill.title}
         </h2>
         <p className="mt-1.5 mb-6 text-[12px]" style={{ color: "var(--o-ink-3)" }}>
-          持有 {max} 份
+          {t("xfer.holding", { n: max })}
         </p>
 
         <label className="block text-[11px] tracking-[1.5px] mb-2" style={{ color: "var(--o-ink-4)" }}>
-          接收地址
+          {t("xfer.to")}
         </label>
         <input
           className="input font-mono"
@@ -86,7 +88,7 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
         />
         {to && !isAddress(to) ? (
           <p className="mt-2 mb-0 text-[12px]" style={{ color: "var(--o-down)" }}>
-            不是有效的 EVM 地址
+            {t("xfer.badAddr")}
           </p>
         ) : null}
 
@@ -96,7 +98,7 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
               className="block text-[11px] tracking-[1.5px] mt-5 mb-2"
               style={{ color: "var(--o-ink-4)" }}
             >
-              份数
+              {t("xfer.amount")}
             </label>
             <input
               className="input num"
@@ -113,8 +115,7 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
           className="mt-6 mb-6 p-3 text-[12px] leading-[1.7] rounded-[2px]"
           style={{ background: "rgba(168,112,95,.08)", color: "var(--o-ink-2)" }}
         >
-          转出后,这张卡的调用权立刻转移给对方。权限由链上余额决定,
-          {max === amount ? "全部转出后你将无法再调用该技能。" : "剩余份数仍可继续调用。"}
+          {max === amount ? t("xfer.warnAll") : t("xfer.warnSome")}
         </p>
 
         {error ? (
@@ -125,10 +126,10 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
 
         <div className="flex gap-3">
           <button className="btn-neon flex-1 py-2.5" disabled={!valid || busy} onClick={submit}>
-            {busy ? "确 认 中" : "转 让"}
+            {busy ? t("xfer.submitting") : t("xfer.submit")}
           </button>
           <button className="btn-ghost px-6" onClick={onClose} disabled={busy}>
-            取消
+            {t("xfer.cancel")}
           </button>
         </div>
       </div>

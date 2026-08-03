@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     // 这条路由白送余额。默认关闭,只有显式打开开关才可用 ——
     // 改造前它无鉴权且上限 $10,000,等于生产环境的免费提款机。
     if (process.env.ENABLE_DEMO_TOPUP !== 'true') {
-      return NextResponse.json({ error: '演示充值未启用' }, { status: 404 });
+      return NextResponse.json({ error: 'DEMO_TOPUP_DISABLED' }, { status: 404 });
     }
     const userId = requireUser(req);
 

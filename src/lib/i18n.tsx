@@ -9,6 +9,110 @@ export type Lang = "en" | "zh";
  * English + Chinese strings. Add keys here as you localize more of the UI.
  */
 const dict = {
+  // ── 黑金改版新增 ──────────────────────────────────────────
+  // 稀有度 = 金属。英文用金属本名，中文同理，不再是 Epic/Legendary 这类游戏黑话。
+  "metal.Common":    { en: "Bronze",     zh: "青铜" },
+  "metal.Rare":      { en: "Silver",     zh: "白银" },
+  "metal.Epic":      { en: "Gold",       zh: "黄金" },
+  "metal.Legendary": { en: "Platinum",   zh: "铂金" },
+  "metal.Mythic":    { en: "Black Gold", zh: "黑金" },
+
+  // 卡面
+  "cert.calls30d":     { en: "Calls, last 30d", zh: "近 30 日调用" },
+  "cert.noRecord":     { en: "No record yet",   zh: "暂无记录" },
+  "cert.unlockPrice":  { en: "Unlock",          zh: "解锁" },
+  "cert.totalCalls":   { en: "Total calls",     zh: "累计调用" },
+  "cert.creatorEarned":{ en: "Creator earned",  zh: "创作者已赚" },
+  "cert.unlock":       { en: "Unlock",          zh: "解锁" },
+  "cert.owned":        { en: "Owned",           zh: "已持有" },
+  "cert.ownedN":       { en: "Holding {n}",     zh: "持有 {n} 份" },
+  "cert.verify":       { en: "Verify on chain", zh: "链上核验" },
+  "cert.minted":       { en: "{a} / {b}",       zh: "{a} / {b}" },
+  "cert.circulating":  { en: "{n} in circulation", zh: "{n} 份流通" },
+  "cert.notMinted":    { en: "Not minted",      zh: "尚未铸造" },
+
+  // 市场页
+  "market.title":    { en: "Skill Card Market", zh: "技能卡市场" },
+  "market.lede": {
+    en: "Every card is an on-chain certificate. Holding it grants permanent access, and it can be transferred or listed.",
+    zh: "每一张卡是一份链上凭证。持有即永久调用权，可转让，可挂单。",
+  },
+  "market.registered":  { en: "Registered on chain", zh: "链上注册" },
+  "market.mintedTotal": { en: "Certificates minted", zh: "已铸凭证" },
+  "market.network":     { en: "Settlement network",  zh: "结算网络" },
+  "market.contract":    { en: "Contract",            zh: "合约" },
+  "market.verified":    { en: "Verified",            zh: "已验证" },
+  "market.countCards":  { en: "{n} cards",           zh: "{n} 张" },
+  "market.emptyCategory": { en: "No cards in this category yet.", zh: "这个分类下还没有卡片。" },
+  "market.empty":       { en: "No cards here yet.",  zh: "这里还没有卡片。" },
+
+  // 分类筛选
+  "cat.all":        { en: "All",        zh: "全部" },
+  "cat.Web3 Dev":   { en: "Web3",       zh: "Web3" },
+  "cat.Research":   { en: "Research",   zh: "研究" },
+  "cat.Automation": { en: "Automation", zh: "自动化" },
+  "cat.Product":    { en: "Product",    zh: "产品" },
+  "cat.Marketing":  { en: "Growth",     zh: "增长" },
+  "cat.Data":       { en: "Data",       zh: "数据" },
+
+  // 卡组
+  "deck.myDeck":       { en: "My Deck",         zh: "我的卡组" },
+  "deck.kinds":        { en: "Card types",      zh: "持有卡种" },
+  "deck.totalCerts":   { en: "Certificates",    zh: "凭证总数" },
+  "deck.bookValue":    { en: "Book value",      zh: "账面价值" },
+  "deck.leased":       { en: "Leased",          zh: "租约中" },
+  "deck.emptyTitle":   { en: "Your deck is empty.", zh: "卡组还是空的。" },
+  "deck.emptyHint2": {
+    en: "Unlock a skill card and it lands in your wallet as an ERC-1155 certificate.",
+    zh: "解锁一张技能卡，它会以 ERC-1155 凭证的形式进入你的钱包。",
+  },
+  "deck.toMarket":     { en: "Browse market",   zh: "去 市 场" },
+  "deck.transferSection": { en: "Transfer certificates", zh: "转让凭证" },
+  "deck.leaseNote":    { en: "Subscriptions are leases and cannot be transferred.", zh: "订阅是租约，不可转让" },
+
+  // 转让
+  "xfer.title":     { en: "Transfer certificate", zh: "转让凭证" },
+  "xfer.holding":   { en: "You hold {n}",         zh: "持有 {n} 份" },
+  "xfer.to":        { en: "Recipient address",    zh: "接收地址" },
+  "xfer.badAddr":   { en: "Not a valid EVM address", zh: "不是有效的 EVM 地址" },
+  "xfer.amount":    { en: "Amount",               zh: "份数" },
+  "xfer.warnAll": {
+    en: "Access transfers immediately. Permission follows the on-chain balance, so once all copies are gone you can no longer invoke this skill.",
+    zh: "转出后，这张卡的调用权立刻转移给对方。权限由链上余额决定，全部转出后你将无法再调用该技能。",
+  },
+  "xfer.warnSome": {
+    en: "Access transfers immediately. Permission follows the on-chain balance; your remaining copies still work.",
+    zh: "转出后，这张卡的调用权立刻转移给对方。权限由链上余额决定，剩余份数仍可继续调用。",
+  },
+  "xfer.submit":    { en: "Transfer",   zh: "转 让" },
+  "xfer.submitting":{ en: "Confirming", zh: "确 认 中" },
+  "xfer.cancel":    { en: "Cancel",     zh: "取消" },
+  "xfer.failed":    { en: "Transfer failed", zh: "转让失败" },
+
+  // 错误码 —— 后端与 hook 只传代号，展示层翻译。
+  "err.WALLET_REQUIRED": { en: "Connect a wallet first",  zh: "请先连接钱包" },
+  "err.NONCE_FAILED":    { en: "Could not start sign-in", zh: "获取登录消息失败" },
+  "err.SIGNIN_FAILED":   { en: "Sign-in failed",          zh: "登录失败" },
+  "err.USER_REJECTED":   { en: "Signature cancelled",     zh: "已取消签名" },
+  "err.NO_ACCESS":       { en: "You don't hold this card and have no active subscription", zh: "链上未持有该技能卡，也没有有效订阅" },
+  "err.UNAUTHORIZED":    { en: "Please connect your wallet and sign in", zh: "请先连接钱包并登录" },
+
+  "err.PRICE_UNAVAILABLE": { en: "Could not read the on-chain price, try again", zh: "读不到链上价格，请稍后重试" },
+  "err.WRONG_NETWORK":     { en: "Switch to {chain} to continue", zh: "请切换到 {chain} 后继续" },
+  "err.NAME_LENGTH":       { en: "Skill name must be 1–48 characters", zh: "技能名长度需在 1–48 字符之间" },
+  "err.NAME_CHARS":        { en: 'Skill name cannot contain " \\ < > or control characters', zh: '技能名不能包含 " \\ < > 或控制字符' },
+  "err.NOT_SIGNED_IN":     { en: "Not signed in", zh: "未登录" },
+  "err.BAD_ADDRESS":       { en: "Invalid address", zh: "地址无效" },
+  "err.BAD_SIGNATURE":     { en: "Signature check failed", zh: "签名校验失败" },
+  "err.MISSING_FIELDS":    { en: "Missing required fields", zh: "缺少必填字段" },
+  "err.EXECUTION_FAILED":  { en: "Execution failed", zh: "执行失败" },
+
+  // 登录
+  "auth.signIn":     { en: "Sign in",  zh: "签名登录" },
+  "auth.signingIn":  { en: "Signing…", zh: "签名中…" },
+  "auth.rejected":   { en: "Signature cancelled", zh: "已取消签名" },
+  "auth.needWallet": { en: "Connect a wallet first", zh: "请先连接钱包" },
+
   // Nav
   "nav.discover": { en: "Discover", zh: "发现" },
   "nav.creator": { en: "Creator", zh: "创作者" },
@@ -216,7 +320,7 @@ export type TranslationKey = keyof typeof dict;
 interface I18nContextValue {
   lang: Lang;
   setLang: (l: Lang) => void;
-  t: (key: TranslationKey) => string;
+  t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
 }
 
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -239,9 +343,17 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  function t(key: TranslationKey): string {
+  function t(key: TranslationKey, vars?: Record<string, string | number>): string {
     const entry = dict[key];
-    return entry ? entry[lang] : key;
+    let out = entry ? entry[lang] : key;
+    // 简单占位符插值：{n} / {a} / {b}。
+    // 中英文语序不同，把变量放进句子里而不是拼接字符串，才能真正双语。
+    if (vars) {
+      for (const [k, v] of Object.entries(vars)) {
+        out = out.split(`{${k}}`).join(String(v));
+      }
+    }
+    return out;
   }
 
   return (
@@ -258,7 +370,11 @@ export function useI18n() {
     return {
       lang: "en" as Lang,
       setLang: () => {},
-      t: (key: TranslationKey) => (dict[key] ? dict[key].en : key),
+      t: (key: TranslationKey, vars?: Record<string, string | number>) => {
+        let out = dict[key] ? dict[key].en : (key as string);
+        if (vars) for (const [k, v] of Object.entries(vars)) out = out.split(`{${k}}`).join(String(v));
+        return out;
+      },
     };
   }
   return ctx;

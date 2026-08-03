@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useI18n } from "@/lib/i18n";
 import type { SkillModule } from "@/lib/skills";
 import type { Rarity } from "@/lib/rarity";
 
@@ -28,12 +29,13 @@ import type { Rarity } from "@/lib/rarity";
  *    delay: index * 0.05 会让第 20 张卡在 1 秒后才出现。
  */
 
-const METAL: Record<Rarity, { label: string; color: string }> = {
-  Common:    { label: "青铜", color: "#a07d54" },
-  Rare:      { label: "白银", color: "#b9bfc5" },
-  Epic:      { label: "黄金", color: "#d7b76e" },
-  Legendary: { label: "铂金", color: "#d9dde1" },
-  Mythic:    { label: "黑金", color: "#e8d5a0" },
+/** 稀有度色值。文案在 i18n 的 metal.* 里，这里只管颜色。 */
+const METAL_COLOR: Record<Rarity, string> = {
+  Common: "#a07d54",
+  Rare: "#b9bfc5",
+  Epic: "#d7b76e",
+  Legendary: "#d9dde1",
+  Mythic: "#e8d5a0",
 };
 
 interface Props {
@@ -64,7 +66,7 @@ export function CertificateCard({
   onVerify,
   onClick,
 }: Props) {
-  const metal = METAL[skill.rarity];
+  const { t } = useI18n();
   const isMythic = skill.rarity === "Mythic";
   const owned = balance > 0;
 
@@ -102,8 +104,8 @@ export function CertificateCard({
         >
           Nº{String(skill.id).padStart(2, "0")}
         </span>
-        <span className="text-[11px] tracking-[2.5px]" style={{ color: metal.color }}>
-          {metal.label}
+        <span className="text-[11px] tracking-[2.5px]" style={{ color: METAL_COLOR[skill.rarity] }}>
+          {t(`metal.${skill.rarity}` as never)}
         </span>
       </header>
 
@@ -111,13 +113,13 @@ export function CertificateCard({
 
       <div className="flex justify-between mt-1.5 mb-5">
         <span className="text-[11px]" style={{ color: "#5f5949" }}>
-          近 30 日调用
+          {t("cert.calls30d")}
         </span>
         <span
           className="num text-[11px]"
           style={{ color: pct === null ? "#5f5949" : down ? "#a8705f" : "#8fae7a" }}
         >
-          {pct === null ? "暂无记录" : `${pct >= 0 ? "+" : ""}${pct}%`}
+          {pct === null ? t("cert.noRecord") : `${pct >= 0 ? "+" : ""}${pct}%`}
         </span>
       </div>
 
@@ -145,10 +147,10 @@ export function CertificateCard({
       <div className="h-px my-[18px] mb-3.5" style={{ background: "#1c1a14" }} />
 
       <dl className="flex justify-between mb-[18px]">
-        <Stat label="解锁" value={price} unit="INJ" />
-        <Stat label="累计调用" value={onchainCalls === undefined ? "—" : onchainCalls.toLocaleString()} />
+        <Stat label={t("cert.unlockPrice")} value={price} unit="INJ" />
+        <Stat label={t("cert.totalCalls")} value={onchainCalls === undefined ? "—" : onchainCalls.toLocaleString()} />
         <Stat
-          label="创作者已赚"
+          label={t("cert.creatorEarned")}
           value={creatorEarned === undefined ? "—" : creatorEarned.toFixed(1)}
           unit={creatorEarned === undefined ? undefined : "INJ"}
           align="right"
@@ -171,7 +173,7 @@ export function CertificateCard({
                 : { background: "#ede7d8", color: "#141209" }
           }
         >
-          {owned ? (balance > 1 ? `持有 ${balance} 份` : "已 持 有") : "解 锁"}
+          {owned ? (balance > 1 ? t("cert.ownedN", { n: balance }) : t("cert.owned")) : t("cert.unlock")}
         </button>
         <button
           onClick={(e) => {
@@ -183,7 +185,7 @@ export function CertificateCard({
           onMouseEnter={(e) => (e.currentTarget.style.color = "#cfc4ac")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#6a6353")}
         >
-          链上核验 ↗
+          {t("cert.verify")} ↗
         </button>
       </div>
     </article>
