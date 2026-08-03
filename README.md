@@ -9,7 +9,7 @@
 
 🌐 **Live Demo:** [orchor.webpsy.net](https://orchor.webpsy.net)
 🏆 **Built for:** Injective Nova Program — *Injective × Microsoft × Web3Labs*
-⛓️ **Contract (Injective Testnet, chainId 1439):** [`0xc5DBA06ECdb428f5072a12CEc61cd544BFe54078`](https://testnet.blockscout.injective.network/address/0xc5DBA06ECdb428f5072a12CEc61cd544BFe54078)
+⛓️ **Contract (Injective Testnet, chainId 1439):** [`0x115B28c2AeafbbDef1853FE5ae135850F9D33D35`](https://testnet.blockscout.injective.network/address/0x115B28c2AeafbbDef1853FE5ae135850F9D33D35)
 
 > **Injective financialized assets. Orchor financializes intelligence.**
 > **Injective 金融化了资产，Orchor 金融化了智能。**
@@ -20,7 +20,7 @@
 
 Everything marked **LIVE** in this document is on-chain right now and takes about a minute to reproduce:
 
-1. Open the [verified contract source on Blockscout](https://testnet.blockscout.injective.network/address/0xc5DBA06ECdb428f5072a12CEc61cd544BFe54078#code) — `OrchorCore.sol` is verified, so `registerSkill`, `hasAccess` and `_splitRevenue` are readable as source, not bytecode
+1. Open the [verified contract source on Blockscout](https://testnet.blockscout.injective.network/address/0x115B28c2AeafbbDef1853FE5ae135850F9D33D35#code) — `OrchorCore1155.sol` is verified, so `registerSkill`, `hasAccess` and `_splitRevenue` are readable as source, not bytecode
 2. Read `nextSkillId` → returns **20** (twenty Skill Cards registered on-chain)
 3. Read `getSkill(1)` → `"Solidity Security Scanner"`, Mythic, mint cap 100, priced in INJ
 4. Read `CREATOR_BPS / PLATFORM_BPS / ONCHAIN_BPS` → **7000 / 2500 / 500** — the 70/25/5 revenue split is a contract constant, not a promise
@@ -91,7 +91,7 @@ Orchor is a settlement-heavy, high-frequency product whose endgame is a **market
 
 | Injective primitive | What Orchor builds on it |
 |---------------------|--------------------------|
-| **Native EVM (MultiVM, chainId 1439)** | `OrchorCore.sol` deploys unchanged — Solidity + wagmi/viem, zero rewrite. **LIVE today.** |
+| **Native EVM (MultiVM, chainId 1439)** | `OrchorCore1155.sol` deploys unchanged — Solidity + wagmi/viem, zero rewrite. **LIVE today.** |
 | **Sub-second finality, sub-cent gas** | Per-invocation on-chain logging is economically viable — every AI run is a real transaction. **LIVE today.** |
 | **Native on-chain orderbook (CLOB)** | Skill Cards get real bid/ask and price discovery — no other L1 has this natively. *(Blueprint §1)* |
 | **Burn Auction** | Orchor's platform fees can join the weekly INJ burn — every AI call contributes to deflation. *(Blueprint §3)* |
@@ -250,7 +250,7 @@ or:solidity-security-scanner@1.2.1
 Orchor is a **hybrid architecture**: the skill economy is on-chain on Injective; a thin off-chain layer keeps the AI runtime fast.
 
 **1. Skill ownership & economy → Injective / 技能确权与经济 → Injective**
-`registerSkill`, `unlockSkill`, `subscribeSkill`, `invokeSkill`, `topUpEnergy` and the 70/25/5 `_splitRevenue` all run in `OrchorCore.sol` on Injective. A skill is a verifiable on-chain asset.
+`registerSkill`, `unlockSkill`, `subscribeSkill`, `invokeSkill`, `topUpEnergy` and the 70/25/5 `_splitRevenue` all run in `OrchorCore1155.sol` on Injective. A skill is a verifiable on-chain asset.
 
 **2. Fiat on-ramp → multi-chain / 法币入口 → 多链**
 Users who prefer stablecoins top up **Credits** from Injective, TRON, Base, or Ethereum. Money enters and leaves on-chain; the Credits ledger is an off-chain convenience layer.
@@ -270,7 +270,7 @@ Skill inference runs on a hosted runtime (Azure on the roadmap; no API keys for 
         on-chain calls          API layer
                 │                   │
      ┌──────────▼─────────┐   ┌─────▼──────────────┐
-     │  OrchorCore.sol    │   │  Credits Ledger    │
+     │  OrchorCore1155.sol│   │  Credits Ledger    │
      │  Injective Testnet │   │  (Prisma/Postgres) │
      │  chainId 1439      │   │  + Payment Adapters│
      └────────┬───────────┘   └────────────────────┘
