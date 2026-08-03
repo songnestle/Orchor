@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
     // Calculate totals
     const totalSkills = revenues.length;
-    const totalRuns = revenues.reduce((sum: bigint, r: any) => sum + r.totalRuns, 0);
+    const totalRuns = revenues.reduce((sum: number, r: any) => sum + r.totalRuns, 0);
     const grossRevenue = revenues.reduce((sum: bigint, r: any) => sum + BigInt(r.totalRevenue), 0n);
     const withdrawableBalance = revenues.reduce((sum: bigint, r: any) => sum + BigInt(r.withdrawableCredits), 0n);
 

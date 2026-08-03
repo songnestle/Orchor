@@ -196,8 +196,10 @@ describe("OrchorCore1155", () => {
       const svg = Buffer.from(json.image.split(",")[1], "base64").toString("utf8");
       expect(svg.startsWith("<svg")).to.equal(true);
       expect(svg).to.contain("Solidity Scanner");
-      // 图像完全来自合约，不依赖 IPFS 或任何服务器
-      expect(svg).to.not.contain("http");
+      // 图像完全来自合约，不依赖 IPFS 或任何服务器。
+      // xmlns 是 XML 命名空间标识符（浏览器不发请求，独立渲染必需），剔除后不允许再出现 http
+      const withoutXmlns = svg.replace(/xmlns(:[\w-]+)?="http:\/\/www\.w3\.org\/[^"]*"/g, "");
+      expect(withoutXmlns).to.not.contain("http");
     });
   });
 
