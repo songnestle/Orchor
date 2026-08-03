@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { paymentManager } from '@/lib/payment/payment-manager';
+import { requireUser, UnauthorizedError } from '@/lib/auth/session';
 
 export const runtime = 'nodejs';
 
@@ -12,12 +13,16 @@ export const runtime = 'nodejs';
  */
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { creatorAddress, chain, asset, credits, destinationAddress } = body;
+    // creatorAddress 不再从请求体读取。
+    // 改造前传任意 creatorAddress + 自己的收款地址,就能把别人的创作者收益提走。
+    const creatorAddress = requireUser(req);
 
-    if (!creatorAddress || !chain || !asset || !credits || !destinationAddress) {
+    const body = await req.json();
+    const { chain, asset, credits, destinationAddress } = body;
+
+    if (!chain || !asset || !credits || !destinationAddress) {
       return NextResponse.json(
-        { error: 'All fields required: creatorAddress, chain, asset, credits, destinationAddress' },
+        { error: 'chain、asset、credits、destinationAddress 为必填' },
         { status: 400 }
       );
     }
@@ -151,6 +156,9 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     console.error('[API] Error processing withdrawal:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to process withdrawal' },

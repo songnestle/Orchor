@@ -163,9 +163,10 @@ class RevenueManager {
     totalCredits: bigint;
     runtimeCostUsdCents: number;
   }) {
-    // Revenue split: 70% creator, 20% platform, 10% runtime cost buffer
-    const creatorRevenue = (params.totalCredits * 70n) / 100n;
-    const platformFee = (params.totalCredits * 20n) / 100n;
+    // 与合约常量对齐:CREATOR_BPS / PLATFORM_BPS / ONCHAIN_BPS = 7000 / 2500 / 500。
+    // 这里曾经按 70/20/10 分,而 README 和合约都写 70/25/5 —— 三处数字不一致。
+    const creatorRevenue = (params.totalCredits * 7000n) / 10_000n;
+    const platformFee = (params.totalCredits * 2500n) / 10_000n;
     const runtimeBuffer = params.totalCredits - creatorRevenue - platformFee;
 
     // Update creator revenue record

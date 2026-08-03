@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { paymentManager } from "@/lib/payment/payment-manager";
+import { useSession } from "@/lib/hooks/useSession";
 
 interface Props {
   open: boolean;
@@ -15,6 +16,9 @@ type Chain = "tron" | "evm-injective" | "evm-base" | "evm-ethereum";
 
 export function TopUpCreditsModal({ open, onClose }: Props) {
   const { address } = useAccount();
+  // 需要鉴权的请求走 authedFetch：未登录会先弹一次签名。
+  const { authedFetch } = useSession();
+
   const [step, setStep] = useState<Step>("select-chain");
   const [selectedChain, setSelectedChain] = useState<Chain>("evm-injective");
   const [selectedAsset, setSelectedAsset] = useState("USDT");
@@ -67,11 +71,10 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
     if (!address) return;
 
     try {
-      const response = await fetch("/api/credits/deposit/create", {
+      const response = await authedFetch("/api/credits/deposit/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: address?.toLowerCase(),
           chain: selectedChain,
           asset: selectedAsset,
         }),
@@ -95,11 +98,10 @@ export function TopUpCreditsModal({ open, onClose }: Props) {
     if (!address || isDemoLoading) return;
     setIsDemoLoading(true);
     try {
-      const response = await fetch("/api/credits/deposit/demo", {
+      const response = await authedFetch("/api/credits/deposit/demo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: address?.toLowerCase(),
           usd: parseFloat(amount),
           chain: selectedChain,
           asset: selectedAsset,

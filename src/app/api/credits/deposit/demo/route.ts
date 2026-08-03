@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ledgerService } from '@/lib/ledger/ledger-service';
 import { prisma } from '@/lib/db';
 import { randomUUID } from 'crypto';
+import { requireUser, UnauthorizedError } from '@/lib/auth/session';
 
 export const runtime = 'nodejs';
 
@@ -19,15 +20,18 @@ export const runtime = 'nodejs';
  */
 export async function POST(req: NextRequest) {
   try {
+    // 这条路由白送余额。默认关闭,只有显式打开开关才可用 ——
+    // 改造前它无鉴权且上限 $10,000,等于生产环境的免费提款机。
+    if (process.env.ENABLE_DEMO_TOPUP !== 'true') {
+      return NextResponse.json({ error: '演示充值未启用' }, { status: 404 });
+    }
+    const userId = requireUser(req);
+
     const body = await req.json();
-    const userId: string | undefined = body.userId?.toLowerCase();
     const usd = Number(body.usd);
     const chain = body.chain ?? 'demo';
     const asset = body.asset ?? 'USDC';
 
-    if (!userId) {
-      return NextResponse.json({ error: 'userId is required' }, { status: 400 });
-    }
     if (!Number.isFinite(usd) || usd <= 0) {
       return NextResponse.json({ error: 'usd must be a positive number' }, { status: 400 });
     }
@@ -68,6 +72,9 @@ export async function POST(req: NextRequest) {
       usd,
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     console.error('[API] Demo deposit error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Deposit failed' },

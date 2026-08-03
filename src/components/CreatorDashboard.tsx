@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
+import { useSession } from "@/lib/hooks/useSession";
 
 interface CreatorStats {
   address: string;
@@ -47,6 +48,9 @@ interface CreatorStats {
 export function CreatorDashboard() {
   const { address, isConnected } = useAccount();
   const { t } = useI18n();
+  // 需要鉴权的请求走 authedFetch：未登录会先弹一次签名。
+  const { authedFetch } = useSession();
+
   const [stats, setStats] = useState<CreatorStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -375,11 +379,10 @@ function WithdrawModal({
 
     setIsProcessing(true);
     try {
-      const response = await fetch("/api/creator/withdraw", {
+      const response = await authedFetch("/api/creator/withdraw", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          creatorAddress: stats.address,
           chain: selectedChain,
           asset: "USDT",
           credits: amount,

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
+import { useSession } from "@/lib/hooks/useSession";
 
 interface Props {
   open: boolean;
@@ -23,6 +24,9 @@ export function SkillExecutionModal({
 }: Props) {
   const { address } = useAccount();
   const { credits, refetch } = useCreditBalance();
+  // 需要鉴权的请求走 authedFetch：未登录会先弹一次签名。
+  const { authedFetch } = useSession();
+
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [isExecuting, setIsExecuting] = useState(false);
@@ -41,11 +45,10 @@ export function SkillExecutionModal({
     setStep("executing");
 
     try {
-      const response = await fetch("/api/skills/execute", {
+      const response = await authedFetch("/api/skills/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: address?.toLowerCase(),
           skillId,
           input,
         }),

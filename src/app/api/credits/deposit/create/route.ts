@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireUser, UnauthorizedError } from '@/lib/auth/session';
 import { paymentManager } from '@/lib/payment/payment-manager';
 
 export const runtime = 'nodejs';
@@ -12,7 +13,9 @@ export const runtime = 'nodejs';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { userId, chain, asset } = body;
+    // 身份来自签名会话,不接受请求体传入 —— 否则可以给任意地址记账。
+    const userId = requireUser(req);
+    const { chain, asset } = body;
 
     if (!userId || !chain || !asset) {
       return NextResponse.json(
@@ -55,6 +58,9 @@ export async function POST(req: NextRequest) {
       example: '10 USDT = 1000 credits',
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     console.error('[API] Error creating deposit address:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to create deposit address' },

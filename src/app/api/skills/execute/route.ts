@@ -1,29 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { skillExecutor } from '@/lib/runtime/skill-executor';
+import { requireUser, UnauthorizedError } from '@/lib/auth/session';
+import { hasOnchainAccess } from '@/lib/chainAccess';
 
 export const runtime = 'nodejs';
 
 /**
  * POST /api/skills/execute
- * Execute a skill using credits
+ * Body: { skillId: number, input: string }
  *
- * Body: { userId: string, skillId: number, input: string }
+ * 两处安全改动:
+ *
+ * 1. userId 不再从请求体读。改造前传谁的 userId 就扣谁的 credits ——
+ *    任何人都能用别人的余额跑推理。现在身份只来自签名会话。
+ *
+ * 2. 执行前校验链上 hasAccess。改造前这条路径完全不问合约,
+ *    不解锁、不订阅也能免费调用任何技能,而 README 声称权限由链上裁决。
+ *    这曾经是整个「链上确权」叙事的技术信用缺口。
  */
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { userId, skillId, input } = body;
+    const userId = requireUser(req);
+    const { skillId, input } = await req.json();
 
-    if (!userId || skillId === undefined || !input) {
+    if (skillId === undefined || !input) {
       return NextResponse.json(
-        { error: 'userId, skillId, and input are required' },
+        { error: 'skillId 与 input 为必填' },
         { status: 400 }
+      );
+    }
+
+    const allowed = await hasOnchainAccess(userId, Number(skillId));
+    if (!allowed) {
+      return NextResponse.json(
+        { error: '链上未持有该技能卡,也没有有效订阅', needsUnlock: true },
+        { status: 403 }
       );
     }
 
     const result = await skillExecutor.execute({
       userId,
-      skillId,
+      skillId: Number(skillId),
       input,
     });
 
@@ -39,23 +56,20 @@ export async function POST(req: NextRequest) {
       revenue: {
         creator: result.creatorRevenue.toString(),
         platform: result.platformFee.toString(),
-        split: '70/20/10',
+        // 与合约常量一致:CREATOR_BPS / PLATFORM_BPS / ONCHAIN_BPS = 7000 / 2500 / 500。
+        // 这里曾经写 70/20/10,和链上对不上 —— 三处数字不一致会直接伤可信度。
+        split: '70/25/5',
       },
     });
   } catch (error) {
-    console.error('[API] Error executing skill:', error);
-    const message = error instanceof Error ? error.message : 'Failed to execute skill';
-    // Insufficient balance is an expected business condition, not a server
-    // error. Return 402 (Payment Required) so the client can prompt top-up.
-    if (message.toLowerCase().includes('insufficient credits')) {
-      return NextResponse.json(
-        { error: message, needsTopUp: true },
-        { status: 402 }
-      );
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
     }
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    );
+    console.error('[API] Error executing skill:', error);
+    const message = error instanceof Error ? error.message : '执行失败';
+    if (message.toLowerCase().includes('insufficient credits')) {
+      return NextResponse.json({ error: message, needsTopUp: true }, { status: 402 });
+    }
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

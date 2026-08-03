@@ -9,6 +9,7 @@ import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
 import { useOrchorWrites, useOnchainSkills } from "@/lib/useOrchor";
 import { useDeck } from "@/lib/deckStore";
 import { useI18n } from "@/lib/i18n";
+import { useSession } from "@/lib/hooks/useSession";
 
 type Step = "idle" | "confirm" | "submitting" | "done" | "error";
 type Action = "run" | "collect";
@@ -26,6 +27,9 @@ export function CardDetailModal({
   onClose,
   onOpenTopUpCredits,
 }: CardDetailModalProps) {
+  // 需要鉴权的请求走 authedFetch：未登录会先弹一次签名。
+  const { authedFetch } = useSession();
+
   const [activeTab, setActiveTab] = useState<"details" | "stats" | "history">("details");
   const [step, setStep] = useState<Step>("idle");
   const [action, setAction] = useState<Action>("run");
@@ -90,11 +94,10 @@ export function CardDetailModal({
     setStep("confirm");
 
     try {
-      const res = await fetch("/api/skills/execute", {
+      const res = await authedFetch("/api/skills/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: address?.toLowerCase(),
           skillId: skill.id,
           input: skill.inputExample,
           credits: runCost,

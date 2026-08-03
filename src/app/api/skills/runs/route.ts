@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireUser, UnauthorizedError } from '@/lib/auth/session';
 import { prisma } from '@/lib/db';
 
 export const runtime = 'nodejs';
@@ -9,15 +10,10 @@ export const runtime = 'nodejs';
  */
 export async function GET(req: NextRequest) {
   try {
-    const userId = req.nextUrl.searchParams.get('userId')?.toLowerCase() ?? null;
+    // 只能读自己的记录。改造前 userId 来自查询串,任何人都能枚举地址读别人的历史。
+    const userId = requireUser(req);
     const skillId = req.nextUrl.searchParams.get('skillId');
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'userId parameter required' },
-        { status: 400 }
-      );
-    }
 
     const runs = await prisma.skillRun.findMany({
       where: {
@@ -42,6 +38,9 @@ export async function GET(req: NextRequest) {
       })),
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     console.error('[API] Error fetching skill runs:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to fetch skill runs' },
