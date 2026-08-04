@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import type { SkillModule } from "@/lib/skills";
+import { localizeSkill, type SkillModule } from "@/lib/skills";
 import { RarityBadge } from "./RarityBadge";
 import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
 import { useOrchorWrites, useOnchainSkills } from "@/lib/useOrchor";
@@ -38,7 +38,9 @@ export function CardDetailModal({
   const [err, setErr] = useState<string | null>(null);
 
   const { isConnected, address } = useAccount();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  // 展示文案按语言取;链上规范名单独显示,方便对着 Blockscout 核验。
+  const text = skill ? localizeSkill(skill, lang) : null;
   const { credits } = useCreditBalance();
   const { unlock, isConfirmed } = useOrchorWrites();
   const { skills: onchainSkills } = useOnchainSkills();
@@ -185,7 +187,7 @@ export function CardDetailModal({
 
                         {/* Info */}
                         <h2 className="text-2xl font-bold text-white mb-2 font-display">
-                          {skill.title}
+                          {text?.title ?? skill.title}
                         </h2>
 
                         <div className="flex items-center gap-2 mb-4">
@@ -215,13 +217,18 @@ export function CardDetailModal({
                   {/* Header */}
                   <div className="mb-6">
                     <h1 className="text-4xl font-bold text-white mb-2 font-display">
-                      {skill.title}
+                      {text?.title ?? skill.title}
                     </h1>
+                    {text && text.title !== skill.title && (
+                      <p className="text-xs text-gray-500 mb-2">
+                        {t("cert.onchainName")}: <span className="font-mono">{skill.title}</span>
+                      </p>
+                    )}
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-sm text-gray-400">by</span>
                       <span className="text-sm text-[#d6a44c] font-semibold">@{skill.creatorHandle}</span>
                       <span className="px-2 py-1 rounded-md bg-[#d6a44c]/10 text-[#d6a44c] text-xs font-bold">
-                        {skill.category}
+                        {t(`cat.${skill.category}` as never)}
                       </span>
                     </div>
                   </div>
@@ -336,9 +343,9 @@ export function CardDetailModal({
                     {activeTab === "details" && (
                       <div className="space-y-6">
                         <div>
-                          <h3 className="text-sm font-bold text-gray-400 mb-2">Description</h3>
+                          <h3 className="text-sm font-bold text-gray-400 mb-2">{t("card.description")}</h3>
                           <p className="text-gray-300 leading-relaxed">
-                            {skill.shortDescription}
+                            {text?.shortDescription ?? skill.shortDescription}
                           </p>
                         </div>
 
@@ -346,7 +353,7 @@ export function CardDetailModal({
                           <h3 className="text-sm font-bold text-gray-400 mb-2">{t("card.exampleInput")}</h3>
                           <div className="p-4 rounded-lg bg-black/40 border border-white/10">
                             <code className="text-sm text-gray-300 font-mono">
-                              {skill.inputExample}
+                              {text?.inputExample ?? skill.inputExample}
                             </code>
                           </div>
                         </div>
@@ -355,7 +362,7 @@ export function CardDetailModal({
                           <h3 className="text-sm font-bold text-gray-400 mb-2">{t("card.exampleOutput")}</h3>
                           <div className="p-4 rounded-lg bg-black/40 border border-white/10">
                             <pre className="text-sm text-gray-300 font-mono whitespace-pre-wrap">
-                              {skill.outputPreview}
+                              {text?.outputPreview ?? skill.outputPreview}
                             </pre>
                           </div>
                         </div>

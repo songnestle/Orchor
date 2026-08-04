@@ -36,6 +36,16 @@ export function SkillGrid({ skills, onSelect, emptyText }: Props) {
 
   const items = useMemo(() => skills, [skills]);
 
+  // 全站单日调用峰值:所有卡的曲线共用这把尺子,卡间高度差才等于调用量差。
+  const seriesPeak = useMemo(() => {
+    if (!stats) return undefined;
+    let peak = 0;
+    for (const s of Object.values(stats)) {
+      for (const v of s.series ?? []) if (v > peak) peak = v;
+    }
+    return peak || undefined;
+  }, [stats]);
+
   if (!items.length) {
     return (
       <p className="text-[13px] py-16 text-center" style={{ color: "var(--o-ink-3)" }}>
@@ -67,6 +77,7 @@ export function SkillGrid({ skills, onSelect, emptyText }: Props) {
             onchainCalls={stats?.[skill.id]?.calls}
             creatorEarned={stats?.[skill.id]?.creatorEarnedInj}
             series={stats?.[skill.id]?.series ?? (stats ? [] : undefined)}
+            seriesPeak={seriesPeak}
             onClick={() => onSelect?.(skill)}
             onUnlock={() => {
               if (!chain) return;

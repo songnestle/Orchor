@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useI18n } from "@/lib/i18n";
 import { computePicks } from "@/lib/recommend";
-import { useBalances } from "@/lib/useOrchor";
+import { useBalances, useOnchainSkills } from "@/lib/useOrchor";
 import { useSkillStats } from "@/lib/hooks/useSkillStats";
 import type { SkillModule } from "@/lib/skills";
 
@@ -24,8 +24,18 @@ export function SmartPicks({ skills, onSelect }: Props) {
   const { t } = useI18n();
   const { stats } = useSkillStats();
   const { balances } = useBalances();
+  const { skills: onchain } = useOnchainSkills();
 
-  const picks = useMemo(() => computePicks(skills, stats, balances), [skills, stats, balances]);
+  const prices = useMemo(() => {
+    const m = new Map<number, bigint>();
+    onchain.forEach((s, id) => m.set(id, s.unlockPriceWei));
+    return m;
+  }, [onchain]);
+
+  const picks = useMemo(
+    () => computePicks(skills, stats, balances, prices),
+    [skills, stats, balances, prices]
+  );
 
   if (!picks.length) return null;
 

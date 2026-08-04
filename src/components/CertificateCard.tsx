@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useI18n } from "@/lib/i18n";
-import type { SkillModule } from "@/lib/skills";
+import { localizeSkill, type SkillModule } from "@/lib/skills";
 import type { Rarity } from "@/lib/rarity";
 
 /**
@@ -56,10 +56,19 @@ interface Props {
    * 绝不回退到 skills.ts 里手写的 sparkline —— 那是编的。
    */
   series?: number[];
+  /**
+   * 全站单日调用峰值,由 SkillGrid 统一算好传入 —— 曲线共用这把尺子,
+   * 卡与卡之间的高度差才等于调用量差。各卡自归一化的话,调用 2 次和
+   * 调用 40 次画出来一模一样,那才是真正的"看起来都一样"。
+   */
+  seriesPeak?: number;
   onUnlock?: () => void;
   onVerify?: () => void;
   onClick?: () => void;
 }
+
+/** 涨跌状态:无记录 / 首期(无同比基线) / 有基线的变化率 */
+type Trend = null | { kind: "new" } | { kind: "pct"; v: number };
 
 export function CertificateCard({
   skill,
@@ -69,24 +78,29 @@ export function CertificateCard({
   creatorEarned,
   balance = 0,
   series,
+  seriesPeak,
   onUnlock,
   onVerify,
   onClick,
 }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const text = localizeSkill(skill, lang);
   const isMythic = skill.rarity === "Mythic";
   const owned = balance > 0;
 
   const line = series ?? [];
-  const pct = useMemo(() => {
+  const trend: Trend = useMemo(() => {
     if (line.length < 2) return null;
-    const head = line.slice(0, Math.floor(line.length / 2)).reduce((a, b) => a + b, 0);
-    const tail = line.slice(Math.floor(line.length / 2)).reduce((a, b) => a + b, 0);
-    if (head === 0 && tail === 0) return null;      // 全零:显示「暂无记录」而不是 +0%
-    if (head === 0) return 100;
-    return Math.round(((tail - head) / head) * 100);
+    const mid = Math.floor(line.length / 2);
+    const head = line.slice(0, mid).reduce((a, b) => a + b, 0);
+    const tail = line.slice(mid).reduce((a, b) => a + b, 0);
+    if (head === 0 && tail === 0) return null;   // 全零:显示「暂无记录」而不是 +0%
+    // 前半段没有基线时,任何变化率都是除零的产物 —— 早期所有卡都会显示
+    // "+100%",看着像同一张卡。诚实的说法是:这是首期数据。
+    if (head === 0) return { kind: "new" };
+    return { kind: "pct", v: Math.round(((tail - head) / head) * 100) };
   }, [line]);
-  const down = pct !== null && pct < 0;
+  const down = trend?.kind === "pct" && trend.v < 0;
 
   const price =
     unlockPriceWei !== undefined
@@ -120,7 +134,7 @@ export function CertificateCard({
         </span>
       </header>
 
-      <Sparkline series={line} down={down} />
+      <Sparkline series={line} down={down} peak={seriesPeak} />
 
       <div className="flex justify-between mt-1.5 mb-5">
         <span className="text-[11px]" style={{ color: "#5f5949" }}>
@@ -128,9 +142,13 @@ export function CertificateCard({
         </span>
         <span
           className="num text-[11px]"
-          style={{ color: pct === null ? "#5f5949" : down ? "#a8705f" : "#8fae7a" }}
+          style={{ color: trend === null ? "#5f5949" : down ? "#a8705f" : "#8fae7a" }}
         >
-          {pct === null ? t("cert.noRecord") : `${pct >= 0 ? "+" : ""}${pct}%`}
+          {trend === null
+            ? t("cert.noRecord")
+            : trend.kind === "new"
+              ? t("cert.firstPeriod")
+              : `${trend.v >= 0 ? "+" : ""}${trend.v}%`}
         </span>
       </div>
 
@@ -148,17 +166,17 @@ export function CertificateCard({
             : { fontFamily: "var(--o-serif)", color: "#ede7d8" }
         }
       >
-        {skill.title}
+        {text.title}
       </h3>
       <p className="mt-1.5 mb-0 text-[12px]" style={{ color: "#6a6353" }}>
         {skill.creatorHandle.replace(/^@+/, "@")}
         {supplyLabel ? ` · ${supplyLabel}` : ""}
       </p>
       <p className="mt-2 mb-0 text-[12px] leading-[1.55] line-clamp-2" style={{ color: "#847c68" }}>
-        {skill.shortDescription}
+        {text.shortDescription}
       </p>
       <p className="mt-2 mb-0 text-[11px] tracking-[.8px]" style={{ color: "#5f5949" }}>
-        {skill.category} · ⚡{skill.energyCost} · {skill.origin}
+        {t(`cat.${skill.category}` as never)} · ⚡{skill.energyCost} · {skill.origin}
       </p>
 
       <div className="h-px my-[18px] mb-3.5" style={{ background: "#1c1a14" }} />
@@ -241,22 +259,22 @@ function Stat({
  * 空数据画基线 + 30 格日刻度:是"还没有数据的图表",不是一块空白;
  * 依旧不编造任何数字。
  */
-function Sparkline({ series, down }: { series: number[]; down: boolean }) {
+function Sparkline({ series, down, peak }: { series: number[]; down: boolean; peak?: number }) {
   const W = 300;
   const H = 64;
   const P = 2;
 
   const { d, area, lx, ly } = useMemo(() => {
     if (series.length < 2) return { d: "", area: "", lx: 0, ly: 0 };
-    const max = Math.max(...series);
-    const min = Math.min(...series);
-    const span = max - min || 1;
+    // 纵轴从 0 起、以全站峰值封顶(拿不到峰值才退回本卡最大值)。
+    // 原来按本卡 min/max 归一化,导致调用 2 次和 40 次画出同样高的曲线。
+    const top = Math.max(peak ?? 0, ...series) || 1;
     const step = (W - P * 2) / (series.length - 1);
-    const pts = series.map((v, i) => [P + i * step, H - 8 - ((v - min) / span) * (H - 22)] as const);
+    const pts = series.map((v, i) => [P + i * step, H - 8 - (v / top) * (H - 22)] as const);
     const path = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
     const [ex, ey] = pts[pts.length - 1];
     return { d: path, area: `${path} L${ex.toFixed(1)} ${H} L${P} ${H} Z`, lx: ex, ly: ey };
-  }, [series]);
+  }, [series, peak]);
 
   // 与相邻涨跌幅徽章同语义:上行绿、下行赭。金色是稀缺资源,留给黑金卡,
   // 否则精选区 6 张上行卡就是 6 条金线,预算(整屏≤3处)瞬间爆掉。

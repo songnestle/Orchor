@@ -20,6 +20,8 @@ const dict = {
   // 卡面
   "cert.calls30d":     { en: "Calls, last 30d", zh: "近 30 日调用" },
   "cert.noRecord":     { en: "No record yet",   zh: "暂无记录" },
+  "cert.firstPeriod":  { en: "First period",    zh: "首期数据" },
+  "cert.onchainName":  { en: "On-chain name",   zh: "链上名称" },
   "cert.unlockPrice":  { en: "Unlock",          zh: "解锁" },
   "cert.totalCalls":   { en: "Total calls",     zh: "累计调用" },
   "cert.creatorEarned":{ en: "Creator earned",  zh: "创作者已赚" },
@@ -314,6 +316,7 @@ const dict = {
   "common.withdraw": { en: "Withdraw", zh: "提现" },
 
   // Card detail extended
+  "card.description": { en: "Description", zh: "技能说明" },
   "card.exampleInput": { en: "Example Input", zh: "输入示例" },
   "card.exampleOutput": { en: "Example Output", zh: "输出示例" },
   "card.privacyVerification": { en: "Privacy Verification", zh: "隐私验证" },

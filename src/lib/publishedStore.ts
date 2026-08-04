@@ -92,13 +92,10 @@ export function buildSkillFromForm(input: {
     priceMON: input.priceMON,
     subscriptionMON: input.subscriptionMON,
     energyCost: input.energyCost,
-    rating: 0,
-    usageCount: 0,
     shortDescription: input.shortDescription,
     inputExample: input.inputExample,
     outputPreview: input.outputPreview,
     pipeline: input.pipeline,
-    sparkline: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     origin: input.origin,
     runtime: {
       model: input.model,

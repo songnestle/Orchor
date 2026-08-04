@@ -24,11 +24,18 @@ export interface SmartPick {
 export function computePicks(
   skills: SkillModule[],
   stats: Record<number, SkillStat> | undefined,
-  balances?: Map<number, number>
+  balances?: Map<number, number>,
+  /** 链上解锁价(wei)。缺省才退回 skills.ts 的静态价 —— 卡面显示的是链上价,
+   *  「性价比」若按静态价排序,推荐结论会和用户看到的价格对不上。 */
+  unlockPriceWei?: Map<number, bigint>
 ): SmartPick[] {
   if (!stats || !skills.length) return [];
   const callsOf = (s: SkillModule) => stats[s.id]?.calls ?? 0;
   const earnedOf = (s: SkillModule) => stats[s.id]?.creatorEarnedInj ?? 0;
+  const priceOf = (s: SkillModule) => {
+    const wei = unlockPriceWei?.get(s.id);
+    return wei !== undefined && wei > 0n ? Number(wei) / 1e18 : s.priceMON;
+  };
   if (!skills.some((s) => callsOf(s) > 0)) return [];
 
   const taken = new Set<number>();
@@ -50,7 +57,7 @@ export function computePicks(
   };
 
   push(best(skills, callsOf), "picks.trending");
-  push(best(skills, (s) => callsOf(s) / Math.max(s.priceMON, 0.001)), "picks.value");
+  push(best(skills, (s) => callsOf(s) / Math.max(priceOf(s), 0.001)), "picks.value");
 
   const held = skills.filter((s) => (balances?.get(s.id) ?? 0) > 0);
   const heldCats = new Set(held.map((s) => s.category));
