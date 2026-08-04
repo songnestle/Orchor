@@ -154,6 +154,12 @@ export function CertificateCard({
         {skill.creatorHandle.replace(/^@+/, "@")}
         {supplyLabel ? ` · ${supplyLabel}` : ""}
       </p>
+      <p className="mt-2 mb-0 text-[12px] leading-[1.55] line-clamp-2" style={{ color: "#847c68" }}>
+        {skill.shortDescription}
+      </p>
+      <p className="mt-2 mb-0 text-[11px] tracking-[.8px]" style={{ color: "#5f5949" }}>
+        {skill.category} · ⚡{skill.energyCost} · {skill.origin}
+      </p>
 
       <div className="h-px my-[18px] mb-3.5" style={{ background: "#1c1a14" }} />
 
@@ -162,7 +168,7 @@ export function CertificateCard({
         <Stat label={t("cert.totalCalls")} value={onchainCalls === undefined ? "—" : onchainCalls.toLocaleString()} />
         <Stat
           label={t("cert.creatorEarned")}
-          value={creatorEarned === undefined ? "—" : creatorEarned.toFixed(1)}
+          value={creatorEarned === undefined ? "—" : formatInj(creatorEarned)}
           unit={creatorEarned === undefined ? undefined : "INJ"}
           align="right"
         />
@@ -227,10 +233,17 @@ function Stat({
   );
 }
 
-/** 单发丝线曲线。空数据画一条基线 —— 新卡就该看起来是新卡。 */
+/**
+ * 单发丝线曲线。
+ * 高度固定 64px —— viewBox 若跟随卡宽等比放大,单列布局下空图会撑出
+ * 170px 的留白(上线首日的"卡片太空荡"就是这个)。preserveAspectRatio
+ * 拉伸配合 non-scaling-stroke,线宽不随宽度变化。
+ * 空数据画基线 + 30 格日刻度:是"还没有数据的图表",不是一块空白;
+ * 依旧不编造任何数字。
+ */
 function Sparkline({ series, down }: { series: number[]; down: boolean }) {
   const W = 300;
-  const H = 76;
+  const H = 64;
   const P = 2;
 
   const { d, area, lx, ly } = useMemo(() => {
@@ -246,20 +259,44 @@ function Sparkline({ series, down }: { series: number[]; down: boolean }) {
   }, [series]);
 
   const color = down ? "#a8705f" : "#c6a96c";
+  const ticks = useMemo(() => Array.from({ length: 30 }, (_, i) => P + (i * (W - P * 2)) / 29), []);
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" aria-hidden="true">
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      className="block w-full h-[64px]"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
       {d ? (
         <>
           <path d={area} fill={color} fillOpacity="0.05" />
-          <path d={d} fill="none" stroke={color} strokeWidth="1.1" strokeLinejoin="round" />
-          <circle cx={lx} cy={ly} r="2" fill={color} />
+          <path d={d} fill="none" stroke={color} strokeWidth="1.1" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+          <path d={`M${lx} ${ly} l0 0`} stroke={color} strokeWidth="4" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
         </>
       ) : (
-        <line x1={P} y1={H - 6} x2={W - P} y2={H - 6} stroke="#3d382a" strokeWidth="1" />
+        <>
+          {ticks.map((x, i) => (
+            <line
+              key={i}
+              x1={x} y1={i % 7 === 0 ? H - 14 : H - 10}
+              x2={x} y2={H - 6}
+              stroke="#2a2519" strokeWidth="1" vectorEffect="non-scaling-stroke"
+            />
+          ))}
+          <line x1={P} y1={H - 6} x2={W - P} y2={H - 6} stroke="#3d382a" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        </>
       )}
     </svg>
   );
+}
+
+/** INJ 金额:小额保留 3 位小数,否则 0.007 INJ 会被 toFixed(1) 抹成 "0.0"。 */
+function formatInj(v: number): string {
+  if (v === 0) return "0";
+  if (v >= 100) return v.toFixed(0);
+  if (v >= 1) return v.toFixed(1);
+  return v.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
 }
 
 /** wei → 最多三位小数。 */
