@@ -73,22 +73,37 @@ async function auditRoute(browser: Browser, route: string): Promise<RouteReport>
   await new Promise((r) => setTimeout(r, 2500));
 
   // 点击遍历:每轮重新枚举,点过的(按文本+序号指纹)跳过。
+  // 每轮开头先纠偏:上一轮点击若触发慢导航(>沉降时间),枚举会撞上
+  // 正在导航的 frame 抛 detached —— 所以纠偏与枚举都要容错重试。
   const seen = new Set<string>();
   for (let round = 0; round < 60; round++) {
-    const targets = await page.$$eval(
-      "button, [role=button], a[href]",
-      (els, base) =>
-        els.map((el, i) => {
-          const a = el as HTMLAnchorElement;
-          const href = a.href || "";
-          const external = !!href && !href.startsWith(base as string);
-          const newTab = a.target === "_blank";
-          const txt = (el.textContent || "").trim().slice(0, 40);
-          const visible = !!(el as HTMLElement).offsetParent;
-          return { i, txt, external, newTab, visible, disabled: (el as HTMLButtonElement).disabled === true };
-        }),
-      BASE
-    );
+    let targets: Array<{ i: number; txt: string; external: boolean; newTab: boolean; visible: boolean; disabled: boolean }>;
+    try {
+      if (new URL(page.url()).pathname !== route) {
+        await page.goto(BASE + route, { waitUntil: "domcontentloaded", timeout: 30_000 });
+        await new Promise((r) => setTimeout(r, 800));
+      }
+      targets = await page.$$eval(
+        "button, [role=button], a[href]",
+        (els, base) =>
+          els.map((el, i) => {
+            const a = el as HTMLAnchorElement;
+            const href = a.href || "";
+            const external = !!href && !href.startsWith(base as string);
+            const newTab = a.target === "_blank";
+            const txt = (el.textContent || "").trim().slice(0, 40);
+            const visible = !!(el as HTMLElement).offsetParent;
+            return { i, txt, external, newTab, visible, disabled: (el as HTMLButtonElement).disabled === true };
+          }),
+        BASE
+      );
+    } catch {
+      // 导航竞态(detached frame 等):稳一拍,回到被测路由重试本轮。
+      await new Promise((r) => setTimeout(r, 1000));
+      await page.goto(BASE + route, { waitUntil: "domcontentloaded", timeout: 30_000 }).catch(() => {});
+      await new Promise((r) => setTimeout(r, 800));
+      continue;
+    }
     const next = targets.find(
       (c) => c.visible && !c.disabled && !c.external && !c.newTab && !seen.has(`${c.txt}#${c.i}`)
     );
@@ -101,7 +116,11 @@ async function auditRoute(browser: Browser, route: string): Promise<RouteReport>
       const handles = await page.$$("button, [role=button], a[href]");
       const h = handles[next.i];
       if (h) {
-        await h.click({ delay: 10 }).catch(() => {});
+        // 点击加 3s 竞速超时:触发原生对话框/协议弹窗时 click 可能永不返回。
+        await Promise.race([
+          h.click({ delay: 10 }).catch(() => {}),
+          new Promise((r) => setTimeout(r, 3000)),
+        ]);
         rep.clicked++;
         await new Promise((r) => setTimeout(r, 350));
         // 关掉可能弹出的 modal / 恢复路由
@@ -127,25 +146,34 @@ async function auditRoute(browser: Browser, route: string): Promise<RouteReport>
 async function main() {
   const reports: RouteReport[] = [];
   // 每个路由独立浏览器实例:一次崩溃不拖垮整场测试。
+  // headless Chrome 紧挨着起停偶发资源竞态把实例弄死("Connection closed"),
+  // 与页面无关 —— 所以路由失败先隔 3s 换全新实例重试一次,仍失败才记账。
   for (const route of ROUTES) {
-    process.stderr.write(`auditing ${route} …\n`);
-    let browser: Browser | null = null;
-    try {
-      browser = await puppeteer.launch({
-        executablePath: CHROME,
-        headless: true,
-        args: ["--no-sandbox", "--disable-gpu", "--window-size=1440,900"],
-      });
-      reports.push(await auditRoute(browser, route));
-    } catch (e: any) {
-      reports.push({
-        route, status: null, clicked: 0, skippedExternal: 0,
-        consoleErrors: [], pageErrors: [`ROUTE FAILED: ${String(e.message).slice(0, 150)}`],
-        badResponses: [], clickFailures: [],
-      });
-    } finally {
-      await browser?.close().catch(() => {});
+    let report: RouteReport | null = null;
+    for (let attempt = 1; attempt <= 2 && !report; attempt++) {
+      process.stderr.write(`auditing ${route} (attempt ${attempt}) …\n`);
+      let browser: Browser | null = null;
+      try {
+        browser = await puppeteer.launch({
+          executablePath: CHROME,
+          headless: true,
+          args: ["--no-sandbox", "--disable-gpu", "--window-size=1440,900"],
+        });
+        report = await auditRoute(browser, route);
+      } catch (e: any) {
+        if (attempt === 2) {
+          report = {
+            route, status: null, clicked: 0, skippedExternal: 0,
+            consoleErrors: [], pageErrors: [`ROUTE FAILED: ${String(e.message).slice(0, 150)}`],
+            badResponses: [], clickFailures: [],
+          };
+        }
+      } finally {
+        await browser?.close().catch(() => {});
+        await new Promise((r) => setTimeout(r, 3000));
+      }
     }
+    reports.push(report!);
   }
 
   let failures = 0;

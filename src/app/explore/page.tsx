@@ -33,10 +33,13 @@ export default function ExplorePage() {
       <div className="fixed right-0 top-20 w-80 h-[calc(100vh-5rem)] overflow-y-auto p-6 glass-strong hidden xl:block">
         <h3 className="text-lg font-bold text-white mb-4">{t("explore.trending")}</h3>
         <div className="space-y-3">
-          {["#web3dev", "#research", "#automation", "#data"].map((tag) => (
+          {/* 数量是目录真实卡数 —— 原来硬编码的 "2.4k posts" 是编造数据 */}
+          {([["#web3dev", "Web3 Dev"], ["#research", "Research"], ["#automation", "Automation"], ["#data", "Data"]] as const).map(([tag, cat]) => (
             <div key={tag} className="p-3 rounded-lg glass hover:bg-white/10 cursor-pointer transition-all">
               <div className="text-[#d6a44c] font-semibold text-sm">{tag}</div>
-              <div className="text-xs text-gray-400 mt-1">2.4k posts</div>
+              <div className="text-xs text-gray-400 mt-1">
+                {t("market.countCards", { n: allSkills.filter((s) => s.category === cat).length })}
+              </div>
             </div>
           ))}
         </div>
