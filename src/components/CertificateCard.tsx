@@ -258,7 +258,9 @@ function Sparkline({ series, down }: { series: number[]; down: boolean }) {
     return { d: path, area: `${path} L${ex.toFixed(1)} ${H} L${P} ${H} Z`, lx: ex, ly: ey };
   }, [series]);
 
-  const color = down ? "#a8705f" : "#c6a96c";
+  // 与相邻涨跌幅徽章同语义:上行绿、下行赭。金色是稀缺资源,留给黑金卡,
+  // 否则精选区 6 张上行卡就是 6 条金线,预算(整屏≤3处)瞬间爆掉。
+  const color = down ? "#a8705f" : "#8fae7a";
   const ticks = useMemo(() => Array.from({ length: 30 }, (_, i) => P + (i * (W - P * 2)) / 29), []);
 
   return (

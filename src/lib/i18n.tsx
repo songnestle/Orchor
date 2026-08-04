@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
 export type Lang = "en" | "zh";
 
@@ -30,6 +30,43 @@ const dict = {
   "cert.minted":       { en: "{a} / {b}",       zh: "{a} / {b}" },
   "cert.circulating":  { en: "{n} in circulation", zh: "{n} 份流通" },
   "cert.notMinted":    { en: "Not minted",      zh: "尚未铸造" },
+
+  // 首页(介绍页)
+  "hero.eyebrow": { en: "Season 01 · Live on Injective Testnet", zh: "Season 01 · Injective 测试网已上线" },
+  // README 官方对译:EN "The Capital Market for Machine Intelligence" ↔ ZH "AI 能力的资本市场"
+  "hero.title":   { en: "The Capital Market for Machine Intelligence.", zh: "AI 能力的资本市场。" },
+  "hero.lede": {
+    en: "Orchor turns AI capabilities into collectible, executable, tradable Skill Cards — registered, priced and settled on-chain on Injective. Holding the card is the permission; transfer it and the permission goes with it.",
+    zh: "Orchor 把 AI 能力封装成可收藏、可执行、可交易的技能卡——在 Injective 上注册、定价、结算。持卡即调用权，卡转走，权限随卡走。",
+  },
+  "hero.ctaMarket": { en: "Enter the market", zh: "进入市场" },
+  "hero.ctaVerify": { en: "Verify on chain",  zh: "链上核验" },
+  "hero.how":       { en: "How it works",     zh: "怎么玩" },
+  "hero.step1t": { en: "Unlock",  zh: "解锁" },
+  "hero.step1d": {
+    en: "Buy a card outright with INJ. It mints as an ERC-1155 to your wallet — the artwork itself lives on-chain.",
+    zh: "用 INJ 买断技能卡，ERC-1155 铸到你的钱包，卡面本身就存在链上。",
+  },
+  "hero.step2t": { en: "Invoke",  zh: "调用" },
+  "hero.step2d": {
+    en: "Holding the card is the access check. Top up ⚡ Energy (1 INJ = 100⚡) and every invocation settles on-chain.",
+    zh: "持卡即权限。充值 ⚡ Energy（1 INJ = 100⚡），每次调用都在链上结算。",
+  },
+  "hero.step3t": { en: "Trade",   zh: "交易" },
+  "hero.step3d": {
+    en: "Cards transfer like any NFT — access moves with them, and creators earn a 7% royalty on every resale.",
+    zh: "卡像任何 NFT 一样转让，权限随卡迁移；每次转手创作者抽 7% 版税。",
+  },
+  "hero.featured": { en: "Featured cards", zh: "精选卡片" },
+  "hero.viewAll":  { en: "View all {n} cards", zh: "查看全部 {n} 张" },
+
+  // 智能推荐(全部由真实链上指标推导,理由即算法)
+  "picks.label":     { en: "Smart picks",          zh: "智能推荐" },
+  "picks.trending":  { en: "Most invoked, 30d",    zh: "近 30 日调用最多" },
+  "picks.value":     { en: "Best value per INJ",   zh: "性价比之选" },
+  "picks.deckMatch": { en: "Matches your deck",    zh: "与你的持仓同类" },
+  "picks.topEarner": { en: "Top-earning creator",  zh: "创作者收入最高" },
+  "picks.calls":     { en: "{n} calls",            zh: "{n} 次调用" },
 
   // 市场页
   "market.title":    { en: "Skill Card Market", zh: "技能卡市场" },
@@ -131,14 +168,6 @@ const dict = {
   "top.topup": { en: "Top Up", zh: "充值" },
   "top.connect": { en: "Connect Wallet", zh: "连接钱包" },
   "top.publish": { en: "Publish", zh: "发布" },
-
-  // Hero
-  "hero.title": { en: "The Skill Layer for AI Agents", zh: "AI 智能体的技能层" },
-  "hero.subtitle": {
-    en: "Collect, run and trade AI skill cards. Funded across multiple chains.",
-    zh: "收藏、运行、交易 AI 技能卡，支持多链充值。",
-  },
-  "hero.explore": { en: "Explore Skills", zh: "浏览技能" },
 
   // Card / actions
   "card.run": { en: "Run", zh: "运行" },
@@ -327,14 +356,19 @@ interface I18nContextValue {
 const I18nContext = createContext<I18nContextValue | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  // Lazy initializer reads the saved language on the very first client render,
-  // so the UI doesn't flash English before switching to the saved language.
-  // (On the server there's no localStorage, so it defaults to "en".)
-  const [lang, setLangState] = useState<Lang>(() => {
-    if (typeof window === "undefined") return "en";
+  // 首帧必须与 SSR 一致(恒为 "en"),否则中文用户每次整页加载都触发
+  // React hydration 报错并整树客户端重渲——比语言闪变严重得多。
+  // 已存语言在挂载后的 effect 里切换;要彻底消除闪变需把语言放进
+  // cookie 让 SSR 可读,留待后续。
+  const [lang, setLangState] = useState<Lang>("en");
+
+  useEffect(() => {
     const saved = localStorage.getItem("orchor:lang");
-    return saved === "zh" || saved === "en" ? saved : "en";
-  });
+    if (saved === "zh") {
+      setLangState("zh");
+      document.documentElement.lang = "zh";
+    }
+  }, []);
 
   function setLang(l: Lang) {
     setLangState(l);
