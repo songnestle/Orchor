@@ -120,7 +120,11 @@ export function CertificateCard({
         // 一张网格纸;去掉线之后间距自己会说话(pools.trade 的列表项
         // 干脆连背景都没有)。黑金卡保留金边 —— 那是它唯一的特权。
         background: "var(--o-raise)",
-        border: isMythic ? "1px solid var(--o-hair-gold)" : "1px solid transparent",
+        // 卡面 SVG 自带金框金纹,一屏 15 张就是 15 圈金边 —— 黑金卡原来
+        // 靠"唯一有金边"辨识,在有图之后彻底失效。改用一圈外发光:
+        // 它在金边泛滥的画面里仍然只属于黑金卡,且不增加第 16 圈线。
+        border: "1px solid transparent",
+        boxShadow: isMythic ? "0 0 0 1px rgba(198,169,108,.5), 0 0 24px -6px rgba(198,169,108,.45)" : "none",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.background = "var(--o-raise-hi)";
@@ -156,16 +160,20 @@ export function CertificateCard({
             </span>
           )}
           {/*
-            快捷解锁。卡片缩小后按钮不再常驻(挤且吵),但"从卡片直接买"
-            是原有能力,不能因为改版悄悄消失 —— 悬停浮出,点开详情也仍可买。
+            快捷解锁。悬停浮出,不占常驻空间。
+            pointer-events-none 是必须的:opacity-0 的元素照样接收点击,
+            触屏没有 hover,这个看不见的按钮会盖住卡面底部约四分之一 ——
+            用户以为在点卡片看详情,实际直接拉起了付款交易。
+            链上价没读到时不渲染它:那时价格只能来自 skills.ts 的静态值,
+            拿静态价去发交易既是编造也点不动(SkillGrid 会静默 return)。
           */}
-          {!owned && (
+          {!owned && unlockPriceWei !== undefined && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onUnlock?.();
               }}
-              className="absolute inset-x-2 bottom-2 py-2 text-[14px] opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 focus:opacity-100 focus:translate-y-0"
+              className="absolute inset-x-2 bottom-2 py-2 text-[14px] opacity-0 translate-y-1 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:pointer-events-auto"
               style={{
                 borderRadius: "var(--o-r-btn)",
                 background: isMythic ? "linear-gradient(160deg,#d9bc7e,#b8955a)" : "#ede7d8",
@@ -177,109 +185,75 @@ export function CertificateCard({
           )}
         </div>
       ) : (
-        <header className="flex items-baseline justify-between px-4 pt-4">
-          {/* Nº 与稀有度是刻意的"证书刻印",字距保留;正文一律不加字距 */}
-          <span
-            className="text-[11px] tracking-[2.5px]"
-            style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink-faint)" }}
-          >
-            Nº{String(skill.id).padStart(2, "0")}
-          </span>
-          <span className="text-[11px] tracking-[2.5px]" style={{ color: METAL_COLOR[skill.rarity] }}>
-            {t(`metal.${skill.rarity}` as never)}
-          </span>
-        </header>
-      )}
-
-      <div className="flex flex-col flex-1 px-4 pt-3 pb-4">
-        {/*
-          卡面已经印着英文规范名、稀有度徽章、解锁价、铸造量和能耗 ——
-          这里绝不重复它们,否则一张卡把同样的信息说两遍。
-          文字区只补卡面没有的:中文名(卡面恒为英文)、说明、链上调用。
-        */}
-        {(!artUri || text.title !== skill.title) && (
-          <div className="flex items-baseline justify-between gap-2 mb-1">
-            <h3
-              className="m-0 text-[16px] leading-tight truncate"
-              style={
-                isMythic
-                  ? {
-                      fontFamily: "var(--o-serif)",
-                      background: "linear-gradient(100deg,#a9884d,#f3e3b0 48%,#a9884d)",
-                      WebkitBackgroundClip: "text",
-                      backgroundClip: "text",
-                      color: "transparent",
-                    }
-                  : { fontFamily: "var(--o-serif)", color: "#ede7d8" }
-              }
+        // 无图回退:卡面拿不到时,这块要独自撑起证书感,并补齐图上本该有的
+        // 价格与稀有度 —— 否则这张卡比有图的少了一半信息。
+        <div className="aspect-square flex flex-col justify-between p-4" style={{ background: "#0d0c09" }}>
+          <div className="flex items-baseline justify-between">
+            {/* Nº 与稀有度是刻意的"证书刻印",字距保留;正文一律不加字距 */}
+            <span
+              className="text-[11px] tracking-[2.5px]"
+              style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink-faint)" }}
             >
-              {text.title}
-            </h3>
-            {!artUri && (
-              <span
-                className="text-[11px] whitespace-nowrap"
-                style={{ color: METAL_COLOR[skill.rarity] }}
-              >
-                {t(`metal.${skill.rarity}` as never)}
+              Nº{String(skill.id).padStart(2, "0")}
+            </span>
+            <span className="text-[11px] tracking-[2.5px]" style={{ color: METAL_COLOR[skill.rarity] }}>
+              {t(`metal.${skill.rarity}` as never)}
+            </span>
+          </div>
+          <div>
+            {/* 链上价没读到就显示破折号 —— skills.ts 的静态价不是链上事实 */}
+            <span className="num text-[20px]" style={{ color: "var(--o-ink)" }}>
+              {unlockPriceWei !== undefined ? price : "—"}
+            </span>
+            {unlockPriceWei !== undefined && (
+              <span className="text-[12px] ml-1" style={{ color: "var(--o-ink-faint)" }}>
+                INJ
               </span>
             )}
           </div>
-        )}
-
-        {/* 固定两行高:描述长短不一会让同排卡片一高一矮,底部撑出空洞 */}
-        <p
-          className="mb-0 text-[12px] leading-[1.55] line-clamp-2"
-          style={{ color: "var(--o-ink-dim)", minHeight: "2lh" }}
-        >
-          {text.shortDescription}
-        </p>
-
-        {/* 链上调用 + 价格。分类/来源/能耗移到详情页 —— 网格里每多一行
-            元数据,扫读时就多一行噪音。卡面上已经印着能耗和价格。 */}
-        <div className="flex items-center justify-between gap-2 mt-auto pt-3">
-          <span className="text-[12px]" style={{ color: "var(--o-ink-faint)" }}>
-            {t(`cat.${skill.category}` as never)}
-          </span>
-          <div className="flex items-center gap-2">
-            <div className="w-[48px]">
-              <Sparkline series={line} down={down} peak={seriesPeak} compact />
-            </div>
-            <span
-              className="num text-[12px] whitespace-nowrap"
-              style={{ color: trend === null ? "var(--o-ink-faint)" : down ? "var(--o-down)" : "var(--o-up)" }}
-            >
-              {onchainCalls === undefined ? "—" : `${onchainCalls.toLocaleString()}×`}
-            </span>
-          </div>
         </div>
+      )}
+
+      {/*
+        文字区只有一行。
+        卡面已经印着英文规范名、稀有度、解锁价、铸造量、能耗 —— 重复它们
+        只会让扫读时的噪音翻倍。这里补两样卡面给不了的:中文名(卡面恒为
+        英文)和链上调用量。说明文字、分类、来源全部退到详情弹窗。
+      */}
+      <div className="flex items-baseline justify-between gap-2 px-3.5 py-3">
+        <h3
+          className="m-0 text-[14px] leading-tight truncate"
+          style={
+            isMythic
+              ? {
+                  fontFamily: "var(--o-serif)",
+                  background: "linear-gradient(100deg,#a9884d,#f3e3b0 48%,#a9884d)",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent",
+                }
+              : { fontFamily: "var(--o-serif)", color: "var(--o-ink)" }
+          }
+        >
+          {text.title}
+        </h3>
+        <span className="flex items-center gap-1.5 shrink-0">
+          {/* 迷你曲线:全站共用一把纵轴尺子,所以高度差就是调用量差 */}
+          <span className="w-[40px] block">
+            <Sparkline series={line} down={down} peak={seriesPeak} compact />
+          </span>
+          <span
+            className="num text-[12px] whitespace-nowrap"
+            style={{ color: trend === null ? "var(--o-ink-faint)" : down ? "var(--o-down)" : "var(--o-up)" }}
+          >
+            {onchainCalls === undefined ? "—" : `${onchainCalls.toLocaleString()}×`}
+          </span>
+        </span>
       </div>
     </article>
   );
 }
 
-function Stat({
-  label,
-  value,
-  unit,
-  align = "left",
-}: {
-  label: string;
-  value: string;
-  unit?: string;
-  align?: "left" | "right";
-}) {
-  return (
-    <div style={{ textAlign: align }}>
-      <dt className="m-0 text-[11px] tracking-[1.2px]" style={{ color: "#5f5949" }}>
-        {label}
-      </dt>
-      <dd className="num m-0 mt-1 text-[15px]" style={{ color: "#ede7d8" }}>
-        {value}
-        {unit ? <span className="text-[11px] ml-1" style={{ color: "#6a6353" }}>{unit}</span> : null}
-      </dd>
-    </div>
-  );
-}
 
 /**
  * 单发丝线曲线。
@@ -347,13 +321,6 @@ function Sparkline({
   );
 }
 
-/** INJ 金额:小额保留 3 位小数,否则 0.007 INJ 会被 toFixed(1) 抹成 "0.0"。 */
-function formatInj(v: number): string {
-  if (v === 0) return "0";
-  if (v >= 100) return v.toFixed(0);
-  if (v >= 1) return v.toFixed(1);
-  return v.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
-}
 
 /** wei → 最多三位小数。 */
 function formatEther3(wei: bigint): string {

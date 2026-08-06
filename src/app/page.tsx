@@ -1,203 +1,137 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { SkillGrid } from "@/components/SkillGrid";
-import { SmartPicks } from "@/components/SmartPicks";
+import { TrendingRail } from "@/components/TrendingRail";
+import { FilterPills } from "@/components/FilterPills";
 import { CardDetailModal } from "@/components/premium/CardDetailModal";
 import { useAllSkills } from "@/lib/useAllSkills";
-import { useOnchainSkills, useNextSkillId } from "@/lib/useOrchor";
+import { useNextSkillId } from "@/lib/useOrchor";
 import { useSkillStats } from "@/lib/hooks/useSkillStats";
 import { ORCHOR_CORE_ADDRESS, activeChain } from "@/lib/chain";
 import { useI18n } from "@/lib/i18n";
-import type { SkillModule } from "@/lib/skills";
+import { matchSkill } from "@/lib/searchSkills";
+import type { SkillModule, SkillCategory } from "@/lib/skills";
 
 /**
- * 首页 = 介绍页。完整市场在 /marketplace 与 /explore ——
- * 改版初稿曾把 `/` 直接做成市场,三个入口互相重复,叙事也没了落点。
+ * 首页 = 市场。
  *
- * 保持的原则:
- * · 统计与精选全部来自合约读数/事件索引,读不到显示破折号,不编造。
- * · 金色仍是稀缺资源;动效只有颜色过渡。
+ * 这一页此前是"介绍页":44px 大标题 + 一段 lede + 四块统计 + 三步玩法 +
+ * 推荐 + 六张精选,滚两屏才看得到货;而 /explore 和 /marketplace 又各自
+ * 把同一批卡再铺一遍 —— 三个入口、一样的内容。
+ *
+ * 现在按 pools.trade 的信息架构:一行定位 + 热门横滑 + 筛选 + 全部卡片。
+ * 叙事(怎么玩、为什么在 Injective)留在 README 与详情弹窗里,不占主页面。
  */
 
-export default function Home() {
+const CATEGORIES: Array<"all" | SkillCategory> = [
+  "all", "Web3 Dev", "Research", "Automation", "Product", "Marketing", "Data",
+];
+
+type SortKey = "calls" | "priceAsc" | "priceDesc" | "newest";
+
+function MarketHome() {
   const allSkills = useAllSkills();
-  const { skills: onchain } = useOnchainSkills();
   const { nextSkillId } = useNextSkillId();
   const { stats } = useSkillStats();
   const { t } = useI18n();
+  const params = useSearchParams();
+  const query = params.get("q") ?? "";
+
+  const [category, setCategory] = useState<"all" | SkillCategory>("all");
+  const [sort, setSort] = useState<SortKey>("calls");
   const [selected, setSelected] = useState<SkillModule | null>(null);
 
   const explorer = activeChain.blockExplorers?.default.url;
   const explorerUrl = explorer ? `${explorer}/address/${ORCHOR_CORE_ADDRESS}` : undefined;
 
-  const totalMinted = useMemo(() => {
-    if (!onchain.size) return null;
-    let n = 0;
-    onchain.forEach((s) => (n += s.minted));
-    return n;
-  }, [onchain]);
-
-  /**
-   * 精选:按真实调用量排序取 6 张;统计没到位时按目录序(只是预览子集,不涉造假)。
-   * 黑金卡至多 1 张 —— 每张 Mythic 自带金边/金名/金按钮 3 处金色,
-   * 两张同屏就冲破"金色整屏≤3处"的预算。这是编辑性选取,不改数据。
-   */
-  const featured = useMemo(() => {
-    const pool = [...allSkills];
-    if (stats) pool.sort((a, b) => (stats[b.id]?.calls ?? 0) - (stats[a.id]?.calls ?? 0));
-    const out: SkillModule[] = [];
-    let mythics = 0;
-    for (const s of pool) {
-      if (out.length === 6) break;
-      if (s.rarity === "Mythic" && mythics >= 1) continue;
-      if (s.rarity === "Mythic") mythics++;
-      out.push(s);
+  const shown = useMemo(() => {
+    const q = query.trim();
+    let pool = category === "all" ? [...allSkills] : allSkills.filter((s) => s.category === category);
+    if (q) {
+      pool = pool.filter((s) => matchSkill(s, q));
     }
-    return out;
-  }, [allSkills, stats]);
+    const callsOf = (s: SkillModule) => stats?.[s.id]?.calls ?? -1;
+    switch (sort) {
+      case "calls": return pool.sort((a, b) => callsOf(b) - callsOf(a));
+      case "priceAsc": return pool.sort((a, b) => a.priceMON - b.priceMON);
+      case "priceDesc": return pool.sort((a, b) => b.priceMON - a.priceMON);
+      case "newest": return pool.sort((a, b) => b.id - a.id);
+    }
+  }, [allSkills, category, sort, stats, query]);
 
   return (
-    <main className="mx-auto max-w-[1440px] px-6 lg:px-10">
-      {/* ── Hero ── */}
-      <header className="pt-20 pb-12 max-w-[720px]">
-        <p className="m-0 flex items-center gap-2 text-[11px] tracking-[2.5px]" style={{ color: "var(--o-ink-dim)" }}>
-          <span className="inline-block h-[5px] w-[5px] rounded-full" style={{ background: "var(--o-up)" }} />
-          {t("hero.eyebrow")}
+    <main className="mx-auto max-w-[1440px] px-6 lg:px-10 pb-20">
+      {/* 一行定位。此前是 44px 大标题 + 段落 + 四块统计,占掉整个首屏。 */}
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 pt-8 pb-7">
+        <p className="m-0 text-[16px]" style={{ color: "var(--o-ink)" }}>
+          {t("home.tagline")}
         </p>
-        <h1
-          className="mt-6 mb-0 text-[44px] sm:text-[44px] leading-[1.12]"
-          style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)", letterSpacing: ".5px" }}
-        >
-          {t("hero.title")}
-        </h1>
-        <p className="mt-5 mb-0 text-[14px] leading-[1.85] max-w-[560px]" style={{ color: "var(--o-ink-dim)" }}>
-          {t("hero.lede")}
+        <p className="m-0 text-[16px]" style={{ color: "var(--o-ink-dim)" }}>
+          {t("home.taglineSub", { n: nextSkillId ?? allSkills.length })}
         </p>
-        <div className="mt-8 flex items-center gap-5">
-          <Link
-            href="/marketplace"
-            className="no-underline text-[14px] tracking-[3px] px-7 py-3 rounded-[var(--o-r-btn)] transition-[filter] duration-150 hover:brightness-95"
-            style={{ background: "#ede7d8", color: "#141209" }}
+        {explorerUrl && (
+          <a
+            href={explorerUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[14px] no-underline transition-colors duration-150"
+            style={{ color: "var(--o-up)" }}
           >
-            {t("hero.ctaMarket")}
-          </Link>
-          {explorerUrl && (
-            <a
-              href={explorerUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="no-underline text-[12px] transition-colors duration-150"
-              style={{ color: "var(--o-ink-dim)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#cfc4ac")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--o-ink-dim)")}
-            >
-              {t("hero.ctaVerify")} ↗
-            </a>
-          )}
-        </div>
-      </header>
-
-      {/* ── 真实链上读数 ── */}
-      <dl
-        className="flex flex-wrap gap-x-10 gap-y-5 pt-6 pb-2"
-        style={{ borderTop: "1px solid var(--o-hair)" }}
-      >
-        <Stat label={t("market.registered")} value={nextSkillId ? String(nextSkillId) : "—"} />
-        <Stat label={t("market.mintedTotal")} value={totalMinted === null ? "—" : String(totalMinted)} />
-        <Stat label={t("market.network")} value={activeChain.name} small />
-        <Stat
-          label={t("market.contract")}
-          value={`${t("market.verified")} ↗`}
-          accent="var(--o-up)"
-          href={explorerUrl}
-          small
-        />
-      </dl>
-
-      {/* ── 怎么玩:三步 ── */}
-      <section className="mt-12">
-        <h2 className="m-0 text-[11px] tracking-[2px]" style={{ color: "var(--o-ink-dim)" }}>
-          {t("hero.how")}
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-5">
-          {([1, 2, 3] as const).map((n) => (
-            <div key={n} className="pt-4" style={{ borderTop: "1px solid var(--o-hair)" }}>
-              <span className="text-[11px] tracking-[2.5px]" style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink-faint)" }}>
-                {String(n).padStart(2, "0")}
-              </span>
-              <h3 className="mt-2 mb-0 text-[20px]" style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)" }}>
-                {t(`hero.step${n}t` as never)}
-              </h3>
-              <p className="mt-2 mb-0 text-[12px] leading-[1.75]" style={{ color: "var(--o-ink-dim)" }}>
-                {t(`hero.step${n}d` as never)}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── 智能推荐(真实链上指标) ── */}
-      <div className="mt-12">
-        <SmartPicks skills={allSkills} onSelect={setSelected} />
+            {t("hero.ctaVerify")} ↗
+          </a>
+        )}
       </div>
 
-      {/* ── 精选卡片 ── */}
-      <section className="mt-2 pb-16">
-        <div className="flex items-baseline justify-between mb-5 pt-5" style={{ borderTop: "1px solid var(--o-hair)" }}>
-          <h2 className="m-0 text-[11px] tracking-[2px]" style={{ color: "var(--o-ink-dim)" }}>
-            {t("hero.featured")}
-          </h2>
-          <Link
-            href="/marketplace"
-            className="no-underline text-[12px] transition-colors duration-150"
-            style={{ color: "var(--o-ink-dim)" }}
+      {!query && <TrendingRail skills={allSkills} onSelect={setSelected} />}
+
+      <div className="flex flex-wrap items-center gap-3 pb-5 pt-2">
+        <FilterPills
+          options={CATEGORIES.map((c) => ({ key: c, label: t(`cat.${c}` as never) }))}
+          value={category}
+          onChange={(k) => setCategory(k as "all" | SkillCategory)}
+        />
+        <div className="ml-auto flex items-center gap-3">
+          <span className="text-[12px]" style={{ color: "var(--o-ink-faint)" }}>
+            {t("market.countCards", { n: shown.length })}
+          </span>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            aria-label={t("sort.label")}
+            className="text-[12px] px-3 py-2 outline-none cursor-pointer"
+            style={{
+              borderRadius: "var(--o-r-pill)",
+              background: "var(--o-raise)",
+              border: "1px solid transparent",
+              color: "var(--o-ink-dim)",
+            }}
           >
-            {t("hero.viewAll", { n: allSkills.length })} →
-          </Link>
+            <option value="calls">{t("sort.calls")}</option>
+            <option value="priceAsc">{t("sort.priceAsc")}</option>
+            <option value="priceDesc">{t("sort.priceDesc")}</option>
+            <option value="newest">{t("sort.newest")}</option>
+          </select>
         </div>
-        <SkillGrid skills={featured} onSelect={setSelected} />
-      </section>
+      </div>
+
+      <SkillGrid
+        skills={shown}
+        onSelect={setSelected}
+        emptyText={query.trim() ? t("market.noMatch") : t("market.emptyCategory")}
+      />
 
       <CardDetailModal skill={selected} isOpen={!!selected} onClose={() => setSelected(null)} />
     </main>
   );
 }
 
-function Stat({
-  label,
-  value,
-  accent,
-  href,
-  small,
-}: {
-  label: string;
-  value: string;
-  accent?: string;
-  href?: string;
-  small?: boolean;
-}) {
-  const body = (
-    <dd
-      className={`m-0 mt-1.5 ${small ? "text-[14px]" : "num text-[20px]"}`}
-      style={{ color: accent ?? "var(--o-ink)" }}
-    >
-      {value}
-    </dd>
-  );
+export default function Home() {
+  // useSearchParams 需要 Suspense 边界,否则整页在构建时退化为客户端渲染
   return (
-    <div>
-      <dt className="m-0 text-[11px] tracking-[1.5px]" style={{ color: "var(--o-ink-faint)" }}>
-        {label}
-      </dt>
-      {href ? (
-        <a href={href} target="_blank" rel="noreferrer" className="no-underline">
-          {body}
-        </a>
-      ) : (
-        body
-      )}
-    </div>
+    <Suspense fallback={<div className="mx-auto max-w-[1440px] px-6 lg:px-10 pt-8" />}>
+      <MarketHome />
+    </Suspense>
   );
 }

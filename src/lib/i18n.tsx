@@ -83,6 +83,10 @@ const dict = {
   "market.verified":    { en: "Verified",            zh: "已验证" },
   "market.countCards":  { en: "{n} cards",           zh: "{n} 张" },
   "market.emptyCategory": { en: "No cards in this category yet.", zh: "这个分类下还没有卡片。" },
+  "home.tagline":    { en: "AI skills, registered and settled on-chain.", zh: "AI 能力,在链上注册与结算。" },
+  "home.taglineSub": { en: "{n} cards live on Injective.", zh: "{n} 张卡运行在 Injective 上。" },
+  "trending.label":  { en: "Trending", zh: "热门" },
+  "sort.label":      { en: "Sort", zh: "排序" },
   "market.searchPlaceholder": { en: "Search skills, creators, categories", zh: "搜索技能、创作者、分类" },
   "market.noMatch": { en: "Nothing matches that search.", zh: "没有匹配的技能卡。" },
   "sort.calls":     { en: "Most invoked",     zh: "调用最多" },
@@ -167,6 +171,7 @@ const dict = {
   "nav.explore": { en: "Explore", zh: "探索" },
   "nav.deck": { en: "Deck", zh: "卡组" },
   "nav.marketplace": { en: "Marketplace", zh: "市场" },
+  "top.energy": { en: "Top up Energy", zh: "充值 Energy" },
   "nav.rankings": { en: "Rankings", zh: "排行榜" },
   "nav.battle": { en: "Battle", zh: "对战" },
   "nav.create": { en: "Create", zh: "创建" },
@@ -355,6 +360,16 @@ const dict = {
 } as const;
 
 export type TranslationKey = keyof typeof dict;
+
+/**
+ * 取某个 key 的全部语言写法。搜索要用:中文用户可能在英文界面下输入
+ * "研究",英文用户也可能在中文界面下输入 "growth" —— 只匹配当前语言
+ * 的显示名,这两种情况都会得到 0 结果。
+ */
+export function allLabels(key: TranslationKey): string[] {
+  const entry = dict[key];
+  return entry ? [entry.en, entry.zh] : [];
+}
 
 interface I18nContextValue {
   lang: Lang;

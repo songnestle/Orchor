@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useOrchorState } from "@/lib/useOrchorState";
-import { useCreditBalance } from "@/lib/hooks/useCreditBalance";
-import { shortAddress } from "@/lib/chain";
 import { useI18n, type TranslationKey } from "@/lib/i18n";
 import { LangToggle } from "./LangToggle";
 
@@ -16,131 +15,133 @@ interface Props {
   onOpenTopUpCredits: () => void;
 }
 
+/**
+ * 顶栏。
+ *
+ * 改版前这里有 13 个元素:6 个菜单 + Credits + Energy + Publish + 链标 +
+ * INJ 余额 + 语言 + Connect,一行塞不下就靠断点逐个藏起来 —— 等于每种
+ * 屏宽下用户看到的是不同的产品。
+ *
+ * 现在只留三组:身份(logo)、找东西(搜索)、我的账户(Energy / 语言 /
+ * 钱包)。导航压到三个真正不同的目的地:市场、卡组、创作者。
+ * Publish 收进创作者页,链标与 INJ 余额收进钱包菜单 —— 它们是状态,
+ * 不是操作,不该常驻在最贵的一行像素里。
+ */
+
 const NAV: { key: TranslationKey; href: string }[] = [
-  { key: "nav.discover", href: "/" },
-  { key: "nav.explore", href: "/explore" },
-  { key: "nav.marketplace", href: "/marketplace" },
-  { key: "nav.rankings", href: "/rankings" },
+  { key: "nav.marketplace", href: "/" },
   { key: "nav.deck", href: "/deck" },
   { key: "nav.creator", href: "/creator" },
 ];
 
-export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCredits }: Props) {
-  const { walletBalanceMON: balance, energy, isConnected } = useOrchorState();
-  const { creditsFormatted, usdValue, isLoading } = useCreditBalance();
+export function TopNav({ onOpenTopUp }: Props) {
+  const { energy } = useOrchorState();
   const { t } = useI18n();
   const pathname = usePathname();
+  const router = useRouter();
+  const [q, setQ] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // "/" 聚焦搜索 —— 和 pools.trade 一样,是这类站点的通用肌肉记忆
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const el = document.activeElement;
+      const typing = el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement;
+      if (e.key === "/" && !typing) {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const v = q.trim();
+    router.push(v ? `/?q=${encodeURIComponent(v)}` : "/");
+  };
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-xl bg-bg/55 border-b border-white/5">
-      <div className="mx-auto max-w-[1440px] px-6 lg:px-10 h-16 flex items-center justify-between gap-6">
-        {/* logo */}
-        <div className="flex items-center gap-3">
-          <OrchorLogo />
-          <div className="hidden sm:block font-display text-lg font-bold tracking-tight">
-            Orch<span className="text-gradient">or</span>
-            <span className="ml-2 align-middle inline-block px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider bg-accent/20 text-accent border border-accent/40">
-              on Injective
-            </span>
-          </div>
-        </div>
+    <header
+      className="sticky top-0 z-40 backdrop-blur-xl"
+      style={{ background: "rgba(10,9,6,.72)", borderBottom: "1px solid var(--o-hair)" }}
+    >
+      <div className="mx-auto max-w-[1440px] px-6 lg:px-10 h-16 flex items-center gap-4">
+        <Link href="/" className="flex items-center gap-2.5 no-underline shrink-0">
+          <OrchorMark />
+          <span
+            className="hidden sm:block text-[18px]"
+            style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)" }}
+          >
+            Orchor
+          </span>
+        </Link>
 
-        {/* nav */}
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1 shrink-0">
           {NAV.map((item) => {
-            const isActive = pathname === item.href;
+            const active = pathname === item.href;
             return (
               <Link
-                key={item.key}
+                key={item.href}
                 href={item.href}
-                className={`relative px-3 h-8 flex items-center rounded-lg text-[11px] font-medium tracking-wide transition ${
-                  isActive
-                    ? "text-white"
-                    : "text-mutedHi hover:text-white hover:bg-white/[0.04]"
-                }`}
+                className="px-3 py-1.5 text-[14px] no-underline transition-colors duration-150"
+                style={{
+                  borderRadius: "var(--o-r-pill)",
+                  color: active ? "var(--o-ink)" : "var(--o-ink-dim)",
+                  background: active ? "rgba(237,231,216,.07)" : "transparent",
+                }}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="nav-active"
-                    className="absolute inset-0 rounded-lg bg-white/10"
-                    transition={{ type: "spring", duration: 0.4, bounce: 0.15 }}
-                  />
-                )}
-                <span className="relative">{t(item.key)}</span>
+                {t(item.key)}
               </Link>
             );
           })}
         </nav>
 
-        {/* right */}
-        <div className="flex items-center gap-2">
-          {/* Orchor Credits - NEW */}
-          {isConnected && (
-            <button
-              onClick={onOpenTopUpCredits}
-              className="hidden sm:flex items-center gap-1.5 pl-2.5 pr-2 h-8 rounded-full glass hover:bg-white/[0.04] transition group relative"
-              title="Top up Orchor Credits - Multi-chain instant payments"
+        {/* 搜索占据中间的全部剩余宽度 —— 32 张卡之后,找卡才是主要动作 */}
+        <form onSubmit={submit} className="flex-1 max-w-[520px] mx-auto">
+          <div className="relative">
+            <input
+              ref={inputRef}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={t("market.searchPlaceholder")}
+              aria-label={t("market.searchPlaceholder")}
+              className="w-full text-[14px] pl-9 pr-9 py-2 outline-none transition-colors duration-150"
+              style={{
+                borderRadius: "var(--o-r-pill)",
+                background: "var(--o-raise)",
+                border: "1px solid transparent",
+                color: "var(--o-ink)",
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--o-hair-hi)")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "transparent")}
+            />
+            <SearchIcon />
+            <kbd
+              className="hidden sm:block absolute right-3 top-1/2 -translate-y-1/2 text-[11px] px-1.5 rounded"
+              style={{ color: "var(--o-ink-faint)", background: "rgba(237,231,216,.06)" }}
             >
-              <CreditIcon size={12} />
-              {isLoading ? (
-                <span className="font-mono text-[12px] text-[#edc26a] animate-pulse">...</span>
-              ) : (
-                <>
-                  <span className="font-mono text-[12px] tabular text-[#edc26a]">{creditsFormatted}</span>
-                  <span className="text-[10px] text-muted">credits</span>
-                </>
-              )}
-              <span className="ml-0.5 inline-flex items-center justify-center h-6 w-6 rounded-full bg-white/10 group-hover:bg-white/20 text-[13px] leading-none pb-0.5 transition-all group-hover:scale-110">
-                +
-              </span>
-              {/* Tooltip */}
-              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-black/90 text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
-                Multi-chain • Instant • ${usdValue}
-              </div>
-            </button>
-          )}
+              /
+            </kbd>
+          </div>
+        </form>
 
-          {/* Energy pill */}
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={onOpenTopUp}
-            className="hidden sm:flex items-center gap-1.5 pl-2 pr-1 h-8 rounded-full glass hover:bg-white/[0.04] transition group"
-            title="Top up Energy"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-[14px] transition-colors duration-150"
+            style={{
+              borderRadius: "var(--o-r-pill)",
+              background: "var(--o-raise)",
+              color: "var(--o-ink)",
+            }}
+            title={t("top.energy")}
           >
-            <EnergyBolt />
-            <span className="font-mono text-[12px] tabular text-white">{energy}</span>
-            <span className="text-[10px] text-muted">⚡</span>
-            <span className="ml-1 inline-flex items-center justify-center h-6 w-6 rounded-full bg-white/10 group-hover:bg-white/20 text-[13px] leading-none pb-0.5">
-              +
-            </span>
+            <span className="num">{energy}</span>
+            <span style={{ color: "var(--o-ink-faint)" }}>⚡</span>
           </button>
-
-          {/* Publish */}
-          <button
-            onClick={onOpenPublish}
-            className="hidden md:flex items-center gap-1.5 px-3 h-8 rounded-lg text-[11px] font-medium border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 transition"
-            title="Publish a new skill onchain"
-          >
-            <PlusIcon />
-            <span className="text-white">Publish</span>
-          </button>
-
-          <div className="hidden lg:flex items-center gap-2 px-3 h-8 rounded-full glass text-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulseDot" />
-            <span className="text-mutedHi">Injective · MultiVM</span>
-          </div>
-
-          {isConnected && (
-            <div className="hidden xl:flex items-center gap-2 px-3 h-8 rounded-full glass">
-              <InjectiveIcon />
-              <span className="font-mono text-[12px] tabular text-white">
-                {balance.toFixed(2)}
-              </span>
-              <span className="text-[10px] text-muted">INJ</span>
-            </div>
-          )}
-
           <LangToggle />
-
           <WalletButton />
         </div>
       </div>
@@ -148,143 +149,95 @@ export function TopNav({ onOpenDeck, onOpenTopUp, onOpenPublish, onOpenTopUpCred
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg
+      className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+      width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden
+    >
+      <circle cx="11" cy="11" r="7" stroke="var(--o-ink-faint)" strokeWidth="2" />
+      <path d="M20 20l-3.5-3.5" stroke="var(--o-ink-faint)" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function WalletButton() {
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openConnectModal, mounted }) => {
-        const ready = mounted;
-        const connected = ready && account && chain;
+        const connected = mounted && account && chain;
+        if (!connected) {
+          return (
+            <button
+              onClick={openConnectModal}
+              className="px-4 py-1.5 text-[14px] transition-[filter] duration-150 hover:brightness-95"
+              style={{ borderRadius: "var(--o-r-pill)", background: "var(--o-ink)", color: "#141209" }}
+            >
+              Connect
+            </button>
+          );
+        }
         return (
-          <div>
-            {(() => {
-              if (!connected) {
-                return (
-                  <button onClick={openConnectModal} className="btn-neon h-8 px-4 rounded-full text-[11px] font-medium">
-                    Connect
-                  </button>
-                );
-              }
-              return (
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={openAccountModal}
-                    className="flex items-center gap-2 pl-1 pr-3 h-8 rounded-full glass text-[11px] font-mono"
-                  >
-                    <span className="h-6 w-6 rounded-full bg-gradient-to-br from-accent to-accent2" />
-                    {account.displayName}
-                  </button>
-                </div>
-              );
-            })()}
-          </div>
+          <button
+            onClick={openAccountModal}
+            className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 text-[14px] num"
+            style={{ borderRadius: "var(--o-r-pill)", background: "var(--o-raise)", color: "var(--o-ink)" }}
+          >
+            <span
+              className="h-5 w-5 rounded-full"
+              style={{ background: "linear-gradient(160deg,#d9bc7e,#b8955a)" }}
+            />
+            {account.displayName}
+          </button>
         );
       }}
     </ConnectButton.Custom>
   );
 }
 
-function OrchorLogo() {
+function OrchorMark() {
   return (
-    <div className="relative h-9 w-9">
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#edc26a] via-[#d6a44c] to-[#bf5b4b] animate-gradientShift bg-[length:200%_200%]" />
-      <div className="absolute inset-[2px] rounded-[10px] bg-bg2 flex items-center justify-center overflow-hidden">
-        <svg viewBox="0 0 32 32" className="h-5 w-5 text-white">
-          <defs>
-            <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#edc26a" />
-              <stop offset="100%" stopColor="#d6a44c" />
-            </linearGradient>
-          </defs>
-          <circle cx="16" cy="16" r="10" fill="none" stroke="url(#logoGrad)" strokeWidth="2" />
-          <circle cx="16" cy="16" r="4" fill="url(#logoGrad)" />
-          <path
-            d="M16 6 L16 10 M16 22 L16 26 M6 16 L10 16 M22 16 L26 16"
-            stroke="url(#logoGrad)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
-    </div>
+    <span
+      className="relative h-8 w-8 grid place-items-center rounded-[10px]"
+      style={{ border: "1px solid var(--o-hair-gold)" }}
+    >
+      <svg viewBox="0 0 32 32" className="h-4 w-4" aria-hidden>
+        <circle cx="16" cy="16" r="9" fill="none" stroke="var(--o-gold)" strokeWidth="1.6" />
+        <circle cx="16" cy="16" r="3.2" fill="var(--o-gold)" />
+        <path
+          d="M16 5.5V9 M16 23v3.5 M5.5 16H9 M23 16h3.5"
+          stroke="var(--o-gold)"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+      </svg>
+    </span>
   );
 }
 
 export function CreditIcon({ size = 12 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="creditGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#edc26a" />
-          <stop offset="100%" stopColor="#d6a44c" />
-        </linearGradient>
-      </defs>
-      <circle cx="12" cy="12" r="9" stroke="url(#creditGrad)" strokeWidth="2" />
-      <path
-        d="M12 8v8M8 12h8"
-        stroke="url(#creditGrad)"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <circle cx="12" cy="12" r="9" stroke="var(--o-gold)" strokeWidth="2" />
+      <path d="M12 8v8M8 12h8" stroke="var(--o-gold)" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
 
+/* 顶栏不再常驻这两个图标,但充值弹窗/卡组抽屉/发布弹窗仍在用它们 */
 export function EnergyBolt({ size = 12 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="energyGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#f0d493" />
-          <stop offset="100%" stopColor="#d6a44c" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z"
-        fill="url(#energyGrad)"
-        stroke="rgba(255,255,255,0.4)"
-        strokeWidth="0.6"
-        strokeLinejoin="round"
-      />
+      <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" fill="var(--o-gold)" />
     </svg>
   );
 }
 
 export function InjectiveIcon({ size = 12 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden>
-      <circle cx="16" cy="16" r="14" fill="url(#injectiveGrad)" />
-      <defs>
-        <linearGradient id="injectiveGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#5ec9f8" />
-          <stop offset="100%" stopColor="#0b63c9" />
-        </linearGradient>
-      </defs>
-      <text
-        x="16"
-        y="20"
-        textAnchor="middle"
-        fill="white"
-        fontSize="14"
-        fontWeight="bold"
-      >
-        I
-      </text>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="9" stroke="var(--o-ink-dim)" strokeWidth="2" />
+      <path d="M8 15c2-6 6-6 8 0" stroke="var(--o-ink-dim)" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
-
-function PlusIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M12 5 V19 M5 12 H19"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-// Fix: Import motion from framer-motion
-import { motion } from "framer-motion";
