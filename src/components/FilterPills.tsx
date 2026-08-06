@@ -33,14 +33,14 @@ export function FilterPills({
             style={{
               borderRadius: "var(--o-r-pill)",
               background: on ? "var(--o-ink)" : "transparent",
-              color: on ? "#141209" : "var(--o-ink-3)",
+              color: on ? "#141209" : "var(--o-ink-dim)",
               border: `1px solid ${on ? "transparent" : "var(--o-hair)"}`,
             }}
             onMouseEnter={(e) => {
-              if (!on) e.currentTarget.style.color = "var(--o-ink-2)";
+              if (!on) e.currentTarget.style.color = "var(--o-ink)";
             }}
             onMouseLeave={(e) => {
-              if (!on) e.currentTarget.style.color = "var(--o-ink-3)";
+              if (!on) e.currentTarget.style.color = "var(--o-ink-dim)";
             }}
           >
             {o.label}

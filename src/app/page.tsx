@@ -62,23 +62,23 @@ export default function Home() {
     <main className="mx-auto max-w-[1440px] px-6 lg:px-10">
       {/* ── Hero ── */}
       <header className="pt-20 pb-12 max-w-[720px]">
-        <p className="m-0 flex items-center gap-2 text-[11px] tracking-[2.5px]" style={{ color: "var(--o-ink-3)" }}>
+        <p className="m-0 flex items-center gap-2 text-[11px] tracking-[2.5px]" style={{ color: "var(--o-ink-dim)" }}>
           <span className="inline-block h-[5px] w-[5px] rounded-full" style={{ background: "var(--o-up)" }} />
           {t("hero.eyebrow")}
         </p>
         <h1
-          className="mt-6 mb-0 text-[40px] sm:text-[52px] leading-[1.12]"
+          className="mt-6 mb-0 text-[44px] sm:text-[44px] leading-[1.12]"
           style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)", letterSpacing: ".5px" }}
         >
           {t("hero.title")}
         </h1>
-        <p className="mt-5 mb-0 text-[14px] leading-[1.85] max-w-[560px]" style={{ color: "var(--o-ink-3)" }}>
+        <p className="mt-5 mb-0 text-[14px] leading-[1.85] max-w-[560px]" style={{ color: "var(--o-ink-dim)" }}>
           {t("hero.lede")}
         </p>
         <div className="mt-8 flex items-center gap-5">
           <Link
             href="/marketplace"
-            className="no-underline text-[13px] tracking-[3px] px-7 py-3 rounded-[var(--o-r-btn)] transition-[filter] duration-150 hover:brightness-95"
+            className="no-underline text-[14px] tracking-[3px] px-7 py-3 rounded-[var(--o-r-btn)] transition-[filter] duration-150 hover:brightness-95"
             style={{ background: "#ede7d8", color: "#141209" }}
           >
             {t("hero.ctaMarket")}
@@ -89,9 +89,9 @@ export default function Home() {
               target="_blank"
               rel="noreferrer"
               className="no-underline text-[12px] transition-colors duration-150"
-              style={{ color: "var(--o-ink-3)" }}
+              style={{ color: "var(--o-ink-dim)" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "#cfc4ac")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--o-ink-3)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--o-ink-dim)")}
             >
               {t("hero.ctaVerify")} ↗
             </a>
@@ -102,7 +102,7 @@ export default function Home() {
       {/* ── 真实链上读数 ── */}
       <dl
         className="flex flex-wrap gap-x-10 gap-y-5 pt-6 pb-2"
-        style={{ borderTop: "0.5px solid var(--o-line)" }}
+        style={{ borderTop: "1px solid var(--o-hair)" }}
       >
         <Stat label={t("market.registered")} value={nextSkillId ? String(nextSkillId) : "—"} />
         <Stat label={t("market.mintedTotal")} value={totalMinted === null ? "—" : String(totalMinted)} />
@@ -118,19 +118,19 @@ export default function Home() {
 
       {/* ── 怎么玩:三步 ── */}
       <section className="mt-12">
-        <h2 className="m-0 text-[11px] tracking-[2px]" style={{ color: "var(--o-ink-3)" }}>
+        <h2 className="m-0 text-[11px] tracking-[2px]" style={{ color: "var(--o-ink-dim)" }}>
           {t("hero.how")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-5">
           {([1, 2, 3] as const).map((n) => (
-            <div key={n} className="pt-4" style={{ borderTop: "0.5px solid var(--o-line)" }}>
-              <span className="text-[11px] tracking-[2.5px]" style={{ fontFamily: "var(--o-serif)", color: "#5f5949" }}>
+            <div key={n} className="pt-4" style={{ borderTop: "1px solid var(--o-hair)" }}>
+              <span className="text-[11px] tracking-[2.5px]" style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink-faint)" }}>
                 {String(n).padStart(2, "0")}
               </span>
-              <h3 className="mt-2 mb-0 text-[17px]" style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)" }}>
+              <h3 className="mt-2 mb-0 text-[20px]" style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)" }}>
                 {t(`hero.step${n}t` as never)}
               </h3>
-              <p className="mt-2 mb-0 text-[12px] leading-[1.75]" style={{ color: "var(--o-ink-3)" }}>
+              <p className="mt-2 mb-0 text-[12px] leading-[1.75]" style={{ color: "var(--o-ink-dim)" }}>
                 {t(`hero.step${n}d` as never)}
               </p>
             </div>
@@ -145,14 +145,14 @@ export default function Home() {
 
       {/* ── 精选卡片 ── */}
       <section className="mt-2 pb-16">
-        <div className="flex items-baseline justify-between mb-5 pt-5" style={{ borderTop: "0.5px solid var(--o-line)" }}>
-          <h2 className="m-0 text-[11px] tracking-[2px]" style={{ color: "var(--o-ink-3)" }}>
+        <div className="flex items-baseline justify-between mb-5 pt-5" style={{ borderTop: "1px solid var(--o-hair)" }}>
+          <h2 className="m-0 text-[11px] tracking-[2px]" style={{ color: "var(--o-ink-dim)" }}>
             {t("hero.featured")}
           </h2>
           <Link
             href="/marketplace"
             className="no-underline text-[12px] transition-colors duration-150"
-            style={{ color: "var(--o-ink-3)" }}
+            style={{ color: "var(--o-ink-dim)" }}
           >
             {t("hero.viewAll", { n: allSkills.length })} →
           </Link>
@@ -188,7 +188,7 @@ function Stat({
   );
   return (
     <div>
-      <dt className="m-0 text-[11px] tracking-[1.5px]" style={{ color: "var(--o-ink-4)" }}>
+      <dt className="m-0 text-[11px] tracking-[1.5px]" style={{ color: "var(--o-ink-faint)" }}>
         {label}
       </dt>
       {href ? (

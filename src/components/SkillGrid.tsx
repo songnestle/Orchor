@@ -50,7 +50,7 @@ export function SkillGrid({ skills, onSelect, emptyText }: Props) {
 
   if (!items.length) {
     return (
-      <p className="text-[13px] py-16 text-center" style={{ color: "var(--o-ink-3)" }}>
+      <p className="text-[14px] py-16 text-center" style={{ color: "var(--o-ink-dim)" }}>
         {emptyText ?? t("market.empty")}
       </p>
     );

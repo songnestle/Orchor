@@ -116,17 +116,17 @@ export function CertificateCard({
       className="group flex flex-col overflow-hidden cursor-pointer transition-colors duration-200"
       style={{
         borderRadius: "var(--o-r-card)",
-        // 比页面底色亮一档:层次靠亮度差,不靠阴影(阴影在纯黑底上只会脏)
+        // 层次靠亮度差,不靠描边也不靠阴影。整排卡各带一圈线,画面就是
+        // 一张网格纸;去掉线之后间距自己会说话(pools.trade 的列表项
+        // 干脆连背景都没有)。黑金卡保留金边 —— 那是它唯一的特权。
         background: "var(--o-raise)",
-        border: `1px solid ${isMythic ? "var(--o-hair-gold)" : "var(--o-hair)"}`,
+        border: isMythic ? "1px solid var(--o-hair-gold)" : "1px solid transparent",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = isMythic
-          ? "rgba(198,169,108,.7)"
-          : "var(--o-hair-hi)";
+        e.currentTarget.style.background = "var(--o-raise-hi)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = isMythic ? "var(--o-hair-gold)" : "var(--o-hair)";
+        e.currentTarget.style.background = "var(--o-raise)";
       }}
     >
       {/*
@@ -149,8 +149,8 @@ export function CertificateCard({
           />
           {owned && (
             <span
-              className="absolute right-2 top-2 px-2 py-0.5 text-[10px] tracking-[1.5px] rounded-[var(--o-r-pill)]"
-              style={{ background: "rgba(13,12,9,.85)", color: "#cfc4ac", border: "0.5px solid #39331f" }}
+              className="absolute right-2 top-2 px-2.5 py-1 text-[11px] rounded-[var(--o-r-pill)]"
+              style={{ background: "rgba(13,12,9,.82)", color: "var(--o-ink)" }}
             >
               {balance > 1 ? t("cert.ownedN", { n: balance }) : t("cert.owned")}
             </span>
@@ -165,7 +165,7 @@ export function CertificateCard({
                 e.stopPropagation();
                 onUnlock?.();
               }}
-              className="absolute inset-x-2 bottom-2 py-2 text-[12px] tracking-[2px] opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 focus:opacity-100 focus:translate-y-0"
+              className="absolute inset-x-2 bottom-2 py-2 text-[14px] opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 focus:opacity-100 focus:translate-y-0"
               style={{
                 borderRadius: "var(--o-r-btn)",
                 background: isMythic ? "linear-gradient(160deg,#d9bc7e,#b8955a)" : "#ede7d8",
@@ -178,9 +178,10 @@ export function CertificateCard({
         </div>
       ) : (
         <header className="flex items-baseline justify-between px-4 pt-4">
+          {/* Nº 与稀有度是刻意的"证书刻印",字距保留;正文一律不加字距 */}
           <span
             className="text-[11px] tracking-[2.5px]"
-            style={{ fontFamily: "var(--o-serif)", color: "#5f5949" }}
+            style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink-faint)" }}
           >
             Nº{String(skill.id).padStart(2, "0")}
           </span>
@@ -190,7 +191,7 @@ export function CertificateCard({
         </header>
       )}
 
-      <div className="flex flex-col flex-1 px-4 pt-3 pb-3.5">
+      <div className="flex flex-col flex-1 px-4 pt-3 pb-4">
         {/*
           卡面已经印着英文规范名、稀有度徽章、解锁价、铸造量和能耗 ——
           这里绝不重复它们,否则一张卡把同样的信息说两遍。
@@ -199,7 +200,7 @@ export function CertificateCard({
         {(!artUri || text.title !== skill.title) && (
           <div className="flex items-baseline justify-between gap-2 mb-1">
             <h3
-              className="m-0 text-[15px] leading-tight tracking-[.2px] truncate"
+              className="m-0 text-[16px] leading-tight truncate"
               style={
                 isMythic
                   ? {
@@ -216,7 +217,7 @@ export function CertificateCard({
             </h3>
             {!artUri && (
               <span
-                className="text-[10px] tracking-[1.5px] whitespace-nowrap"
+                className="text-[11px] whitespace-nowrap"
                 style={{ color: METAL_COLOR[skill.rarity] }}
               >
                 {t(`metal.${skill.rarity}` as never)}
@@ -227,43 +228,25 @@ export function CertificateCard({
 
         {/* 固定两行高:描述长短不一会让同排卡片一高一矮,底部撑出空洞 */}
         <p
-          className="mb-0 text-[11px] leading-[1.5] line-clamp-2"
-          style={{ color: "#7b7360", minHeight: "2lh" }}
+          className="mb-0 text-[12px] leading-[1.55] line-clamp-2"
+          style={{ color: "var(--o-ink-dim)", minHeight: "2lh" }}
         >
           {text.shortDescription}
         </p>
 
-        <p className="mt-1.5 mb-0 text-[10px] tracking-[.6px]" style={{ color: "#5f5949" }}>
-          {t(`cat.${skill.category}` as never)}
-          {artUri ? "" : ` · ⚡${skill.energyCost}`}
-          {supplyLabel && !artUri ? ` · ${supplyLabel}` : ""}
-          {" · "}
-          {skill.origin}
-        </p>
-
-        {/* 链上调用:卡面上没有的唯一一组数据 */}
-        <div className="flex items-end justify-between gap-2 mt-auto pt-3">
-          {artUri ? (
-            <span className="text-[10px] tracking-[1px]" style={{ color: "#5f5949" }}>
-              {t("cert.calls30d")}
-            </span>
-          ) : (
-            <div>
-              <span className="num text-[14px]" style={{ color: "#ede7d8" }}>
-                {price}
-              </span>
-              <span className="text-[10px] ml-1" style={{ color: "#6a6353" }}>
-                INJ
-              </span>
-            </div>
-          )}
+        {/* 链上调用 + 价格。分类/来源/能耗移到详情页 —— 网格里每多一行
+            元数据,扫读时就多一行噪音。卡面上已经印着能耗和价格。 */}
+        <div className="flex items-center justify-between gap-2 mt-auto pt-3">
+          <span className="text-[12px]" style={{ color: "var(--o-ink-faint)" }}>
+            {t(`cat.${skill.category}` as never)}
+          </span>
           <div className="flex items-center gap-2">
-            <div className="w-[54px]">
+            <div className="w-[48px]">
               <Sparkline series={line} down={down} peak={seriesPeak} compact />
             </div>
             <span
-              className="num text-[11px] whitespace-nowrap"
-              style={{ color: trend === null ? "#5f5949" : down ? "#a8705f" : "#8fae7a" }}
+              className="num text-[12px] whitespace-nowrap"
+              style={{ color: trend === null ? "var(--o-ink-faint)" : down ? "var(--o-down)" : "var(--o-up)" }}
             >
               {onchainCalls === undefined ? "—" : `${onchainCalls.toLocaleString()}×`}
             </span>

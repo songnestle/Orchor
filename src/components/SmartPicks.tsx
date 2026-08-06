@@ -43,10 +43,10 @@ export function SmartPicks({ skills, onSelect }: Props) {
     <section
       aria-label={t("picks.label")}
       className="flex flex-wrap items-stretch gap-x-10 gap-y-4 py-5 mt-6"
-      style={{ borderTop: "0.5px solid var(--o-line)" }}
+      style={{ borderTop: "1px solid var(--o-hair)" }}
     >
       <div className="flex flex-col justify-center min-w-[92px]">
-        <span className="text-[11px] tracking-[2px]" style={{ color: "var(--o-ink-3)" }}>
+        <span className="text-[12px]" style={{ color: "var(--o-ink-faint)" }}>
           {t("picks.label")}
         </span>
       </div>
@@ -57,16 +57,16 @@ export function SmartPicks({ skills, onSelect }: Props) {
           className="text-left group"
           style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}
         >
-          <span className="block text-[11px] tracking-[1.2px]" style={{ color: "var(--o-ink-3)" }}>
+          <span className="block text-[11px]" style={{ color: "var(--o-ink-dim)" }}>
             {t(p.reasonKey as never)}
           </span>
           <span
-            className="block mt-1 text-[15px] transition-colors duration-150 group-hover:opacity-80"
+            className="block mt-1 text-[16px] transition-colors duration-150 group-hover:opacity-80"
             style={{ fontFamily: "var(--o-serif)", color: "var(--o-ink)" }}
           >
             {p.skill.title}
           </span>
-          <span className="num block mt-0.5 text-[11px]" style={{ color: "var(--o-ink-3)" }}>
+          <span className="num block mt-0.5 text-[11px]" style={{ color: "var(--o-ink-dim)" }}>
             {t("picks.calls", { n: p.calls })}
           </span>
         </button>

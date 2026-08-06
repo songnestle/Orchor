@@ -83,6 +83,8 @@ const dict = {
   "market.verified":    { en: "Verified",            zh: "已验证" },
   "market.countCards":  { en: "{n} cards",           zh: "{n} 张" },
   "market.emptyCategory": { en: "No cards in this category yet.", zh: "这个分类下还没有卡片。" },
+  "market.searchPlaceholder": { en: "Search skills, creators, categories", zh: "搜索技能、创作者、分类" },
+  "market.noMatch": { en: "Nothing matches that search.", zh: "没有匹配的技能卡。" },
   "sort.calls":     { en: "Most invoked",     zh: "调用最多" },
   "sort.priceAsc":  { en: "Price: low to high", zh: "价格从低到高" },
   "sort.priceDesc": { en: "Price: high to low", zh: "价格从高到低" },

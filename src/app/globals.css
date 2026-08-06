@@ -30,10 +30,20 @@
   --o-gold-fill: linear-gradient(160deg, #d9bc7e, #b8955a);
   --o-gilt:      linear-gradient(100deg, #a9884d, #f3e3b0 48%, #a9884d);
 
+  /*
+   * 墨色只有三级,而且是同一个象牙白的三档不透明度 —— 不是三种灰。
+   * 之前四级各自是独立色值(#8a8271 / #6a6353 / #5f5949),彼此差
+   * 十几个色阶,肉眼分不出层级,只让画面变脏。参考 pools.trade:
+   * 全站正文就 rgb(255,255,255) 与它的 65%,层级靠透明度。
+   */
   --o-ink:       #ede7d8;
-  --o-ink-2:     #8a8271;
-  --o-ink-3:     #6a6353;
-  --o-ink-4:     #5f5949;
+  --o-ink-dim:   rgba(237, 231, 216, 0.62);
+  --o-ink-faint: rgba(237, 231, 216, 0.38);
+
+  /* 旧名保留,统一映射到新的三级,避免遗留引用出现第四种灰 */
+  --o-ink-2:     var(--o-ink-dim);
+  --o-ink-3:     var(--o-ink-dim);
+  --o-ink-4:     var(--o-ink-faint);
 
   --o-line:      #1c1a14;
   --o-line-2:    #232017;
@@ -59,6 +69,7 @@
 
   /* 浮起面:比页面底色亮一档,层次不靠阴影 */
   --o-raise:     #1a1811;
+  --o-raise-hi:  #211e15;   /* hover 再亮一档,替代描边变色 */
 
   --o-serif: Georgia, "Songti SC", "Noto Serif SC", "Times New Roman", serif;
   --o-sans:  var(--nf-body), "DM Sans", system-ui, -apple-system, sans-serif;
