@@ -1,7 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import { SkillGrid } from "@/components/SkillGrid";
 import { TrendingRail } from "@/components/TrendingRail";
 import { FilterPills } from "@/components/FilterPills";
@@ -12,6 +11,7 @@ import { useSkillStats } from "@/lib/hooks/useSkillStats";
 import { ORCHOR_CORE_ADDRESS, activeChain } from "@/lib/chain";
 import { useI18n } from "@/lib/i18n";
 import { matchSkill } from "@/lib/searchSkills";
+import { useSearchQuery } from "@/lib/searchStore";
 import type { SkillModule, SkillCategory } from "@/lib/skills";
 
 /**
@@ -31,13 +31,14 @@ const CATEGORIES: Array<"all" | SkillCategory> = [
 
 type SortKey = "calls" | "priceAsc" | "priceDesc" | "newest";
 
-function MarketHome() {
+export default function Home() {
   const allSkills = useAllSkills();
   const { nextSkillId } = useNextSkillId();
   const { stats } = useSkillStats();
   const { t } = useI18n();
-  const params = useSearchParams();
-  const query = params.get("q") ?? "";
+  // 搜索词来自模块级 store 而不是 useSearchParams —— 后者会让整页退出
+  // 静态预渲染,32 张卡要等 JS 执行完才出现。
+  const query = useSearchQuery();
 
   const [category, setCategory] = useState<"all" | SkillCategory>("all");
   const [sort, setSort] = useState<SortKey>("calls");
@@ -124,14 +125,5 @@ function MarketHome() {
 
       <CardDetailModal skill={selected} isOpen={!!selected} onClose={() => setSelected(null)} />
     </main>
-  );
-}
-
-export default function Home() {
-  // useSearchParams 需要 Suspense 边界,否则整页在构建时退化为客户端渲染
-  return (
-    <Suspense fallback={<div className="mx-auto max-w-[1440px] px-6 lg:px-10 pt-8" />}>
-      <MarketHome />
-    </Suspense>
   );
 }

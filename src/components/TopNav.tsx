@@ -7,6 +7,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useOrchorState } from "@/lib/useOrchorState";
 import { useI18n, type TranslationKey } from "@/lib/i18n";
 import { LangToggle } from "./LangToggle";
+import { setSearchQuery } from "@/lib/searchStore";
 
 interface Props {
   onOpenDeck: () => void;
@@ -56,10 +57,17 @@ export function TopNav({ onOpenTopUp }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // 边打边筛。写进 store 并同步 URL(链接可分享、前进后退可用),
+  // 但不走 router.push —— 那会重新挂载整页,每敲一个字闪一次。
+  const onChange = (v: string) => {
+    setQ(v);
+    setSearchQuery(v, { pushUrl: false });
+    if (pathname !== "/") router.push("/");
+  };
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const v = q.trim();
-    router.push(v ? `/?q=${encodeURIComponent(v)}` : "/");
+    setSearchQuery(q, { pushUrl: true });
   };
 
   return (
@@ -104,7 +112,7 @@ export function TopNav({ onOpenTopUp }: Props) {
             <input
               ref={inputRef}
               value={q}
-              onChange={(e) => setQ(e.target.value)}
+              onChange={(e) => onChange(e.target.value)}
               placeholder={t("market.searchPlaceholder")}
               aria-label={t("market.searchPlaceholder")}
               className="w-full text-[14px] pl-9 pr-9 py-2 outline-none transition-colors duration-150"
