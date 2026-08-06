@@ -155,6 +155,26 @@ export function CertificateCard({
               {balance > 1 ? t("cert.ownedN", { n: balance }) : t("cert.owned")}
             </span>
           )}
+          {/*
+            快捷解锁。卡片缩小后按钮不再常驻(挤且吵),但"从卡片直接买"
+            是原有能力,不能因为改版悄悄消失 —— 悬停浮出,点开详情也仍可买。
+          */}
+          {!owned && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onUnlock?.();
+              }}
+              className="absolute inset-x-2 bottom-2 py-2 text-[12px] tracking-[2px] opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 focus:opacity-100 focus:translate-y-0"
+              style={{
+                borderRadius: "var(--o-r-btn)",
+                background: isMythic ? "linear-gradient(160deg,#d9bc7e,#b8955a)" : "#ede7d8",
+                color: "#141209",
+              }}
+            >
+              {t("cert.unlock")} · {price} INJ
+            </button>
+          )}
         </div>
       ) : (
         <header className="flex items-baseline justify-between px-4 pt-4">
