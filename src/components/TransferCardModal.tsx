@@ -61,7 +61,7 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[420px] p-7 rounded-[3px]"
+        className="w-full max-w-[420px] p-7 rounded-[var(--o-r-card)]"
         style={{ background: "var(--o-surface)", border: "0.5px solid var(--o-line-3)" }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -114,7 +114,7 @@ export function TransferCardModal({ skill, max, isOpen, onClose }: Props) {
         ) : null}
 
         <p
-          className="mt-6 mb-6 p-3 text-[12px] leading-[1.7] rounded-[2px]"
+          className="mt-6 mb-6 p-3 text-[12px] leading-[1.7] rounded-[var(--o-r-btn)]"
           style={{ background: "rgba(168,112,95,.08)", color: "var(--o-ink-2)" }}
         >
           {max === amount ? t("xfer.warnAll") : t("xfer.warnSome")}

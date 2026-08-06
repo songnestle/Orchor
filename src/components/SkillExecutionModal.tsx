@@ -105,7 +105,7 @@ export function SkillExecutionModal({
             <>
               {errMsg ? (
                 <p
-                  className="mb-4 px-3 py-2.5 text-[12px] leading-relaxed rounded-[2px]"
+                  className="mb-4 px-3 py-2.5 text-[12px] leading-relaxed rounded-[var(--o-r-btn)]"
                   style={{ background: "rgba(168,112,95,.1)", color: "var(--o-down)" }}
                 >
                   {errMsg}

@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { CertificateCard } from "./CertificateCard";
 import { useBalances, useOnchainSkills, useOrchorWrites } from "@/lib/useOrchor";
 import { useSkillStats } from "@/lib/hooks/useSkillStats";
+import { useSkillArt } from "@/lib/hooks/useSkillArt";
 import { ORCHOR_CORE_ADDRESS, activeChain } from "@/lib/chain";
 import { useI18n } from "@/lib/i18n";
 import type { SkillModule } from "@/lib/skills";
@@ -31,6 +32,7 @@ export function SkillGrid({ skills, onSelect, emptyText }: Props) {
   const { skills: onchain } = useOnchainSkills();
   const { unlock } = useOrchorWrites();
   const { stats } = useSkillStats();
+  const art = useSkillArt();
 
   const explorer = activeChain.blockExplorers?.default.url;
 
@@ -55,7 +57,9 @@ export function SkillGrid({ skills, onSelect, emptyText }: Props) {
   }
 
   return (
-    <div className="grid gap-[18px] grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+    // 密度:卡面图让每张卡有了视觉锚点,不再需要靠尺寸撑存在感。
+    // 原来 xl 只有 3 列、一屏看到 6 张,现在 5 列一屏近 15 张。
+    <div className="grid gap-3.5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {items.map((skill) => {
         const chain = onchain.get(skill.id);
         // 中英文语序不同，供给说明用带占位符的 key 而不是拼字符串。
@@ -78,6 +82,7 @@ export function SkillGrid({ skills, onSelect, emptyText }: Props) {
             creatorEarned={stats?.[skill.id]?.creatorEarnedInj}
             series={stats?.[skill.id]?.series ?? (stats ? [] : undefined)}
             seriesPeak={seriesPeak}
+            artUri={art?.[skill.id]}
             onClick={() => onSelect?.(skill)}
             onUnlock={() => {
               if (!chain) return;

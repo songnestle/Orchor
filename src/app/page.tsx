@@ -78,7 +78,7 @@ export default function Home() {
         <div className="mt-8 flex items-center gap-5">
           <Link
             href="/marketplace"
-            className="no-underline text-[13px] tracking-[3px] px-7 py-3 rounded-[2px] transition-[filter] duration-150 hover:brightness-95"
+            className="no-underline text-[13px] tracking-[3px] px-7 py-3 rounded-[var(--o-r-btn)] transition-[filter] duration-150 hover:brightness-95"
             style={{ background: "#ede7d8", color: "#141209" }}
           >
             {t("hero.ctaMarket")}

@@ -43,6 +43,23 @@
   --o-up:        #8fae7a;
   --o-down:      #a8705f;
 
+  /*
+   * 圆角与描边。改版初稿用 3px 直角追求"票据感",整站因此显得硬。
+   * 现代做法(pools.trade / Apple)是大圆角 + 极淡半透明描边 + 用
+   * 亮度差而不是阴影来分层。这里只换几何语言,黑金配色不动。
+   */
+  --o-r-card:  20px;   /* 卡片、面板 */
+  --o-r-media: 16px;   /* 卡面图等媒体块 */
+  --o-r-btn:   12px;   /* 按钮、输入框 */
+  --o-r-pill:  999px;  /* 筛选 tab、徽章 */
+
+  --o-hair:      rgba(237, 231, 216, 0.07);
+  --o-hair-hi:   rgba(237, 231, 216, 0.14);
+  --o-hair-gold: rgba(198, 169, 108, 0.42);
+
+  /* 浮起面:比页面底色亮一档,层次不靠阴影 */
+  --o-raise:     #1a1811;
+
   --o-serif: Georgia, "Songti SC", "Noto Serif SC", "Times New Roman", serif;
   --o-sans:  var(--nf-body), "DM Sans", system-ui, -apple-system, sans-serif;
   --o-mono:  var(--nf-mono), "JetBrains Mono", ui-monospace, monospace;

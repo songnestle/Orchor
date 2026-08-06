@@ -83,6 +83,10 @@ const dict = {
   "market.verified":    { en: "Verified",            zh: "已验证" },
   "market.countCards":  { en: "{n} cards",           zh: "{n} 张" },
   "market.emptyCategory": { en: "No cards in this category yet.", zh: "这个分类下还没有卡片。" },
+  "sort.calls":     { en: "Most invoked",     zh: "调用最多" },
+  "sort.priceAsc":  { en: "Price: low to high", zh: "价格从低到高" },
+  "sort.priceDesc": { en: "Price: high to low", zh: "价格从高到低" },
+  "sort.newest":    { en: "Newest",           zh: "最新上架" },
   "market.empty":       { en: "No cards here yet.",  zh: "这里还没有卡片。" },
 
   // 分类筛选

@@ -62,6 +62,8 @@ interface Props {
    * 调用 40 次画出来一模一样,那才是真正的"看起来都一样"。
    */
   seriesPeak?: number;
+  /** 链上卡面 SVG 的 data URI(来自 /api/skills/art)。缺省则回退纯文字版式。 */
+  artUri?: string;
   onUnlock?: () => void;
   onVerify?: () => void;
   onClick?: () => void;
@@ -79,6 +81,7 @@ export function CertificateCard({
   balance = 0,
   series,
   seriesPeak,
+  artUri,
   onUnlock,
   onVerify,
   onClick,
@@ -110,118 +113,142 @@ export function CertificateCard({
   return (
     <article
       onClick={onClick}
-      className="flex flex-col rounded-[3px] px-5 pt-5 pb-[18px] cursor-pointer transition-colors duration-200"
+      className="group flex flex-col overflow-hidden cursor-pointer transition-colors duration-200"
       style={{
-        background: "#111009",
-        border: `0.5px solid ${isMythic ? "rgba(198,169,108,.55)" : "#232017"}`,
+        borderRadius: "var(--o-r-card)",
+        // 比页面底色亮一档:层次靠亮度差,不靠阴影(阴影在纯黑底上只会脏)
+        background: "var(--o-raise)",
+        border: `1px solid ${isMythic ? "var(--o-hair-gold)" : "var(--o-hair)"}`,
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = isMythic ? "rgba(198,169,108,.85)" : "#39331f";
+        e.currentTarget.style.borderColor = isMythic
+          ? "rgba(198,169,108,.7)"
+          : "var(--o-hair-hi)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = isMythic ? "rgba(198,169,108,.55)" : "#232017";
+        e.currentTarget.style.borderColor = isMythic ? "var(--o-hair-gold)" : "var(--o-hair)";
       }}
     >
-      <header className="flex items-baseline justify-between mb-4">
-        <span
-          className="text-[11px] tracking-[2.5px]"
-          style={{ fontFamily: "var(--o-serif)", color: "#5f5949" }}
-        >
-          Nº{String(skill.id).padStart(2, "0")}
-        </span>
-        <span className="text-[11px] tracking-[2.5px]" style={{ color: METAL_COLOR[skill.rarity] }}>
-          {t(`metal.${skill.rarity}` as never)}
-        </span>
-      </header>
+      {/*
+        链上卡面。合约现算的证书 SVG,MetaMask 一直在显示它,而我们自己的
+        网站以前只放文字 —— 卡片因此张张雷同。SVG 是 340×480 的整张证书,
+        这里取上部方形(角标 / 稀有度徽章 / 按 id 生成的纹样 / 英文规范名)。
+        读不到就退回纯文字版式,不塞占位图。
+      */}
+      {artUri ? (
+        <div className="relative aspect-square overflow-hidden" style={{ background: "#0d0c09" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={artUri}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
+            loading="lazy"
+            // 合约把纹样画得很淡(为了在 MetaMask 的白底/黑底下都不刺眼),
+            // 在网站的深色卡里几乎看不见 —— 提一档亮度和对比,不改颜色。
+            style={{ filter: "brightness(1.22) contrast(1.06)" }}
+          />
+          {owned && (
+            <span
+              className="absolute right-2 top-2 px-2 py-0.5 text-[10px] tracking-[1.5px] rounded-[var(--o-r-pill)]"
+              style={{ background: "rgba(13,12,9,.85)", color: "#cfc4ac", border: "0.5px solid #39331f" }}
+            >
+              {balance > 1 ? t("cert.ownedN", { n: balance }) : t("cert.owned")}
+            </span>
+          )}
+        </div>
+      ) : (
+        <header className="flex items-baseline justify-between px-4 pt-4">
+          <span
+            className="text-[11px] tracking-[2.5px]"
+            style={{ fontFamily: "var(--o-serif)", color: "#5f5949" }}
+          >
+            Nº{String(skill.id).padStart(2, "0")}
+          </span>
+          <span className="text-[11px] tracking-[2.5px]" style={{ color: METAL_COLOR[skill.rarity] }}>
+            {t(`metal.${skill.rarity}` as never)}
+          </span>
+        </header>
+      )}
 
-      <Sparkline series={line} down={down} peak={seriesPeak} />
-
-      <div className="flex justify-between mt-1.5 mb-5">
-        <span className="text-[11px]" style={{ color: "#5f5949" }}>
-          {t("cert.calls30d")}
-        </span>
-        <span
-          className="num text-[11px]"
-          style={{ color: trend === null ? "#5f5949" : down ? "#a8705f" : "#8fae7a" }}
-        >
-          {trend === null
-            ? t("cert.noRecord")
-            : trend.kind === "new"
-              ? t("cert.firstPeriod")
-              : `${trend.v >= 0 ? "+" : ""}${trend.v}%`}
-        </span>
-      </div>
-
-      <h3
-        className="m-0 text-[19px] leading-tight tracking-[.3px]"
-        style={
-          isMythic
-            ? {
-                fontFamily: "var(--o-serif)",
-                background: "linear-gradient(100deg,#a9884d,#f3e3b0 48%,#a9884d)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
+      <div className="flex flex-col flex-1 px-4 pt-3 pb-3.5">
+        {/*
+          卡面已经印着英文规范名、稀有度徽章、解锁价、铸造量和能耗 ——
+          这里绝不重复它们,否则一张卡把同样的信息说两遍。
+          文字区只补卡面没有的:中文名(卡面恒为英文)、说明、链上调用。
+        */}
+        {(!artUri || text.title !== skill.title) && (
+          <div className="flex items-baseline justify-between gap-2 mb-1">
+            <h3
+              className="m-0 text-[15px] leading-tight tracking-[.2px] truncate"
+              style={
+                isMythic
+                  ? {
+                      fontFamily: "var(--o-serif)",
+                      background: "linear-gradient(100deg,#a9884d,#f3e3b0 48%,#a9884d)",
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      color: "transparent",
+                    }
+                  : { fontFamily: "var(--o-serif)", color: "#ede7d8" }
               }
-            : { fontFamily: "var(--o-serif)", color: "#ede7d8" }
-        }
-      >
-        {text.title}
-      </h3>
-      <p className="mt-1.5 mb-0 text-[12px]" style={{ color: "#6a6353" }}>
-        {skill.creatorHandle.replace(/^@+/, "@")}
-        {supplyLabel ? ` · ${supplyLabel}` : ""}
-      </p>
-      <p className="mt-2 mb-0 text-[12px] leading-[1.55] line-clamp-2" style={{ color: "#847c68" }}>
-        {text.shortDescription}
-      </p>
-      <p className="mt-2 mb-0 text-[11px] tracking-[.8px]" style={{ color: "#5f5949" }}>
-        {t(`cat.${skill.category}` as never)} · ⚡{skill.energyCost} · {skill.origin}
-      </p>
+            >
+              {text.title}
+            </h3>
+            {!artUri && (
+              <span
+                className="text-[10px] tracking-[1.5px] whitespace-nowrap"
+                style={{ color: METAL_COLOR[skill.rarity] }}
+              >
+                {t(`metal.${skill.rarity}` as never)}
+              </span>
+            )}
+          </div>
+        )}
 
-      <div className="h-px my-[18px] mb-3.5" style={{ background: "#1c1a14" }} />
-
-      <dl className="flex justify-between mb-[18px]">
-        <Stat label={t("cert.unlockPrice")} value={price} unit="INJ" />
-        <Stat label={t("cert.totalCalls")} value={onchainCalls === undefined ? "—" : onchainCalls.toLocaleString()} />
-        <Stat
-          label={t("cert.creatorEarned")}
-          value={creatorEarned === undefined ? "—" : formatInj(creatorEarned)}
-          unit={creatorEarned === undefined ? undefined : "INJ"}
-          align="right"
-        />
-      </dl>
-
-      <div className="flex items-center gap-4">
-        <button
-          disabled={owned}
-          onClick={(e) => {
-            e.stopPropagation();
-            onUnlock?.();
-          }}
-          className="flex-1 text-[13px] tracking-[3px] py-2.5 rounded-[2px] transition-[filter] duration-150"
-          style={
-            owned
-              ? { background: "transparent", color: "#6a6353", border: "0.5px solid #232017" }
-              : isMythic
-                ? { background: "linear-gradient(160deg,#d9bc7e,#b8955a)", color: "#171410" }
-                : { background: "#ede7d8", color: "#141209" }
-          }
+        {/* 固定两行高:描述长短不一会让同排卡片一高一矮,底部撑出空洞 */}
+        <p
+          className="mb-0 text-[11px] leading-[1.5] line-clamp-2"
+          style={{ color: "#7b7360", minHeight: "2lh" }}
         >
-          {owned ? (balance > 1 ? t("cert.ownedN", { n: balance }) : t("cert.owned")) : t("cert.unlock")}
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onVerify?.();
-          }}
-          className="text-[12px] whitespace-nowrap transition-colors duration-150"
-          style={{ color: "#6a6353" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#cfc4ac")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#6a6353")}
-        >
-          {t("cert.verify")} ↗
-        </button>
+          {text.shortDescription}
+        </p>
+
+        <p className="mt-1.5 mb-0 text-[10px] tracking-[.6px]" style={{ color: "#5f5949" }}>
+          {t(`cat.${skill.category}` as never)}
+          {artUri ? "" : ` · ⚡${skill.energyCost}`}
+          {supplyLabel && !artUri ? ` · ${supplyLabel}` : ""}
+          {" · "}
+          {skill.origin}
+        </p>
+
+        {/* 链上调用:卡面上没有的唯一一组数据 */}
+        <div className="flex items-end justify-between gap-2 mt-auto pt-3">
+          {artUri ? (
+            <span className="text-[10px] tracking-[1px]" style={{ color: "#5f5949" }}>
+              {t("cert.calls30d")}
+            </span>
+          ) : (
+            <div>
+              <span className="num text-[14px]" style={{ color: "#ede7d8" }}>
+                {price}
+              </span>
+              <span className="text-[10px] ml-1" style={{ color: "#6a6353" }}>
+                INJ
+              </span>
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <div className="w-[54px]">
+              <Sparkline series={line} down={down} peak={seriesPeak} compact />
+            </div>
+            <span
+              className="num text-[11px] whitespace-nowrap"
+              style={{ color: trend === null ? "#5f5949" : down ? "#a8705f" : "#8fae7a" }}
+            >
+              {onchainCalls === undefined ? "—" : `${onchainCalls.toLocaleString()}×`}
+            </span>
+          </div>
+        </div>
       </div>
     </article>
   );
@@ -259,9 +286,11 @@ function Stat({
  * 空数据画基线 + 30 格日刻度:是"还没有数据的图表",不是一块空白;
  * 依旧不编造任何数字。
  */
-function Sparkline({ series, down, peak }: { series: number[]; down: boolean; peak?: number }) {
+function Sparkline({
+  series, down, peak, compact = false,
+}: { series: number[]; down: boolean; peak?: number; compact?: boolean }) {
   const W = 300;
-  const H = 64;
+  const H = compact ? 26 : 64;
   const P = 2;
 
   const { d, area, lx, ly } = useMemo(() => {
@@ -270,11 +299,13 @@ function Sparkline({ series, down, peak }: { series: number[]; down: boolean; pe
     // 原来按本卡 min/max 归一化,导致调用 2 次和 40 次画出同样高的曲线。
     const top = Math.max(peak ?? 0, ...series) || 1;
     const step = (W - P * 2) / (series.length - 1);
-    const pts = series.map((v, i) => [P + i * step, H - 8 - (v / top) * (H - 22)] as const);
+    const padB = compact ? 3 : 8;
+    const usable = compact ? H - 8 : H - 22;
+    const pts = series.map((v, i) => [P + i * step, H - padB - (v / top) * usable] as const);
     const path = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
     const [ex, ey] = pts[pts.length - 1];
     return { d: path, area: `${path} L${ex.toFixed(1)} ${H} L${P} ${H} Z`, lx: ex, ly: ey };
-  }, [series, peak]);
+  }, [series, peak, compact, H]);
 
   // 与相邻涨跌幅徽章同语义:上行绿、下行赭。金色是稀缺资源,留给黑金卡,
   // 否则精选区 6 张上行卡就是 6 条金线,预算(整屏≤3处)瞬间爆掉。
@@ -284,16 +315,18 @@ function Sparkline({ series, down, peak }: { series: number[]; down: boolean; pe
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
-      className="block w-full h-[64px]"
+      className={compact ? "block w-full h-[26px]" : "block w-full h-[64px]"}
       preserveAspectRatio="none"
       aria-hidden="true"
     >
       {d ? (
         <>
           <path d={area} fill={color} fillOpacity="0.05" />
-          <path d={d} fill="none" stroke={color} strokeWidth="1.1" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-          <path d={`M${lx} ${ly} l0 0`} stroke={color} strokeWidth="4" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          <path d={d} fill="none" stroke={color} strokeWidth={compact ? "1" : "1.1"} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+          <path d={`M${lx} ${ly} l0 0`} stroke={color} strokeWidth={compact ? "2.5" : "4"} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
         </>
+      ) : compact ? (
+        <line x1={P} y1={H - 3} x2={W - P} y2={H - 3} stroke="#3d382a" strokeWidth="1" vectorEffect="non-scaling-stroke" />
       ) : (
         <>
           {ticks.map((x, i) => (
