@@ -16,9 +16,20 @@ const CHROME =
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
 const ROUTES = [
-  "/", "/explore", "/marketplace", "/rankings", "/deck",
+  "/", "/rankings", "/deck",
   "/creator", "/history", "/transactions", "/battle", "/create",
   "/profile/atlaslabs",
+];
+
+/**
+ * 已合并进首页的旧路径。只验证它们仍然可达并落到 /,不做点击遍历 ——
+ * 遍历时脚本每轮发现 pathname 不等于目标就会 goto 回去,而这里每次
+ * goto 都被重定向,页面反复卸载,wagmi 会在卸载中抛 ConnectorNotConnected。
+ * 那是测试与重定向打架,不是产品问题。
+ */
+const REDIRECTS: Array<[from: string, to: string]> = [
+  ["/explore", "/"],
+  ["/marketplace", "/"],
 ];
 
 interface RouteReport {
@@ -143,6 +154,34 @@ async function auditRoute(browser: Browser, route: string): Promise<RouteReport>
   return rep;
 }
 
+/** 旧路径是否仍可达并落到新位置 */
+async function checkRedirects(): Promise<string[]> {
+  const bad: string[] = [];
+  const browser = await puppeteer.launch({
+    executablePath: CHROME,
+    headless: true,
+    args: ["--no-sandbox", "--disable-gpu"],
+  });
+  try {
+    for (const [from, to] of REDIRECTS) {
+      const page = await browser.newPage();
+      try {
+        await page.goto(BASE + from, { waitUntil: "domcontentloaded", timeout: 30_000 });
+        const landed = new URL(page.url()).pathname;
+        if (landed !== to) bad.push(`${from} -> ${landed} (expected ${to})`);
+        else process.stderr.write(`redirect ok: ${from} -> ${to}\n`);
+      } catch (e: any) {
+        bad.push(`${from}: ${String(e.message).slice(0, 80)}`);
+      } finally {
+        await page.close().catch(() => {});
+      }
+    }
+  } finally {
+    await browser.close().catch(() => {});
+  }
+  return bad;
+}
+
 async function main() {
   const reports: RouteReport[] = [];
   // 每个路由独立浏览器实例:一次崩溃不拖垮整场测试。
@@ -176,7 +215,10 @@ async function main() {
     reports.push(report!);
   }
 
-  let failures = 0;
+  const redirectProblems = await checkRedirects();
+
+  let failures = redirectProblems.length;
+  for (const e of redirectProblems) console.log(`✗ redirect  ${e}`);
   for (const r of reports) {
     const bad = r.pageErrors.length + r.clickFailures.length + r.badResponses.length +
       (r.status && r.status >= 400 ? 1 : 0);
